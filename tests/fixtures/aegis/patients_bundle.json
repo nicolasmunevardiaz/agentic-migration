@@ -1,0 +1,22 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "total": 1,
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "row-1",
+        "identifier[0].value": "member-1",
+        "identifier[1].value": "synthetic-ssn",
+        "name[0].given[0]": "Synthetic",
+        "name[0].family": "Patient",
+        "gender": "unknown",
+        "birthDate": "1970-01-01",
+        "period.start": "2025-01-01",
+        "period.end": "",
+        "active": true
+      }
+    }
+  ]
+}
