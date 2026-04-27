@@ -1,0 +1,184 @@
+{
+  "spec_version": "0.1",
+  "provider": {
+    "provider_name": "BlueStone Health",
+    "provider_slug": "data_provider_2_bluestone_health",
+    "provider_folder": "data_provider_2_bluestone_health",
+    "source_type": "clinical_provider_export",
+    "upload_partition": "year=2025"
+  },
+  "source": {
+    "entity": "observations",
+    "filetype": "hl7_xml",
+    "file_extension": "xml",
+    "expected_file_patterns": [
+      "data_500k/data_provider_2_bluestone_health/year=2025/observations/observations_*.xml"
+    ],
+    "column_dictionary_path": "data_500k/data_provider_2_bluestone_health/year=2025/column_dictionary.md"
+  },
+  "parser_profile": {
+    "parser_family": "hl7_v2_xml_messages",
+    "parser_options": {
+      "xml_namespace": "urn:hl7-org:v2xml",
+      "root_tag": "HL7Messages",
+      "message_segment": "ORU_R01",
+      "field_paths": {
+        "LINE_ID": "MSH.10",
+        "MEAS_ID": "OBR.3",
+        "PARENT_PT": "PID.3",
+        "EN_REF": "PV1.19",
+        "MEAS_DT": "OBR.7",
+        "OBS_JSON": "OBX.5",
+        "ACT_FLAG": "OBR.25"
+      }
+    },
+    "source_row_key": "LINE_ID",
+    "canonical_row_key": "ROW_ID",
+    "record_grain": "one observation per XML message"
+  },
+  "mapping": {
+    "fields": [
+      {
+        "source_header": "LINE_ID",
+        "canonical_name": "ROW_ID",
+        "description": "Unique id per source row; not the business member key.",
+        "inferred_type": "string",
+        "pii_signal": false,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": false,
+        "review_reason": ""
+      },
+      {
+        "source_header": "MEAS_ID",
+        "canonical_name": "OBS_KEY",
+        "description": "Observation record identifier.",
+        "inferred_type": "string",
+        "pii_signal": true,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": true,
+        "review_reason": "Clinical row identifier."
+      },
+      {
+        "source_header": "PARENT_PT",
+        "canonical_name": "PT_001_ID",
+        "description": "Member id foreign-key hint.",
+        "inferred_type": "string",
+        "pii_signal": true,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": true,
+        "review_reason": "Member identifier requires relationship review."
+      },
+      {
+        "source_header": "EN_REF",
+        "canonical_name": "APPT_REF",
+        "description": "Appointment reference in dependent table.",
+        "inferred_type": "string",
+        "pii_signal": true,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": true,
+        "review_reason": "Encounter-linked identifier."
+      },
+      {
+        "source_header": "MEAS_DT",
+        "canonical_name": "OBS_DT_RAW",
+        "description": "Observation date.",
+        "inferred_type": "date",
+        "pii_signal": true,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": true,
+        "review_reason": "Observation date is PHI."
+      },
+      {
+        "source_header": "OBS_JSON",
+        "canonical_name": "OBS_PAYLOAD",
+        "description": "Fixed-shape vitals JSON payload preserved as source text.",
+        "inferred_type": "json_string",
+        "pii_signal": true,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": true,
+        "review_reason": "Vitals payload is clinical PHI and must not be interpreted in discovery."
+      },
+      {
+        "source_header": "ACT_FLAG",
+        "canonical_name": "REC_STS",
+        "description": "Legacy status code.",
+        "inferred_type": "string",
+        "pii_signal": false,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": false,
+        "review_reason": ""
+      }
+    ]
+  },
+  "relationships": {
+    "primary_key_candidates": [
+      "LINE_ID",
+      "MEAS_ID"
+    ],
+    "foreign_key_hints": [
+      "PARENT_PT -> patients.CUST_ID",
+      "EN_REF -> encounters.VISIT_ID"
+    ],
+    "relationship_risks": [
+      "Observation payload must be preserved, not interpreted as Silver clinical measures."
+    ]
+  },
+  "drift": {
+    "row_key_drift": [
+      "BlueStone uses LINE_ID while other provider row-key headers may differ."
+    ],
+    "filetype_drift": [
+      "Dictionary states CSV with .xml, but filetype and local files indicate HL7 XML."
+    ],
+    "mapping_drift": [],
+    "schema_drift": [
+      "OBS_JSON is embedded as XML text/CDATA and must be preserved as a string."
+    ]
+  },
+  "quarantine_rules": {
+    "file_level": [
+      "stop_pipeline when XML is malformed or root tag is not HL7Messages",
+      "stop_pipeline when parser family is unsupported"
+    ],
+    "row_level": [
+      "quarantine_data when LINE_ID is missing",
+      "warn when optional observation payload members are null"
+    ]
+  },
+  "qa_expectations": {
+    "unit_data_tests": [
+      "parse synthetic observation HL7 XML fixture",
+      "preserve OBS_JSON text without clinical interpretation"
+    ],
+    "integration_tests": [
+      "resolve observation XML file patterns when local source data is present"
+    ],
+    "schema_tests": [
+      "validate required provider spec sections and parser profile"
+    ],
+    "data_quality_tests": [
+      "verify LINE_ID row-key presence"
+    ],
+    "reconciliation_tests": [
+      "match dictionary headers to YAML mappings and XML field paths"
+    ]
+  },
+  "human_review": {
+    "required": true,
+    "reasons": [
+      "Vitals payload is clinical PHI",
+      "Observation relationship hints require human approval before Silver semantics"
+    ]
+  },
+  "readiness": {
+    "adapter_ready": true,
+    "blocked_reason": ""
+  }
+}

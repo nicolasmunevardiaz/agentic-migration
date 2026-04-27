@@ -1,0 +1,213 @@
+{
+  "spec_version": "0.1",
+  "provider": {
+    "provider_name": "BlueStone Health",
+    "provider_slug": "data_provider_2_bluestone_health",
+    "provider_folder": "data_provider_2_bluestone_health",
+    "source_type": "clinical_provider_export",
+    "upload_partition": "year=2025"
+  },
+  "source": {
+    "entity": "patients",
+    "filetype": "hl7_xml",
+    "file_extension": "xml",
+    "expected_file_patterns": [
+      "data_500k/data_provider_2_bluestone_health/year=2025/patients/patients_*.xml"
+    ],
+    "column_dictionary_path": "data_500k/data_provider_2_bluestone_health/year=2025/column_dictionary.md"
+  },
+  "parser_profile": {
+    "parser_family": "hl7_v2_xml_messages",
+    "parser_options": {
+      "xml_namespace": "urn:hl7-org:v2xml",
+      "root_tag": "HL7Messages",
+      "message_segment": "ADT_A01",
+      "field_paths": {
+        "LINE_ID": "MSH.10",
+        "CUST_ID": "PID.3",
+        "MBR_FIRST_NM": "PID.5.2",
+        "MBR_LAST_NM": "PID.5.1",
+        "TAX_ID": "PID.19",
+        "SEX_CD": "PID.8",
+        "DOB_TXT": "PID.7",
+        "ENROLL_DT": "PV1.44",
+        "TERM_DT": "PV1.45",
+        "STS_CD": "PID.32"
+      }
+    },
+    "source_row_key": "LINE_ID",
+    "canonical_row_key": "ROW_ID",
+    "record_grain": "one membership transaction event per XML message"
+  },
+  "mapping": {
+    "fields": [
+      {
+        "source_header": "LINE_ID",
+        "canonical_name": "ROW_ID",
+        "description": "Unique id per source row; not the business member key.",
+        "inferred_type": "string",
+        "pii_signal": false,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": false,
+        "review_reason": ""
+      },
+      {
+        "source_header": "CUST_ID",
+        "canonical_name": "PT_001_ID",
+        "description": "Member identifier on every BlueStone table.",
+        "inferred_type": "string",
+        "pii_signal": true,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": true,
+        "review_reason": "Member identifiers require privacy and relationship review."
+      },
+      {
+        "source_header": "MBR_FIRST_NM",
+        "canonical_name": "PT_FIRST_NM",
+        "description": "Member first name.",
+        "inferred_type": "string",
+        "pii_signal": true,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": true,
+        "review_reason": "Direct identifier."
+      },
+      {
+        "source_header": "MBR_LAST_NM",
+        "canonical_name": "PT_LAST_NM",
+        "description": "Member last name.",
+        "inferred_type": "string",
+        "pii_signal": true,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": true,
+        "review_reason": "Direct identifier."
+      },
+      {
+        "source_header": "TAX_ID",
+        "canonical_name": "SSN_VAL",
+        "description": "Social Security Number or Tax ID.",
+        "inferred_type": "string",
+        "pii_signal": true,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": true,
+        "review_reason": "Highly sensitive government identifier."
+      },
+      {
+        "source_header": "SEX_CD",
+        "canonical_name": "GDR_CD",
+        "description": "Source gender code.",
+        "inferred_type": "string",
+        "pii_signal": true,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": true,
+        "review_reason": "Demographic PHI signal."
+      },
+      {
+        "source_header": "DOB_TXT",
+        "canonical_name": "BDT_VAL",
+        "description": "Birth date text.",
+        "inferred_type": "date",
+        "pii_signal": true,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": true,
+        "review_reason": "Date of birth is PHI."
+      },
+      {
+        "source_header": "ENROLL_DT",
+        "canonical_name": "INIT_DT_RAW",
+        "description": "Ingress or event start date.",
+        "inferred_type": "date",
+        "pii_signal": true,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": true,
+        "review_reason": "Membership date is PHI."
+      },
+      {
+        "source_header": "TERM_DT",
+        "canonical_name": "END_DT_RAW",
+        "description": "Exit date when retired.",
+        "inferred_type": "date",
+        "pii_signal": true,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": true,
+        "review_reason": "Membership date is PHI."
+      },
+      {
+        "source_header": "STS_CD",
+        "canonical_name": "REC_STS",
+        "description": "Legacy status code for membership transaction rows.",
+        "inferred_type": "string",
+        "pii_signal": false,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": false,
+        "review_reason": ""
+      }
+    ]
+  },
+  "relationships": {
+    "primary_key_candidates": [
+      "LINE_ID"
+    ],
+    "foreign_key_hints": [],
+    "relationship_risks": [
+      "CUST_ID may repeat by design and must not be treated as a unique person key without human approval."
+    ]
+  },
+  "drift": {
+    "row_key_drift": [
+      "BlueStone uses LINE_ID while other provider row-key headers may differ."
+    ],
+    "filetype_drift": [
+      "Dictionary states CSV with .xml, but filetype and local files indicate HL7 XML."
+    ],
+    "mapping_drift": [],
+    "schema_drift": []
+  },
+  "quarantine_rules": {
+    "file_level": [
+      "stop_pipeline when XML is malformed or root tag is not HL7Messages",
+      "stop_pipeline when parser family is unsupported"
+    ],
+    "row_level": [
+      "quarantine_data when LINE_ID is missing",
+      "warn when optional membership date fields are blank"
+    ]
+  },
+  "qa_expectations": {
+    "unit_data_tests": [
+      "parse synthetic patient HL7 XML fixture"
+    ],
+    "integration_tests": [
+      "resolve patient XML file patterns when local source data is present"
+    ],
+    "schema_tests": [
+      "validate required provider spec sections and parser profile"
+    ],
+    "data_quality_tests": [
+      "verify LINE_ID row-key presence"
+    ],
+    "reconciliation_tests": [
+      "match dictionary headers to YAML mappings and XML field paths"
+    ]
+  },
+  "human_review": {
+    "required": true,
+    "reasons": [
+      "PII classification requires governance review",
+      "CUST_ID repeat behavior requires relationship review before Silver semantics"
+    ]
+  },
+  "readiness": {
+    "adapter_ready": true,
+    "blocked_reason": ""
+  }
+}

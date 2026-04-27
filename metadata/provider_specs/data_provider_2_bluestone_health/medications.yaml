@@ -1,0 +1,218 @@
+{
+  "spec_version": "0.1",
+  "provider": {
+    "provider_name": "BlueStone Health",
+    "provider_slug": "data_provider_2_bluestone_health",
+    "provider_folder": "data_provider_2_bluestone_health",
+    "source_type": "clinical_provider_export",
+    "upload_partition": "year=2025"
+  },
+  "source": {
+    "entity": "medications",
+    "filetype": "hl7_xml",
+    "file_extension": "xml",
+    "expected_file_patterns": [
+      "data_500k/data_provider_2_bluestone_health/year=2025/medications/medications_*.xml"
+    ],
+    "column_dictionary_path": "data_500k/data_provider_2_bluestone_health/year=2025/column_dictionary.md"
+  },
+  "parser_profile": {
+    "parser_family": "hl7_v2_xml_messages",
+    "parser_options": {
+      "xml_namespace": "urn:hl7-org:v2xml",
+      "root_tag": "HL7Messages",
+      "message_segment": "RDE_O11",
+      "field_paths": {
+        "LINE_ID": "MSH.10",
+        "RX_OCC_ID": "ORC.2",
+        "RX_PROD_CD": "RXE.2.1",
+        "PID_REF": "PID.3",
+        "E_REF": "PV1.19",
+        "RX_DX_REF": "DG1.1",
+        "DRUG_DESC": "RXE.2.2",
+        "RX_UNIT_AMT": "RXE.22",
+        "ORDER_TS": "ORC.9",
+        "REC_FLAG": "ORC.5"
+      }
+    },
+    "source_row_key": "LINE_ID",
+    "canonical_row_key": "ROW_ID",
+    "record_grain": "one medication order per XML message"
+  },
+  "mapping": {
+    "fields": [
+      {
+        "source_header": "LINE_ID",
+        "canonical_name": "ROW_ID",
+        "description": "Unique id per source row; not the business member key.",
+        "inferred_type": "string",
+        "pii_signal": false,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": false,
+        "review_reason": ""
+      },
+      {
+        "source_header": "RX_OCC_ID",
+        "canonical_name": "MED_OCC_KEY",
+        "description": "Medication order occurrence id.",
+        "inferred_type": "string",
+        "pii_signal": true,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": true,
+        "review_reason": "Clinical row identifier."
+      },
+      {
+        "source_header": "RX_PROD_CD",
+        "canonical_name": "MED_ID",
+        "description": "Catalog medication id.",
+        "inferred_type": "string",
+        "pii_signal": true,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": true,
+        "review_reason": "Medication code is clinical PHI."
+      },
+      {
+        "source_header": "PID_REF",
+        "canonical_name": "PT_001_ID",
+        "description": "Member id foreign-key hint.",
+        "inferred_type": "string",
+        "pii_signal": true,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": true,
+        "review_reason": "Member identifier requires relationship review."
+      },
+      {
+        "source_header": "E_REF",
+        "canonical_name": "APPT_REF",
+        "description": "Appointment reference in dependent table.",
+        "inferred_type": "string",
+        "pii_signal": true,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": true,
+        "review_reason": "Encounter-linked identifier."
+      },
+      {
+        "source_header": "RX_DX_REF",
+        "canonical_name": "CND_REF",
+        "description": "Foreign key to parent condition row.",
+        "inferred_type": "string",
+        "pii_signal": true,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": true,
+        "review_reason": "Clinical relationship hint."
+      },
+      {
+        "source_header": "DRUG_DESC",
+        "canonical_name": "MED_DESC",
+        "description": "Medication description.",
+        "inferred_type": "string",
+        "pii_signal": true,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": true,
+        "review_reason": "Medication description is clinical PHI."
+      },
+      {
+        "source_header": "RX_UNIT_AMT",
+        "canonical_name": "MED_UNIT_PRICE",
+        "description": "Billed unit price for this order.",
+        "inferred_type": "decimal",
+        "pii_signal": true,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": true,
+        "review_reason": "Financial amount requires governance review."
+      },
+      {
+        "source_header": "ORDER_TS",
+        "canonical_name": "ORD_DT_RAW",
+        "description": "Order date aligned to appointment day.",
+        "inferred_type": "date",
+        "pii_signal": true,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": true,
+        "review_reason": "Medication order date is PHI."
+      },
+      {
+        "source_header": "REC_FLAG",
+        "canonical_name": "REC_STS",
+        "description": "Legacy status code.",
+        "inferred_type": "string",
+        "pii_signal": false,
+        "required_for_bronze": true,
+        "required_for_silver": false,
+        "needs_human_review": false,
+        "review_reason": ""
+      }
+    ]
+  },
+  "relationships": {
+    "primary_key_candidates": [
+      "LINE_ID",
+      "RX_OCC_ID"
+    ],
+    "foreign_key_hints": [
+      "PID_REF -> patients.CUST_ID",
+      "E_REF -> encounters.VISIT_ID",
+      "RX_DX_REF -> conditions.COND_REF"
+    ],
+    "relationship_risks": [
+      "Medication-to-condition relationship must not be promoted without human approval."
+    ]
+  },
+  "drift": {
+    "row_key_drift": [
+      "BlueStone uses LINE_ID while other provider row-key headers may differ."
+    ],
+    "filetype_drift": [
+      "Dictionary states CSV with .xml, but filetype and local files indicate HL7 XML."
+    ],
+    "mapping_drift": [],
+    "schema_drift": []
+  },
+  "quarantine_rules": {
+    "file_level": [
+      "stop_pipeline when XML is malformed or root tag is not HL7Messages",
+      "stop_pipeline when parser family is unsupported"
+    ],
+    "row_level": [
+      "quarantine_data when LINE_ID is missing",
+      "warn when relationship references are blank"
+    ]
+  },
+  "qa_expectations": {
+    "unit_data_tests": [
+      "parse synthetic medication HL7 XML fixture"
+    ],
+    "integration_tests": [
+      "resolve medication XML file patterns when local source data is present"
+    ],
+    "schema_tests": [
+      "validate required provider spec sections and parser profile"
+    ],
+    "data_quality_tests": [
+      "verify LINE_ID row-key presence"
+    ],
+    "reconciliation_tests": [
+      "match dictionary headers to YAML mappings and XML field paths"
+    ]
+  },
+  "human_review": {
+    "required": true,
+    "reasons": [
+      "Clinical medication fields require governance review",
+      "Medication price field requires financial governance review"
+    ]
+  },
+  "readiness": {
+    "adapter_ready": true,
+    "blocked_reason": ""
+  }
+}

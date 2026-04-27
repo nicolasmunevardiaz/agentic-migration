@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HL7Messages xmlns="urn:hl7-org:v2xml">
+  <RDE_O11>
+    <MSH.10>line-medication-001</MSH.10>
+    <ORC.2>medication-occurrence-alpha</ORC.2>
+    <RXE.2.1>medication-catalog-alpha</RXE.2.1>
+    <PID.3>member-alpha</PID.3>
+    <PV1.19>visit-alpha</PV1.19>
+    <DG1.1>condition-occurrence-alpha</DG1.1>
+    <RXE.2.2>synthetic medication description</RXE.2.2>
+    <RXE.22>12.34</RXE.22>
+    <ORC.9>2025-02-03</ORC.9>
+    <ORC.5>1</ORC.5>
+  </RDE_O11>
+</HL7Messages>
