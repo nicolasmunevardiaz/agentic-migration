@@ -1,0 +1,54 @@
+spec_version: 0.1
+provider:
+  provider_name: ""
+  provider_slug: ""
+  provider_folder: ""
+  source_type: ""
+  upload_partition: ""
+source:
+  entity: ""
+  filetype: ""
+  file_extension: ""
+  expected_file_patterns: []
+  column_dictionary_path: ""
+parser_profile:
+  parser_family: ""
+  parser_options: {}
+  source_row_key: ""
+  canonical_row_key: "ROW_ID"
+  record_grain: ""
+mapping:
+  fields:
+    - source_header: ""
+      canonical_name: ""
+      description: ""
+      inferred_type: ""
+      pii_signal: false
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: false
+      review_reason: ""
+relationships:
+  primary_key_candidates: []
+  foreign_key_hints: []
+  relationship_risks: []
+drift:
+  row_key_drift: []
+  filetype_drift: []
+  mapping_drift: []
+  schema_drift: []
+quarantine_rules:
+  file_level: []
+  row_level: []
+qa_expectations:
+  unit_data_tests: []
+  integration_tests: []
+  schema_tests: []
+  data_quality_tests: []
+  reconciliation_tests: []
+human_review:
+  required: false
+  reasons: []
+readiness:
+  adapter_ready: false
+  blocked_reason: ""

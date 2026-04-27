@@ -1,0 +1,39 @@
+spec_version: 0.1
+entity: ""
+layer: "silver"
+grain: ""
+description: ""
+columns:
+  - name: ""
+    type: ""
+    nullable: true
+    required: false
+    pii_class: ""
+    lineage_required: false
+    source_mappings:
+      - provider_slug: ""
+        source_entity: ""
+        source_header: ""
+        provider_spec_path: ""
+    transform_rule: ""
+    quarantine_if_invalid: false
+    needs_human_review: false
+    review_reason: ""
+keys:
+  primary_key_candidates: []
+  foreign_key_candidates: []
+relationships:
+  - name: ""
+    from_column: ""
+    to_entity: ""
+    to_column: ""
+    confidence: ""
+    risk: ""
+qa_expectations:
+  schema_tests: []
+  data_quality_tests: []
+  reconciliation_tests: []
+  regression_tests: []
+readiness:
+  model_ready: false
+  blocked_reason: ""

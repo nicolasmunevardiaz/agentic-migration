@@ -1,0 +1,113 @@
+name: AgentOps CI
+
+on:
+  pull_request:
+    branches:
+      - main
+      - testing
+      - develop
+  push:
+    branches:
+      - main
+      - testing
+      - develop
+
+permissions:
+  contents: read
+
+jobs:
+  repository-guard:
+    name: repository-guard
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Guard repository contract
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          required_paths=(
+            ".agent/skills"
+            ".agent/spec_templates"
+            "docs"
+            "metadata/provider_specs"
+            "metadata/model_specs/bronze"
+            "metadata/model_specs/silver"
+            "metadata/model_specs/mappings"
+            "metadata/deployment_specs/databricks"
+            "reports/qa"
+            "reports/privacy"
+            "reports/hitl"
+            "logs"
+            "src/adapters"
+            "src/common"
+            "src/handlers"
+            "tests/specs"
+            "tests/adapters"
+            "tests/fixtures"
+          )
+
+          for path in "${required_paths[@]}"; do
+            test -e "$path" || {
+              echo "Missing required repository path: $path"
+              exit 1
+            }
+          done
+
+          if git ls-files data_500k | grep -q .; then
+            echo "data_500k must not be tracked in Git"
+            exit 1
+          fi
+
+          if git ls-files | grep -E '(^|/)\.DS_Store$'; then
+            echo ".DS_Store files must not be tracked in Git"
+            exit 1
+          fi
+
+          if git ls-files | grep -E '(^|/)\.env($|\.)'; then
+            echo ".env files must not be tracked in Git"
+            exit 1
+          fi
+
+  python-quality:
+    name: python-quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run ruff
+        run: uv run ruff check
+
+      - name: Run pytest
+        run: uv run pytest
+
+  secret-scan:
+    name: secret-scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Scan for obvious committed secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          patterns='(OPENAI_API_KEY|DATABRICKS_TOKEN|AWS_SECRET_ACCESS_KEY|AZURE_CLIENT_SECRET|GITHUB_TOKEN|gh[pousr]_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9]{20,})'
+          if git grep -I -n -E "$patterns" -- \
+            ':!*.md' \
+            ':!.github/workflows/agentops-ci.yml'; then
+            echo "Potential secret-like value found in tracked files"
+            exit 1
+          fi

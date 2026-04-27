@@ -1,0 +1,34 @@
+spec_version: 0.1
+deployment_target:
+  platform: "databricks"
+  unity_catalog_catalog: ""
+  unity_catalog_schema: ""
+  environment: ""
+inputs:
+  provider_specs: []
+  model_specs: []
+  adapter_artifacts: []
+tables:
+  bronze: []
+  silver: []
+  quarantine: []
+  qa_evidence: []
+execution:
+  mode: ""
+  lakeflow_or_dlt: false
+  dlt_meta_dataflowspec: ""
+  databricks_asset_bundle_path: ""
+  workflow_or_job_name: ""
+quality:
+  expectations: []
+  reconciliation_checks: []
+  schema_checks: []
+lineage:
+  required_columns: []
+  unity_catalog_lineage_expected: true
+approval:
+  requires_human_approval: true
+  approval_record_path: ""
+readiness:
+  deployment_ready: false
+  blocked_reason: ""

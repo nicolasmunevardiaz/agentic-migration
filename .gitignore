@@ -1,0 +1,32 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# Local source datasets stay outside Git and remote history.
+data_500k/
+
+# Local generated runtime artifacts
+artifacts/**
+!artifacts/.gitkeep
+
+# Databricks local deployment state
+.databricks/
+.bundle/
+
+# Local logs and temporary files
+*.log
+*.tmp
+tmp/
+temp/
