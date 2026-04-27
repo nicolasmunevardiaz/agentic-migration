@@ -14,13 +14,15 @@ Read the Technical PRD, `docs/agentops_filesystem_conventions.md`, active plan d
 
 Validate branch discipline, PR evidence, workflow permissions, `uv` usage, dependency cache expectations, dependency safety evidence, forbidden commands, secrets handling, Databricks/Terraform guardrails, protected-branch assumptions, test evidence, and whether the active plan allows the requested change.
 
-The expected branch model is `develop` for active integration, `testing` for validation staging, `main` for protected release state, and `hotfix/*` for urgent controlled fixes. Agent branches should be scoped, for example `agentops/<plan-id>/<provider-or-scope>`, when branch creation is explicitly authorized.
+The only long-lived branches are `main`, `testing`, and `develop`. Agent branches are temporary work branches and must be scoped, for example `agentops/<plan-id>/<provider-or-scope>` or `governance/<scope>`, when branch creation is explicitly authorized. Agent-created PRs must target `main`; `develop` and `testing` are not valid default PR targets for agent work. If a PR targets anything other than `main`, require an explicit Human in the Loop exception recorded in the PR evidence and return a blocked status unless that exception exists.
 
-PR evidence must include plan id, provider or `all`, skills used, files changed, tests run, evidence paths, dependency changes, risks, HITL decisions, Databricks impact, and rollback notes. An agent must not claim tests passed or dependency safety without a command transcript, CI check, scanner output, or evidence path. If evidence is complete, this skill may return `allowed_next_action: create_pr`.
+Temporary agent branches must have a deletion plan in the PR evidence. After PR approval and merge, or explicit human closure, the temporary head branch must be deleted locally and remotely. This skill may verify and report branch cleanup requirements, but it must not delete branches itself.
+
+PR evidence must include plan id, provider or `all`, skills used, base branch, head branch, branch deletion plan, files changed, tests run, evidence paths, dependency changes, risks, HITL decisions, Databricks impact, and rollback notes. An agent must not claim tests passed or dependency safety without a command transcript, CI check, scanner output, or evidence path. If evidence is complete and the base branch is `main`, this skill may return `allowed_next_action: create_pr`.
 
 ## Non-Negotiables
 
-Do not approve PRs, merge PRs, change GitHub settings, change branch protections, change secrets, run `gh` commands that mutate repository configuration, run Databricks jobs, apply Terraform, deploy Databricks Asset Bundles, authorize production-impacting actions, or bypass Human in the Loop.
+Do not approve PRs, merge PRs, delete branches, change GitHub settings, change branch protections, change secrets, run `gh` commands that mutate repository configuration, run Databricks jobs, apply Terraform, deploy Databricks Asset Bundles, authorize production-impacting actions, or bypass Human in the Loop.
 
 Safe `gh` usage is limited to authentication/status inspection, PR creation after this skill returns `allowed_next_action: create_pr`, PR viewing, PR checks, and CI run inspection. Do not expose `gh` for repository settings, secrets, branch protections, environments, rulesets, project mutation, approvals, or merges. Do not allow broad workflow permissions without explicit human approval. Do not allow direct changes to Databricks or Terraform execution paths from a PR without approval. Do not allow new dependencies with known critical or high vulnerabilities unless a human explicitly approves the exception. Do not allow PR readiness to depend only on agent self-report.
 

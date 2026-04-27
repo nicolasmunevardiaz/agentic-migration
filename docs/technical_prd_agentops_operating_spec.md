@@ -33,6 +33,14 @@ The control plane must validate migration code and migration intent before any D
 
 Every agent-generated PR must explain what changed, which providers/entities/tables are impacted, what risks were introduced, what evidence was produced, and what Databricks validation is expected next. Human approval is based on PR diff, tests, coverage, parser report, migration plan, risk report, manifest, and expected QA checks. A PR that cannot explain its impact is not ready for Databricks.
 
+### 3.1.1 Branch And Pull Request Governance
+
+The only long-lived repository branches are `main`, `testing`, and `develop`. Agent-created branches are temporary work branches only; they must use a scoped name, must not become permanent integration branches, and must be deleted after the PR is approved and merged or explicitly closed by a human.
+
+All agent-created pull requests must target `main`. `develop` and `testing` may be used as human-managed integration or validation branches, but they are not valid default PR targets for agent work unless a human explicitly records a one-off exception in the PR evidence.
+
+Before creating a PR, the agent must confirm that the base branch is `main`, list the head branch, include branch cleanup notes, and record any branch-policy exception as a Human in the Loop decision. If the target is not `main` and no exception is recorded, `repo-governance-auditor` must block PR creation.
+
 ### 3.2 Data Execution And Validation Plane: Databricks After Approval
 
 Databricks enters when validation depends on real or representative data, Spark/Delta behavior, Unity Catalog permissions, runtime configuration, lineage, or scalable execution. This plane must perform source profiling, Bronze/Silver data quality checks, source-to-target reconciliation, row counts, null-rate checks, duplicate checks, schema drift detection, CDC correctness where applicable, performance and cost benchmarks, Unity Catalog lineage validation, Lakeflow/DLT validation if used, comparison between legacy outputs and new outputs when available, and progressive testing from sampled data to larger volumes.
@@ -158,7 +166,7 @@ All plans and skills must follow the shared filesystem contract in `docs/agentop
 
 Agent work must be traceable through concise append-only technical logs under `logs/`. Discovery and provider profiling must operate on one provider at a time, with the agent acting as a specialist for the active provider and writing to `logs/provider_discovery/<provider_slug>.md`. Canonical modeling is the first generalist phase that may review all providers together, writing to `logs/canonical_model/canonical_review.md`. Logs must include timestamp, plan, provider, skill, event, artifact, and a short note; agents must append corrections instead of deleting or rewriting history.
 
-Before an agent prepares or creates a PR, it must use `repo-governance-auditor` to check PR evidence, branch discipline, forbidden operations, workflow permissions, secrets handling, dependency safety evidence, test evidence, and HITL requirements. This skill must not create PRs, mutate GitHub settings, change secrets, run Databricks, apply Terraform, approve PRs, or merge changes.
+Before an agent prepares or creates a PR, it must use `repo-governance-auditor` to check PR evidence, branch discipline, forbidden operations, workflow permissions, secrets handling, dependency safety evidence, test evidence, and HITL requirements. This skill must verify that the PR targets `main`, that only `main`, `testing`, and `develop` are treated as long-lived branches, and that the temporary head branch has a documented deletion plan after PR approval and merge or explicit closure. This skill must not create PRs, mutate GitHub settings, change secrets, run Databricks, apply Terraform, approve PRs, or merge changes.
 
 Any new or changed package must be reviewed by `privacy-governance-reviewer` for supportability, known vulnerability risk, lockfile discipline, dependency confusion or typosquatting risk, and human-approved exceptions. Agents must not install or approve packages with known critical or high vulnerabilities without explicit HITL approval and mitigation.
 
