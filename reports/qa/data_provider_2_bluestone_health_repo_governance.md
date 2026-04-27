@@ -12,7 +12,7 @@ status: passed
 - Databricks impact: no Databricks execution or deployment specs.
 - Terraform impact: none.
 - Secrets impact: none.
-- Unrelated local file: untracked `spike.md` remains untouched and out of scope.
+- Unrelated local files: untracked `codex.png` and `spike.md` remain untouched and out of scope.
 
 ## Governance Findings
 
@@ -28,9 +28,9 @@ status: passed
 
 | Command | Result |
 | --- | --- |
-| `uv run pytest tests/specs/test_provider_specs.py` | passed, 8 tests |
-| `uv run pytest tests/adapters` | passed, 11 tests |
-| `uv run pytest` | passed, 22 tests |
+| `uv run pytest tests/specs/test_provider_specs.py` | passed, 9 tests after merging `origin/develop` |
+| `uv run pytest tests/adapters` | passed, 14 tests after merging `origin/develop` |
+| `uv run pytest` | passed, 26 tests after merging `origin/develop` |
 | `uv run ruff check` | passed |
 
 ## Allowed Next Action

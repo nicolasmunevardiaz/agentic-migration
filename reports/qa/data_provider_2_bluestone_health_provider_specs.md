@@ -23,9 +23,9 @@ status: passed_local_validation
 
 | Command | Result |
 | --- | --- |
-| `uv run pytest tests/specs/test_provider_specs.py` | passed, 8 tests |
-| `uv run pytest tests/adapters` | passed, 11 tests |
-| `uv run pytest` | passed, 22 tests |
+| `uv run pytest tests/specs/test_provider_specs.py` | passed, 9 tests after merging `origin/develop` |
+| `uv run pytest tests/adapters` | passed, 14 tests after merging `origin/develop` |
+| `uv run pytest` | passed, 26 tests after merging `origin/develop` |
 | `uv run ruff check` | passed |
 
 ## Notes
@@ -33,3 +33,4 @@ status: passed_local_validation
 - The initial adapter test run failed because `pytest` on `develop` did not include the repository root on `PYTHONPATH`.
 - `pyproject.toml` now declares `pythonpath = ["."]` for deterministic local and CI imports.
 - No dependency install was required.
+- The PR conflict in `tests/specs/test_provider_specs.py` was resolved by preserving Aegis coverage from `develop` and adding BlueStone coverage in the same test module.
