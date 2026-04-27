@@ -1,0 +1,19 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "total": 1,
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Observation",
+        "id": "row-1",
+        "identifier[0].value": "observation-1",
+        "subject.reference": "Patient/member-1",
+        "encounter.reference": "Encounter/encounter-1",
+        "effectiveDateTime": "2025-01-01T00:00:00",
+        "valueString": "{\"heart_rate\": 72}",
+        "status": "final"
+      }
+    }
+  ]
+}
