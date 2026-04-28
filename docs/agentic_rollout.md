@@ -4,7 +4,7 @@
 
 This document contains plug-and-play prompts for the manual AgentOps rollout from provider profiling to Databricks rollout. The manual sequence is the reference path that will later be automated.
 
-Every prompt must follow `docs/technical_prd_agentops_operating_spec.md`, `docs/agentops_filesystem_conventions.md`, `.agent/spec_templates/`, and the active plan document. Agents must respect `hitl-escalation-controller`, `privacy-governance-reviewer`, and `repo-governance-auditor`.
+Every prompt must follow `docs/technical_prd_agentops_operating_spec.md`, `docs/agentops_filesystem_conventions.md`, `.agent/spec_templates/`, and the active plan document. Agents must respect `drift-decision-resolver`, `hitl-escalation-controller`, `privacy-governance-reviewer`, and `repo-governance-auditor` when those controls apply to the active stage.
 
 ## Global Prerequisites
 
@@ -16,12 +16,12 @@ Allowed `gh` usage is limited to `gh auth status`, `gh pr create`, `gh pr view`,
 
 ## Execution Order
 
-Provider profiling may run in parallel only if each agent owns one provider, one branch, one provider log, and one provider spec subtree. Canonical modeling starts only after provider profiling PRs are approved or explicitly accepted as blocked. Adapter implementation may run per provider after canonical contracts are approved. Databricks rollout is last and requires HITL approval.
+Provider profiling may run in parallel only if each agent owns one provider, one branch, one provider log, and one provider spec subtree. Canonical modeling starts only after provider profiling PRs are approved or explicitly accepted as blocked and the canonical drift decision runbook has no unresolved blocking decisions. Adapter implementation may run per provider after canonical contracts are approved. Databricks rollout is last and requires HITL approval.
 
 | Stage | Execution | Prompt |
 |---|---|---|
 | Provider profiling | Parallel or sequential by provider | Prompts 1A-1E |
-| Canonical model | Sequential, all providers | Prompt 2 |
+| Drift decision resolution and canonical model | Sequential, all providers | Prompt 2 |
 | Adapter implementation and CI | Parallel or sequential by provider | Prompts 3A-3E |
 | Databricks rollout planning | Sequential, all approved artifacts | Prompt 4 |
 
@@ -135,22 +135,24 @@ Run relevant validation with uv. If dependencies are missing, stop and request H
 When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "spec: pacific-shield - add provider profiles". The PR body must include plan id, provider, skills used, files changed, tests run, evidence paths, risks, HITL decisions, Databricks impact, and rollback notes.
 ```
 
-## Prompt 2: Canonical Model And Contracts
+## Prompt 2: Drift Decisions, Canonical Model, And Contracts
 
-Explanation: This prompt intentionally widens context after provider profiling because canonical modeling requires cross-provider comparison. It reads all approved provider specs but still blocks adapter code and Databricks execution.
+Explanation: This prompt intentionally widens context after provider profiling because drift decisions and canonical modeling require cross-provider comparison. It resolves or explicitly defers blocking drift decisions before any Bronze/Silver contracts are generated, then creates canonical model specs only if the runbook gate is clear. It still blocks adapter code and Databricks execution.
 
-Prerequisites: Provider profiling PRs are merged, approved, or explicitly blocked with HITL records. Human has approved local `uv` use, safe `gh` PR creation after governance audit, and any missing dev dependencies.
+Prerequisites: Provider profiling PRs are merged, approved, or explicitly blocked with HITL records. Human has approved local `uv` use, safe `gh` PR creation after governance audit, and any missing dev dependencies. `reports/hitl/canonical_drift_decision_runbook.md` exists and is ready to be updated as the plan 02 gate.
 
 ```text
 You are Codex executing Canonical Model And Contracts across all approved providers.
 
-Use docs/02_canonical_model_and_contracts_plan.md as the active plan. Read docs/technical_prd_agentops_operating_spec.md, docs/agentops_filesystem_conventions.md, docs/agentops_skill_strategy.md, .agent/spec_templates/silver_entity_model.template.yaml, metadata/provider_specs/**, reports/drift/**, reports/hitl/**, and reports/privacy/**.
+Use docs/02_canonical_model_and_contracts_plan.md as the active plan. Read docs/technical_prd_agentops_operating_spec.md, docs/agentops_filesystem_conventions.md, docs/agentops_skill_strategy.md, .agent/spec_templates/silver_entity_model.template.yaml, metadata/provider_specs/**, reports/drift/**, reports/privacy/**, reports/hitl/**, reports/qa/**, and reports/hitl/canonical_drift_decision_runbook.md.
 
-Use these skills: canonical-model-planner, privacy-governance-reviewer, spec-test-generator, hitl-escalation-controller, and repo-governance-auditor before PR creation.
+Use these skills: drift-decision-resolver, canonical-model-planner, privacy-governance-reviewer, spec-test-generator, hitl-escalation-controller, and repo-governance-auditor before PR creation.
 
-Work as a generalist canonical reviewer. Read all approved provider specs together. Do not perform new provider discovery, adapter implementation, Databricks rollout, Gold modeling, KPI definition, identity resolution, or clinical interpretation without HITL.
+Work as a generalist canonical reviewer. Read all approved provider specs and all reports together. First update reports/hitl/canonical_drift_decision_runbook.md with every drift decision that blocks or informs canonical modeling. If any entry with Blocks Plan 02 = yes remains pending_human_decision, stop and invoke hitl-escalation-controller with a specific human question. Do not generate Bronze/Silver model specs until blocking drift decisions are applied, rejected, or deferred_with_human_approval.
 
-Append concise trace entries to logs/canonical_model/canonical_review.md. Generate metadata/model_specs/bronze/bronze_contract.yaml, metadata/model_specs/silver/<entity>.yaml, metadata/model_specs/mappings/provider_to_silver_matrix.yaml, and metadata/model_specs/impact/modeling_risk_report.md.
+After the drift decision runbook gate is clear, use canonical-model-planner to generate metadata/model_specs/bronze/bronze_contract.yaml, metadata/model_specs/silver/<entity>.yaml, metadata/model_specs/mappings/provider_to_silver_matrix.yaml, and metadata/model_specs/impact/modeling_risk_report.md. Do not perform new provider discovery, adapter implementation, Databricks rollout, Gold modeling, KPI definition, identity resolution, or clinical interpretation without HITL.
+
+Append concise trace entries to logs/canonical_model/canonical_review.md for both drift decision resolution and canonical model generation.
 
 Run model/spec validation with uv. If dependencies are missing, stop and request HITL approval before installing with uv. If repeated failures, missing evidence, ambiguous semantics, or scope drift occur, invoke hitl-escalation-controller and stop.
 
@@ -283,4 +285,4 @@ When local readiness QA passes, run repo-governance-auditor. If it returns allow
 
 Automation should preserve this manual order. Provider profiling can become a fan-out matrix by provider only when each job owns a branch, log file, spec subtree, and PR. Canonical modeling, Databricks rollout, and any permission-changing step must remain sequential and HITL-gated.
 
-The automation controller should treat `hitl-escalation-controller` as a stop signal, `privacy-governance-reviewer` as a security/dependency gate, and `repo-governance-auditor` as the final PR-readiness gate.
+The automation controller should treat `drift-decision-resolver` as the plan 02 readiness gate, `hitl-escalation-controller` as a stop signal, `privacy-governance-reviewer` as a security/dependency gate, and `repo-governance-auditor` as the final PR-readiness gate.

@@ -153,3 +153,11 @@ def test_canonical_drift_decision_runbook_has_required_gate_fields() -> None:
     assert "Final Decision" in runbook
     assert "Files Updated" in runbook
     assert "Validation Evidence" in runbook
+
+
+def test_agentic_rollout_invokes_drift_decision_gate() -> None:
+    rollout = (REPO_ROOT / "docs" / "agentic_rollout.md").read_text(encoding="utf-8")
+
+    assert "drift-decision-resolver" in rollout
+    assert "canonical_drift_decision_runbook.md" in rollout
+    assert "Do not generate Bronze/Silver model specs" in rollout
