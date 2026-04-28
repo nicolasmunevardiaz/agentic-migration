@@ -12,19 +12,19 @@ Run this plan as a generalist canonical review. Unlike provider discovery, this 
 
 ## Required Skills
 
-Use `canonical-model-planner` as the primary modeling skill. Use `privacy-governance-reviewer` to validate PII/PHI treatment and governance posture. Use `spec-test-generator` to define and generate Python validation for model specs and mapping matrices.
+Use `drift-decision-resolver` first to resolve or explicitly defer blocking provider drift decisions across all reports before canonical modeling starts. Use `canonical-model-planner` as the primary modeling skill only after the drift decision runbook is ready. Use `privacy-governance-reviewer` to validate PII/PHI treatment and governance posture. Use `spec-test-generator` to define and generate Python validation for model specs and mapping matrices. Use `hitl-escalation-controller` if any blocking decision lacks a human owner, final decision, or approved deferral.
 
 ## Definition Of Ready
 
-Provider specs exist under `metadata/provider_specs/<provider_slug>/<entity>.yaml` or have documented blockers. Provider drift findings and HITL decisions from discovery are available. The expected model template is available in `.agent/spec_templates/silver_entity_model.template.yaml`.
+Provider specs exist under `metadata/provider_specs/<provider_slug>/<entity>.yaml` or have documented blockers. Provider drift findings and HITL decisions from discovery are available. The cross-provider decision runbook exists at `reports/hitl/canonical_drift_decision_runbook.md`. Every runbook item with `blocks_plan_02: yes` or `Blocks Plan 02` set to `yes` is marked `applied`, `rejected`, or `deferred_with_human_approval`, with owner, date, evidence paths, files updated, and validation evidence. The expected model template is available in `.agent/spec_templates/silver_entity_model.template.yaml`.
 
 ## Inputs
 
-Read provider specs, the provider drift summary, human-review decisions, the Technical PRD, the skill strategy, and model templates. Provider specs are source contracts. Treat them as evidence for canonical modeling, not as the target model.
+Read provider specs, provider drift summaries, privacy reports, QA reports, HITL queues, the canonical drift decision runbook, the Technical PRD, the skill strategy, and model templates. Provider specs are source contracts. Treat them as evidence for canonical modeling, not as the target model.
 
 ## Filesystem Contract
 
-Follow `docs/agentops_filesystem_conventions.md`. Do not create private agent folders or alternative output roots. Bronze contracts must land under `metadata/model_specs/bronze/`, Silver contracts under `metadata/model_specs/silver/`, mapping matrices under `metadata/model_specs/mappings/`, modeling risk reports under `metadata/model_specs/impact/`, HITL decisions under `reports/hitl/`, privacy findings under `reports/privacy/`, and model validation tests under `tests/specs/`.
+Follow `docs/agentops_filesystem_conventions.md`. Do not create private agent folders or alternative output roots. The canonical drift decision runbook must live at `reports/hitl/canonical_drift_decision_runbook.md`. Bronze contracts must land under `metadata/model_specs/bronze/`, Silver contracts under `metadata/model_specs/silver/`, mapping matrices under `metadata/model_specs/mappings/`, modeling risk reports under `metadata/model_specs/impact/`, HITL decisions under `reports/hitl/`, privacy findings under `reports/privacy/`, and model validation tests under `tests/specs/`.
 
 ## Trace Logging
 
@@ -33,6 +33,8 @@ Append concise technical entries to `logs/canonical_model/canonical_review.md`. 
 ## Expected Outputs
 
 Create `metadata/model_specs/bronze/bronze_contract.yaml`, one `metadata/model_specs/silver/<entity>.yaml` per approved Silver entity, `metadata/model_specs/mappings/provider_to_silver_matrix.yaml`, and `metadata/model_specs/impact/modeling_risk_report.md`. The contracts must define grain, approved columns, types, nullability, lineage fields, required fields, candidate keys, provider coverage, source mappings, quarantine behavior, PII classification, modeling risks, and HITL decisions.
+
+Before those model artifacts are created, update `reports/hitl/canonical_drift_decision_runbook.md` with every drift decision that blocks or informs canonical modeling. If any blocking decision remains unresolved, stop with a HITL escalation packet instead of generating canonical model specs.
 
 ## Python And Implementation Standards
 
@@ -51,6 +53,8 @@ The development workflow should use a simple self-descriptive name such as `Mode
 ## HITL Decisions
 
 Human review is required for Silver required fields, ambiguous types, unsafe casts, candidate keys, relationship confidence, PII/PHI classification, quarantine behavior, provider coverage gaps, and any field whose meaning is clinical or financial. Approval records must link to provider specs and modeling evidence.
+
+The canonical drift decision runbook is the source of truth for final drift decisions entering this plan. Discovery-phase HITL queues may identify pending questions, but plan 02 must not treat them as resolved until the runbook records a final decision and implementation status.
 
 ## Definition Of Done
 

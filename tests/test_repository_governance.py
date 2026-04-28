@@ -108,3 +108,48 @@ def test_fixture_directory_is_documented() -> None:
     assert "Aegis" in content
     assert "BlueStone" in content
     assert "Do not copy real records" in content
+
+
+def test_canonical_plan_requires_drift_decision_runbook() -> None:
+    plan = (REPO_ROOT / "docs" / "02_canonical_model_and_contracts_plan.md").read_text(
+        encoding="utf-8"
+    )
+    skill = REPO_ROOT / ".agent" / "skills" / "drift-decision-resolver" / "SKILL.md"
+    runbook = REPO_ROOT / "reports" / "hitl" / "canonical_drift_decision_runbook.md"
+
+    assert skill.exists()
+    assert runbook.exists()
+    assert "drift-decision-resolver" in plan
+    assert "canonical_drift_decision_runbook.md" in plan
+    assert "must not treat them as resolved" in plan
+
+
+def test_drift_decision_resolver_is_registered() -> None:
+    skill = (
+        REPO_ROOT / ".agent" / "skills" / "drift-decision-resolver" / "SKILL.md"
+    ).read_text(encoding="utf-8")
+    strategy = (REPO_ROOT / "docs" / "agentops_skill_strategy.md").read_text(
+        encoding="utf-8"
+    )
+    technical_prd = (
+        REPO_ROOT / "docs" / "technical_prd_agentops_operating_spec.md"
+    ).read_text(encoding="utf-8")
+
+    assert "canonical_drift_decision_runbook.md" in skill
+    assert "pending_human_decision" in skill
+    assert "deferred_with_human_approval" in skill
+    assert "drift-decision-resolver" in strategy
+    assert "drift-decision-resolver" in technical_prd
+
+
+def test_canonical_drift_decision_runbook_has_required_gate_fields() -> None:
+    runbook = (
+        REPO_ROOT / "reports" / "hitl" / "canonical_drift_decision_runbook.md"
+    ).read_text(encoding="utf-8")
+
+    assert "Plan 02 may start only after" in runbook
+    assert "Decision ID" in runbook
+    assert "Blocks Plan 02" in runbook
+    assert "Final Decision" in runbook
+    assert "Files Updated" in runbook
+    assert "Validation Evidence" in runbook
