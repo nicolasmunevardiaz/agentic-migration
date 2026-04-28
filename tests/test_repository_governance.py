@@ -85,3 +85,16 @@ def test_contributing_documents_minimal_governance() -> None:
     assert "`main` is the only long-lived branch" in contributing
     assert "Conventional Commits" in contributing
     assert "chore: remove dependabot config" in contributing
+
+
+def test_drift_reports_are_human_readable() -> None:
+    drift_reports = [
+        REPO_ROOT / "reports" / "drift" / "data_provider_1_aegis_care_network.md",
+        REPO_ROOT / "reports" / "drift" / "data_provider_2_bluestone_health.md",
+    ]
+
+    for report in drift_reports:
+        content = report.read_text(encoding="utf-8")
+        assert "## How To Read This" in content
+        assert "## Reader Glossary" in content
+        assert "HITL" in content
