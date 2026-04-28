@@ -1,0 +1,62 @@
+spec_version: "0.1"
+provider:
+  provider_name: "Pacific Shield Insurance"
+  provider_slug: "data_provider_5_pacific_shield_insurance"
+  provider_folder: "data_provider_5_pacific_shield_insurance"
+  source_type: "claims_export"
+  upload_partition: "year=2025"
+source:
+  entity: "medications"
+  filetype: "csv"
+  file_extension: "csv"
+  expected_file_patterns:
+    - "data_500k/data_provider_5_pacific_shield_insurance/year=2025/medications/medications_*.csv"
+  column_dictionary_path: "data_500k/data_provider_5_pacific_shield_insurance/year=2025/column_dictionary.md"
+parser_profile:
+  parser_family: "csv_claims_export"
+  parser_options:
+    delimiter: ","
+    comment_prefix: "#"
+    optional_preamble: "sep=,"
+    header_mode: "optional_header_or_dictionary_order"
+    duplicate_header_policy: "preserve_positions"
+    expected_headers: ["CLM_SEQ", "RX_CLM_ID", "DRUG_CD", "MEMBER_ID", "ENCOUNTER_ID", "DX_LINE_REF", "DRUG_NM", "PAID_AMT", "FILL_DT", "CLM_STS"]
+  source_row_key: "CLM_SEQ"
+  canonical_row_key: "ROW_ID"
+  record_grain: "one medication order CSV row"
+mapping:
+  fields:
+    - {source_header: "CLM_SEQ", source_index: 0, canonical_name: "ROW_ID", description: "Unique id per CSV row; not the business member key.", inferred_type: "string", pii_signal: false, required_for_bronze: true, required_for_silver: false, needs_human_review: false, review_reason: ""}
+    - {source_header: "RX_CLM_ID", source_index: 1, canonical_name: "MED_OCC_KEY", description: "Unique medication order occurrence id.", inferred_type: "string", pii_signal: true, required_for_bronze: true, required_for_silver: false, needs_human_review: true, review_reason: "Medication occurrence identifier requires review."}
+    - {source_header: "DRUG_CD", source_index: 2, canonical_name: "MED_ID", description: "Catalog medication id.", inferred_type: "string", pii_signal: true, required_for_bronze: true, required_for_silver: false, needs_human_review: true, review_reason: "Medication code requires review."}
+    - {source_header: "MEMBER_ID", source_index: 3, canonical_name: "PT_001_ID", description: "Member id reference that may break by design.", inferred_type: "string", pii_signal: true, required_for_bronze: true, required_for_silver: false, needs_human_review: true, review_reason: "Member identifier and FK reliability require review."}
+    - {source_header: "ENCOUNTER_ID", source_index: 4, canonical_name: "APPT_REF", description: "Appointment reference in dependent tables.", inferred_type: "string", pii_signal: true, required_for_bronze: true, required_for_silver: false, needs_human_review: true, review_reason: "Encounter relationship requires review."}
+    - {source_header: "DX_LINE_REF", source_index: 5, canonical_name: "CND_REF", description: "Foreign key to parent condition row.", inferred_type: "string", pii_signal: true, required_for_bronze: true, required_for_silver: false, needs_human_review: true, review_reason: "Condition relationship requires review."}
+    - {source_header: "DRUG_NM", source_index: 6, canonical_name: "MED_DESC", description: "Medication description for the source medication id.", inferred_type: "string", pii_signal: true, required_for_bronze: true, required_for_silver: false, needs_human_review: true, review_reason: "Medication description can reveal treatment context."}
+    - {source_header: "PAID_AMT", source_index: 7, canonical_name: "MED_UNIT_PRICE", description: "Paid or billed unit price for this order.", inferred_type: "decimal", pii_signal: true, required_for_bronze: true, required_for_silver: false, needs_human_review: true, review_reason: "Financial healthcare amount requires review."}
+    - {source_header: "FILL_DT", source_index: 8, canonical_name: "ORD_DT_RAW", description: "Order or fill date aligned to appointment day.", inferred_type: "date", pii_signal: true, required_for_bronze: true, required_for_silver: false, needs_human_review: true, review_reason: "Medication date is PHI."}
+    - {source_header: "CLM_STS", source_index: 9, canonical_name: "REC_STS", description: "Legacy claim status code.", inferred_type: "string", pii_signal: false, required_for_bronze: true, required_for_silver: false, needs_human_review: true, review_reason: "Status normalization is deferred to canonical review."}
+relationships:
+  primary_key_candidates: ["CLM_SEQ", "RX_CLM_ID"]
+  foreign_key_hints: ["MEMBER_ID -> patients.MEMBER_ID", "ENCOUNTER_ID -> encounters.ENCOUNTER_ID", "DX_LINE_REF -> conditions.DX_LINE_ID"]
+  relationship_risks: ["Medication relationship chain requires reconciliation before Silver semantics."]
+drift:
+  row_key_drift: ["Pacific Shield uses CLM_SEQ while other provider row-key headers differ."]
+  filetype_drift: ["Pacific Shield uses CSV chunks with optional sep preamble, optional header rows, and dictionary-ordered data-first chunks."]
+  mapping_drift: ["PAID_AMT carries financial meaning and must remain source-level until approved modeling."]
+  schema_drift: ["Some local clinical CSV chunks contain headers only; source coverage requires review."]
+quarantine_rules:
+  file_level: ["stop_pipeline when CSV rows do not match the declared entity column count", "stop_pipeline when parser family is unsupported"]
+  row_level: ["quarantine_data when CLM_SEQ is missing", "warn when medication relationship references do not reconcile in local validation"]
+qa_expectations:
+  unit_data_tests: ["parse synthetic medications CSV fixture"]
+  integration_tests: ["resolve medication CSV file patterns when local source data is present"]
+  schema_tests: ["validate required provider spec sections and parser profile"]
+  data_quality_tests: ["verify CLM_SEQ row-key presence"]
+  reconciliation_tests: ["match dictionary headers to YAML mappings and CSV positions"]
+human_review:
+  required: true
+  reasons: ["source coverage gap requires review", "medication and financial semantics require review", "relationship confidence requires review"]
+readiness:
+  adapter_ready: true
+  blocked_reason: ""
