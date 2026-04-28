@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HL7Messages xmlns="urn:hl7-org:v2xml">
+  <DFT_P03>
+    <MSH.10>line-condition-001</MSH.10>
+    <DG1.1>condition-occurrence-alpha</DG1.1>
+    <DG1.3.1>condition-catalog-alpha</DG1.3.1>
+    <PID.3>member-alpha</PID.3>
+    <PV1.19>visit-alpha</PV1.19>
+    <DG1.3.2>dx-synthetic-alpha</DG1.3.2>
+    <DG1.3.5>synthetic condition description</DG1.3.5>
+    <DG1.17>1</DG1.17>
+  </DFT_P03>
+</HL7Messages>

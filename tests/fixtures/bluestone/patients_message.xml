@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HL7Messages xmlns="urn:hl7-org:v2xml">
+  <ADT_A01>
+    <MSH.10>line-patient-001</MSH.10>
+    <PID.3>member-alpha</PID.3>
+    <PID.5.2>synthetic-given</PID.5.2>
+    <PID.5.1>synthetic-family</PID.5.1>
+    <PID.19>tax-synthetic-001</PID.19>
+    <PID.8>U</PID.8>
+    <PID.7>1980-01-01</PID.7>
+    <PV1.44>2025-01-01</PV1.44>
+    <PV1.45></PV1.45>
+    <PID.32>1</PID.32>
+  </ADT_A01>
+</HL7Messages>

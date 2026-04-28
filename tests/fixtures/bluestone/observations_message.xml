@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HL7Messages xmlns="urn:hl7-org:v2xml">
+  <ORU_R01>
+    <MSH.10>line-observation-001</MSH.10>
+    <OBR.3>observation-alpha</OBR.3>
+    <PID.3>member-alpha</PID.3>
+    <PV1.19>visit-alpha</PV1.19>
+    <OBR.7>2025-02-03</OBR.7>
+    <OBX.5><![CDATA[{"type":"vitals","height":{"value":170,"u":"cm"},"blood_pressure":{"systolic":120,"diastolic":80,"u":"mmHg"}}]]></OBX.5>
+    <OBR.25>1</OBR.25>
+  </ORU_R01>
+</HL7Messages>
