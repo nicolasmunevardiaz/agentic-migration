@@ -22,6 +22,8 @@ Read provider folders under `data_500k/`, every available `column_dictionary.md`
 
 Produce one YAML spec per provider/entity under `metadata/provider_specs/<provider_slug>/<entity>.yaml`. Also produce a provider-specific parser under `src/adapters/`, synthetic parser fixtures under `tests/fixtures/`, provider parser tests under `tests/adapters/`, a provider-level drift summary, a human-review queue for ambiguous mappings, missing entities, uncertain parser settings, PII concerns, and relationship risks, and append trace entries to `logs/provider_discovery/<provider_slug>.md`.
 
+Drift summaries must be human-readable review artifacts, not only technical notes. Each drift report must include a short "How to read this" section, a "Reader glossary" for provider-specific terms such as parser profile, row key, status normalization, relationship confidence, PII/PHI handling, adapter-ready, and HITL, plus a plain-language split between what passed local validation and what still requires a human decision.
+
 ## YAML Spec Contract
 
 Each YAML must declare provider identity, source type, upload partition, filetype, file extension, entity, expected file patterns, parser profile, source row key, canonical row key, field mappings, relationship hints, PII classification signals, known drift, quarantine rules, QA expectations, and `needs_human_review` reasons. Use `.agent/spec_templates/provider_entity_profile.template.yaml` as the shape. The parser profile must be executable by the provider parser; do not leave parser details as aspirational documentation.
@@ -32,7 +34,7 @@ The provider parser is mandatory. It must read the provider's actual file shape 
 
 ## Checks
 
-Validate that the provider dictionary is parsed into structured metadata rather than copied as prose. Validate that the provider parser can read at least synthetic fixtures for each discovered entity, and local sampled data when available. Detect row-key drift across providers, filetype drift, header-to-canonical mapping drift, duplicate source headers mapping to multiple canonical fields, missing canonical fields, unexpected extra source fields, payer-only entity limitations, and clinical-only entity expectations. Capture whether each entity appears ready for adapter implementation.
+Validate that the provider dictionary is parsed into structured metadata rather than copied as prose. Validate that the provider parser can read at least synthetic fixtures for each discovered entity, and local sampled data when available. Detect row-key drift across providers, filetype drift, header-to-canonical mapping drift, duplicate source headers mapping to multiple canonical fields, missing canonical fields, unexpected extra source fields, payer-only entity limitations, and clinical-only entity expectations. Capture whether each entity appears ready for adapter implementation. In drift summaries, translate technical parser decisions into plain language and explicitly state whether the decision is already implemented in code, still pending HITL, or only a documented observation.
 
 ## Non-Negotiables
 
