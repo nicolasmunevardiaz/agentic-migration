@@ -4,13 +4,9 @@ on:
   pull_request:
     branches:
       - main
-      - testing
-      - develop
   push:
     branches:
       - main
-      - testing
-      - develop
 
 permissions:
   contents: read

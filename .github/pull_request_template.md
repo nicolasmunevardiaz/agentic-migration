@@ -5,6 +5,14 @@
 - Plan id:
 - Provider or scope:
 - Skills used:
+- Base branch: `main`
+- Head branch:
+
+## Branch Governance
+
+- This PR targets `main`:
+- Temporary work branch is scoped and not long-lived:
+- Branch deletion after PR approval/merge or explicit closure:
 
 ## Change Evidence
 

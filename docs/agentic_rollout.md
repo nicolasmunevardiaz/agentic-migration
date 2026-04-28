@@ -44,7 +44,7 @@ Generate provider/entity YAML specs under metadata/provider_specs/data_provider_
 
 Run relevant validation with uv. If dependencies are missing, stop and request HITL approval before installing with uv. If the same failure repeats, evidence is missing, or semantic/PII decisions are ambiguous, invoke hitl-escalation-controller and stop.
 
-When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against develop with title "spec: aegis - add provider profiles". The PR body must include plan id, provider, skills used, files changed, tests run, evidence paths, risks, HITL decisions, Databricks impact, and rollback notes.
+When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "spec: aegis - add provider profiles". The PR body must include plan id, provider, skills used, files changed, tests run, evidence paths, risks, HITL decisions, Databricks impact, and rollback notes.
 ```
 
 ## Prompt 1B: BlueStone Provider Profiling
@@ -66,7 +66,7 @@ Generate provider/entity YAML specs under metadata/provider_specs/data_provider_
 
 Run relevant validation with uv. If dependencies are missing, stop and request HITL approval before installing with uv. If the same failure repeats, evidence is missing, or semantic/PII decisions are ambiguous, invoke hitl-escalation-controller and stop.
 
-When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against develop with title "spec: bluestone - add provider profiles". The PR body must include plan id, provider, skills used, files changed, tests run, evidence paths, risks, HITL decisions, Databricks impact, and rollback notes.
+When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "spec: bluestone - add provider profiles". The PR body must include plan id, provider, skills used, files changed, tests run, evidence paths, risks, HITL decisions, Databricks impact, and rollback notes.
 ```
 
 ## Prompt 1C: NorthCare Provider Profiling
@@ -88,7 +88,7 @@ Generate provider/entity YAML specs under metadata/provider_specs/data_provider_
 
 Run relevant validation with uv. If dependencies are missing, stop and request HITL approval before installing with uv. If the same failure repeats, evidence is missing, or semantic/PII decisions are ambiguous, invoke hitl-escalation-controller and stop.
 
-When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against develop with title "spec: northcare - add provider profiles". The PR body must include plan id, provider, skills used, files changed, tests run, evidence paths, risks, HITL decisions, Databricks impact, and rollback notes.
+When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "spec: northcare - add provider profiles". The PR body must include plan id, provider, skills used, files changed, tests run, evidence paths, risks, HITL decisions, Databricks impact, and rollback notes.
 ```
 
 ## Prompt 1D: ValleyBridge Provider Profiling
@@ -110,7 +110,7 @@ Generate provider/entity YAML specs under metadata/provider_specs/data_provider_
 
 Run relevant validation with uv. If dependencies are missing, stop and request HITL approval before installing with uv. If the same failure repeats, evidence is missing, or semantic/PII decisions are ambiguous, invoke hitl-escalation-controller and stop.
 
-When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against develop with title "spec: valleybridge - add provider profiles". The PR body must include plan id, provider, skills used, files changed, tests run, evidence paths, risks, HITL decisions, Databricks impact, and rollback notes.
+When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "spec: valleybridge - add provider profiles". The PR body must include plan id, provider, skills used, files changed, tests run, evidence paths, risks, HITL decisions, Databricks impact, and rollback notes.
 ```
 
 ## Prompt 1E: Pacific Shield Provider Profiling
@@ -132,7 +132,7 @@ Generate provider/entity YAML specs under metadata/provider_specs/data_provider_
 
 Run relevant validation with uv. If dependencies are missing, stop and request HITL approval before installing with uv. If the same failure repeats, evidence is missing, or semantic/PII decisions are ambiguous, invoke hitl-escalation-controller and stop.
 
-When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against develop with title "spec: pacific-shield - add provider profiles". The PR body must include plan id, provider, skills used, files changed, tests run, evidence paths, risks, HITL decisions, Databricks impact, and rollback notes.
+When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "spec: pacific-shield - add provider profiles". The PR body must include plan id, provider, skills used, files changed, tests run, evidence paths, risks, HITL decisions, Databricks impact, and rollback notes.
 ```
 
 ## Prompt 2: Canonical Model And Contracts
@@ -154,7 +154,7 @@ Append concise trace entries to logs/canonical_model/canonical_review.md. Genera
 
 Run model/spec validation with uv. If dependencies are missing, stop and request HITL approval before installing with uv. If repeated failures, missing evidence, ambiguous semantics, or scope drift occur, invoke hitl-escalation-controller and stop.
 
-When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against develop with title "spec: canonical-model - add bronze silver contracts". The PR body must include plan id, provider=all, skills used, files changed, tests run, evidence paths, risks, HITL decisions, Databricks impact, and rollback notes.
+When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "spec: canonical-model - add bronze silver contracts". The PR body must include plan id, provider=all, skills used, files changed, tests run, evidence paths, risks, HITL decisions, Databricks impact, and rollback notes.
 ```
 
 ## Prompt 3A: Aegis Adapter Implementation And CI
@@ -174,7 +174,7 @@ Implement only the Aegis adapter scope. Put adapter code under src/adapters/, sh
 
 Run uv-based tests and linting. Do not install dependencies without HITL approval and privacy-governance review. If failures repeat, semantics are unclear, or tests require weakening, invoke hitl-escalation-controller and stop.
 
-When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against develop with title "adapter: aegis - implement provider adapter". Include plan id, provider, skills, changed files, tests, evidence, risks, HITL, Databricks impact, and rollback notes.
+When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "adapter: aegis - implement provider adapter". Include plan id, provider, skills, changed files, tests, evidence, risks, HITL, Databricks impact, and rollback notes.
 ```
 
 ## Prompt 3B: BlueStone Adapter Implementation And CI
@@ -194,7 +194,7 @@ Implement only the BlueStone adapter scope. Put adapter code under src/adapters/
 
 Run uv-based tests and linting. Do not install dependencies without HITL approval and privacy-governance review. If failures repeat, semantics are unclear, or tests require weakening, invoke hitl-escalation-controller and stop.
 
-When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against develop with title "adapter: bluestone - implement provider adapter". Include plan id, provider, skills, changed files, tests, evidence, risks, HITL, Databricks impact, and rollback notes.
+When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "adapter: bluestone - implement provider adapter". Include plan id, provider, skills, changed files, tests, evidence, risks, HITL, Databricks impact, and rollback notes.
 ```
 
 ## Prompt 3C: NorthCare Adapter Implementation And CI
@@ -214,7 +214,7 @@ Implement only the NorthCare adapter scope. Put adapter code under src/adapters/
 
 Run uv-based tests and linting. Do not install dependencies without HITL approval and privacy-governance review. If failures repeat, semantics are unclear, or tests require weakening, invoke hitl-escalation-controller and stop.
 
-When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against develop with title "adapter: northcare - implement provider adapter". Include plan id, provider, skills, changed files, tests, evidence, risks, HITL, Databricks impact, and rollback notes.
+When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "adapter: northcare - implement provider adapter". Include plan id, provider, skills, changed files, tests, evidence, risks, HITL, Databricks impact, and rollback notes.
 ```
 
 ## Prompt 3D: ValleyBridge Adapter Implementation And CI
@@ -234,7 +234,7 @@ Implement only the ValleyBridge adapter scope. Put adapter code under src/adapte
 
 Run uv-based tests and linting. Do not install dependencies without HITL approval and privacy-governance review. If failures repeat, semantics are unclear, or tests require weakening, invoke hitl-escalation-controller and stop.
 
-When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against develop with title "adapter: valleybridge - implement provider adapter". Include plan id, provider, skills, changed files, tests, evidence, risks, HITL, Databricks impact, and rollback notes.
+When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "adapter: valleybridge - implement provider adapter". Include plan id, provider, skills, changed files, tests, evidence, risks, HITL, Databricks impact, and rollback notes.
 ```
 
 ## Prompt 3E: Pacific Shield Adapter Implementation And CI
@@ -254,7 +254,7 @@ Implement only the Pacific Shield adapter scope. Put adapter code under src/adap
 
 Run uv-based tests and linting. Do not install dependencies without HITL approval and privacy-governance review. If failures repeat, semantics are unclear, or tests require weakening, invoke hitl-escalation-controller and stop.
 
-When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against develop with title "adapter: pacific-shield - implement provider adapter". Include plan id, provider, skills, changed files, tests, evidence, risks, HITL, Databricks impact, and rollback notes.
+When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "adapter: pacific-shield - implement provider adapter". Include plan id, provider, skills, changed files, tests, evidence, risks, HITL, Databricks impact, and rollback notes.
 ```
 
 ## Prompt 4: Databricks Validation And Rollout
@@ -276,7 +276,7 @@ Generate Databricks deployment specs under metadata/deployment_specs/databricks/
 
 Run local readiness validation with uv. If dependency, permissions, secrets, lineage, reconciliation, or runtime evidence is missing, invoke hitl-escalation-controller and stop. Do not weaken deployment checks.
 
-When local readiness QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against testing with title "ci: databricks-readiness - add rollout plan". Include plan id, provider=all, skills, changed files, tests, evidence, risks, HITL, Databricks impact, and rollback notes.
+When local readiness QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "ci: databricks-readiness - add rollout plan". Include plan id, provider=all, skills, changed files, tests, evidence, risks, HITL, Databricks impact, and rollback notes.
 ```
 
 ## Automation Notes

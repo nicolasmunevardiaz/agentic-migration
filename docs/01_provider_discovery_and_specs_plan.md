@@ -12,7 +12,7 @@ Run this plan as a provider specialist. The agent must work on exactly one provi
 
 ## Required Skills
 
-Use `provider-spec-generator` as the primary generation skill. Use `privacy-governance-reviewer` to classify PII/PHI and review evidence redaction. Use `spec-test-generator` to define the Python tests that protect generated provider specs and the provider parser. Use `hitl-escalation-controller` if the parser cannot be made reliable without semantic guessing.
+Use `provider-spec-generator` as the primary generation skill. Use `privacy-governance-reviewer` to classify PII/PHI and review evidence redaction. Use `spec-test-generator` to define the Python tests that protect generated provider specs and the provider parser. Use `repo-governance-auditor` before PR creation. Use `hitl-escalation-controller` if the parser cannot be made reliable without semantic guessing.
 
 ## Definition Of Ready
 
@@ -49,6 +49,8 @@ Expected local commands are `uv run pytest tests/specs/test_provider_specs.py`, 
 ## GitHub Workflow Expectations
 
 The development workflow should use a simple self-descriptive name such as `Spec Validation`. It should install dependencies through `uv`, run provider spec tests, run formatting and lint checks, and publish a PR-ready validation summary. If OpenAI-powered steps are used later, the workflow must reference `OPENAI_API_KEY` from repository or environment secrets and must never print or persist the secret.
+
+Provider discovery PRs must target `main`. The only long-lived branch is `main`; provider work branches are temporary and must use a scoped name such as `agentops/<plan-id>/<provider-or-scope>`. The PR evidence must include the base branch, head branch, and branch deletion plan. After PR approval and merge, or explicit closure by a human, the temporary provider branch must be deleted locally and remotely. `repo-governance-auditor` must block PR creation when the base branch is not `main` unless a human records a one-off exception.
 
 ## HITL Decisions
 
