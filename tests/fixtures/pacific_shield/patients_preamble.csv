@@ -1,0 +1,4 @@
+# extract_ts=2025-12-31T00:00:00+00:00
+sep=,
+"CLM_SEQ","MEMBER_ID","MBR_FIRST_NAME","MBR_LAST_NAME","MBR_SSN","MBR_SEX","MBR_DOB","ELIG_START_DT","ELIG_END_DT","MBR_STS"
+"R_P05_SYN_0001","MEMBER-SYN-001","Synthetic","Member","synthetic-tax-id","U","1980-01-01","2025-01-01","","1"

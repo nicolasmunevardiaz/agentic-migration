@@ -1,0 +1,58 @@
+spec_version: "0.1"
+provider:
+  provider_name: "Pacific Shield Insurance"
+  provider_slug: "data_provider_5_pacific_shield_insurance"
+  provider_folder: "data_provider_5_pacific_shield_insurance"
+  source_type: "claims_export"
+  upload_partition: "year=2025"
+source:
+  entity: "encounters"
+  filetype: "csv"
+  file_extension: "csv"
+  expected_file_patterns:
+    - "data_500k/data_provider_5_pacific_shield_insurance/year=2025/encounters/encounters_*.csv"
+  column_dictionary_path: "data_500k/data_provider_5_pacific_shield_insurance/year=2025/column_dictionary.md"
+parser_profile:
+  parser_family: "csv_claims_export"
+  parser_options:
+    delimiter: ","
+    comment_prefix: "#"
+    optional_preamble: "sep=,"
+    header_mode: "optional_header_or_dictionary_order"
+    duplicate_header_policy: "preserve_positions"
+    expected_headers: ["CLM_SEQ", "ENCOUNTER_ID", "MEMBER_ID", "SVC_DT", "COVERAGE_STATUS", "CLM_STS"]
+  source_row_key: "CLM_SEQ"
+  canonical_row_key: "ROW_ID"
+  record_grain: "one encounter CSV row with coverage status"
+mapping:
+  fields:
+    - {source_header: "CLM_SEQ", source_index: 0, canonical_name: "ROW_ID", description: "Unique id per CSV row; not the business member key.", inferred_type: "string", pii_signal: false, required_for_bronze: true, required_for_silver: false, needs_human_review: false, review_reason: ""}
+    - {source_header: "ENCOUNTER_ID", source_index: 1, canonical_name: "APPT_KEY", description: "Unique appointment id within the file bundle.", inferred_type: "string", pii_signal: true, required_for_bronze: true, required_for_silver: false, needs_human_review: true, review_reason: "Encounter identifier and relationship behavior require review."}
+    - {source_header: "MEMBER_ID", source_index: 2, canonical_name: "PT_001_ID", description: "Member id reference that may break by design.", inferred_type: "string", pii_signal: true, required_for_bronze: true, required_for_silver: false, needs_human_review: true, review_reason: "Member identifier and FK reliability require review."}
+    - {source_header: "SVC_DT", source_index: 3, canonical_name: "APPT_DT_RAW", description: "Appointment or service date.", inferred_type: "date", pii_signal: true, required_for_bronze: true, required_for_silver: false, needs_human_review: true, review_reason: "Encounter date is PHI."}
+    - {source_header: "COVERAGE_STATUS", source_index: 4, canonical_name: "COVERAGE_STATUS", description: "Insurance coverage status at time of encounter.", inferred_type: "string", pii_signal: true, required_for_bronze: true, required_for_silver: false, needs_human_review: true, review_reason: "Coverage semantics require human review."}
+    - {source_header: "CLM_STS", source_index: 5, canonical_name: "REC_STS", description: "Legacy claim status code.", inferred_type: "string", pii_signal: false, required_for_bronze: true, required_for_silver: false, needs_human_review: true, review_reason: "Status normalization is deferred to canonical review."}
+relationships:
+  primary_key_candidates: ["CLM_SEQ", "ENCOUNTER_ID"]
+  foreign_key_hints: ["MEMBER_ID -> patients.MEMBER_ID"]
+  relationship_risks: ["MEMBER_ID references may break by design and require reconciliation before Silver semantics."]
+drift:
+  row_key_drift: ["Pacific Shield uses CLM_SEQ while other provider row-key headers differ."]
+  filetype_drift: ["Pacific Shield uses CSV chunks with optional sep preamble, optional header rows, and dictionary-ordered data-first chunks."]
+  mapping_drift: ["COVERAGE_STATUS is claims/coverage context and must not be normalized without human approval."]
+  schema_drift: ["Some local clinical CSV chunks contain headers only; source coverage requires review."]
+quarantine_rules:
+  file_level: ["stop_pipeline when CSV rows do not match the declared entity column count", "stop_pipeline when parser family is unsupported"]
+  row_level: ["quarantine_data when CLM_SEQ is missing", "warn when MEMBER_ID does not reconcile to patient membership inputs"]
+qa_expectations:
+  unit_data_tests: ["parse synthetic encounters CSV fixture"]
+  integration_tests: ["resolve encounter CSV file patterns when local source data is present"]
+  schema_tests: ["validate required provider spec sections and parser profile"]
+  data_quality_tests: ["verify CLM_SEQ row-key presence"]
+  reconciliation_tests: ["match dictionary headers to YAML mappings and CSV positions"]
+human_review:
+  required: true
+  reasons: ["source coverage gap requires review", "coverage status semantics require review", "relationship confidence requires review"]
+readiness:
+  adapter_ready: true
+  blocked_reason: ""

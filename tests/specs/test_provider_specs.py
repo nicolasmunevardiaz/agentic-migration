@@ -393,6 +393,142 @@ PROVIDER_CONFIGS = {
             "PL_DATA",
         },
     },
+    "data_provider_5_pacific_shield_insurance": {
+        "provider_name": "Pacific Shield Insurance",
+        "filetype": "csv",
+        "file_extension": "csv",
+        "parser_family": "csv_claims_export",
+        "row_key": "CLM_SEQ",
+        "expected_headers": {
+            "patients": {
+                "CLM_SEQ",
+                "MEMBER_ID",
+                "MBR_FIRST_NAME",
+                "MBR_LAST_NAME",
+                "MBR_SSN",
+                "MBR_SEX",
+                "MBR_DOB",
+                "ELIG_START_DT",
+                "ELIG_END_DT",
+                "MBR_STS",
+            },
+            "encounters": {
+                "CLM_SEQ",
+                "ENCOUNTER_ID",
+                "MEMBER_ID",
+                "SVC_DT",
+                "COVERAGE_STATUS",
+                "CLM_STS",
+            },
+            "conditions": {
+                "CLM_SEQ",
+                "DX_LINE_ID",
+                "DX_CD",
+                "MEMBER_ID",
+                "ENCOUNTER_ID",
+                "DX_DESC",
+                "LINE_STS",
+            },
+            "medications": {
+                "CLM_SEQ",
+                "RX_CLM_ID",
+                "DRUG_CD",
+                "MEMBER_ID",
+                "ENCOUNTER_ID",
+                "DX_LINE_REF",
+                "DRUG_NM",
+                "PAID_AMT",
+                "FILL_DT",
+                "CLM_STS",
+            },
+            "observations": {
+                "CLM_SEQ",
+                "OBS_CLM_ID",
+                "MEMBER_ID",
+                "ENCOUNTER_ID",
+                "SVC_DT",
+                "VITALS_JSON",
+                "CLM_STS",
+            },
+        },
+        "expected_header_sequences": {
+            "patients": [
+                "CLM_SEQ",
+                "MEMBER_ID",
+                "MBR_FIRST_NAME",
+                "MBR_LAST_NAME",
+                "MBR_SSN",
+                "MBR_SEX",
+                "MBR_DOB",
+                "ELIG_START_DT",
+                "ELIG_END_DT",
+                "MBR_STS",
+            ],
+            "encounters": [
+                "CLM_SEQ",
+                "ENCOUNTER_ID",
+                "MEMBER_ID",
+                "SVC_DT",
+                "COVERAGE_STATUS",
+                "CLM_STS",
+            ],
+            "conditions": [
+                "CLM_SEQ",
+                "DX_LINE_ID",
+                "DX_CD",
+                "MEMBER_ID",
+                "ENCOUNTER_ID",
+                "DX_CD",
+                "DX_DESC",
+                "LINE_STS",
+            ],
+            "medications": [
+                "CLM_SEQ",
+                "RX_CLM_ID",
+                "DRUG_CD",
+                "MEMBER_ID",
+                "ENCOUNTER_ID",
+                "DX_LINE_REF",
+                "DRUG_NM",
+                "PAID_AMT",
+                "FILL_DT",
+                "CLM_STS",
+            ],
+            "observations": [
+                "CLM_SEQ",
+                "OBS_CLM_ID",
+                "MEMBER_ID",
+                "ENCOUNTER_ID",
+                "SVC_DT",
+                "VITALS_JSON",
+                "CLM_STS",
+            ],
+        },
+        "sensitive_headers": {
+            "MEMBER_ID",
+            "MBR_FIRST_NAME",
+            "MBR_LAST_NAME",
+            "MBR_SSN",
+            "MBR_SEX",
+            "MBR_DOB",
+            "ELIG_START_DT",
+            "ELIG_END_DT",
+            "ENCOUNTER_ID",
+            "SVC_DT",
+            "COVERAGE_STATUS",
+            "DX_LINE_ID",
+            "DX_CD",
+            "DX_DESC",
+            "RX_CLM_ID",
+            "DRUG_CD",
+            "DX_LINE_REF",
+            "DRUG_NM",
+            "PAID_AMT",
+            "FILL_DT",
+            "OBS_CLM_ID",
+            "VITALS_JSON",
+        },
+    },
 }
 
 ALLOWED_QA_DECISIONS = {"stop_pipeline", "quarantine_data", "warn"}
@@ -471,7 +607,8 @@ def test_unit_parser_profiles_declare_provider_contracts() -> None:
             assert parser_profile["parser_family"] == config["parser_family"]
             assert parser_profile["source_row_key"] == row_key
             assert parser_profile["canonical_row_key"] == "ROW_ID"
-            assert parser_options["field_paths"][row_key]
+            if config["parser_family"] != "csv_claims_export":
+                assert parser_options["field_paths"][row_key]
 
             if config["parser_family"] == "fhir_r4_bundle":
                 assert parser_options["bundle_entry_path"] == "entry[].resource"
@@ -494,6 +631,15 @@ def test_unit_parser_profiles_declare_provider_contracts() -> None:
                 assert "cp1252" in parser_options["encoding_candidates"]
                 assert parser_options["resource_type"] == config["expected_resource_types"][entity]
                 assert parser_options["field_paths"][row_key] == "id"
+            if config["parser_family"] == "csv_claims_export":
+                assert parser_options["delimiter"] == ","
+                assert parser_options["optional_preamble"] == "sep=,"
+                assert parser_options["header_mode"] == "optional_header_or_dictionary_order"
+                assert parser_options["duplicate_header_policy"] == "preserve_positions"
+                assert parser_options["expected_headers"] == config[
+                    "expected_header_sequences"
+                ][entity]
+                assert parser_options["expected_headers"][0] == row_key
 
 
 def test_integration_file_patterns_resolve_local_provider_files() -> None:
@@ -538,11 +684,26 @@ def test_reconciliation_dictionary_headers_match_yaml_mappings_and_paths() -> No
         for entity, spec in load_specs(provider).items():
             expected_headers = config["expected_headers"][entity]
             mapped_headers = {field["source_header"] for field in spec["mapping"]["fields"]}
-            field_paths = spec["parser_profile"]["parser_options"]["field_paths"]
 
             assert mapped_headers == expected_headers
-            assert set(field_paths) == expected_headers
-            assert all(field_paths[header] for header in expected_headers)
+            parser_options = spec["parser_profile"]["parser_options"]
+            if config["parser_family"] == "csv_claims_export":
+                expected_header_sequence = config["expected_header_sequences"][entity]
+                assert parser_options["expected_headers"] == expected_header_sequence
+                assert all(
+                    field["source_index"] < len(expected_header_sequence)
+                    for field in spec["mapping"]["fields"]
+                )
+                assert [
+                    expected_header_sequence[field["source_index"]]
+                    for field in spec["mapping"]["fields"]
+                ] == [
+                    field["source_header"] for field in spec["mapping"]["fields"]
+                ]
+            else:
+                field_paths = parser_options["field_paths"]
+                assert set(field_paths) == expected_headers
+                assert all(field_paths[header] for header in expected_headers)
 
 
 def test_privacy_sensitive_headers_are_flagged() -> None:
