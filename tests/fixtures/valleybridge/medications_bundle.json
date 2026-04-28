@@ -1,0 +1,23 @@
+# format=fhir+json
+{
+  "resourceType": "Bundle",
+  "type": "searchset",
+  "total": 1,
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "MedicationOrder",
+        "id": "dw-medication-001",
+        "identifier[0].value": "medication-occurrence-alpha",
+        "medicationCodeableConcept.coding[0].code": "medication-catalog-alpha",
+        "patient.reference": "member-alpha",
+        "context.reference": "contact-alpha",
+        "reasonReference[0].reference": "condition-occurrence-alpha",
+        "medicationCodeableConcept.text": "synthetic medication product",
+        "dosageInstruction[0].doseQuantity.value": "12.34",
+        "dateWritten": "2025-02-01",
+        "status": "1"
+      }
+    }
+  ]
+}

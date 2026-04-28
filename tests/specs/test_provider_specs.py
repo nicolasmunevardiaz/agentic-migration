@@ -293,6 +293,106 @@ PROVIDER_CONFIGS = {
             "OBS_PAYLOAD",
         },
     },
+    "data_provider_4_valleybridge_medical": {
+        "provider_name": "ValleyBridge Medical",
+        "filetype": "fhir_stu3",
+        "file_extension": "json",
+        "parser_family": "fhir_stu3_bundle_with_comments",
+        "row_key": "DW_LOAD_SEQ",
+        "expected_resource_types": {
+            "patients": "Patient",
+            "encounters": "Encounter",
+            "conditions": "Condition",
+            "medications": "MedicationOrder",
+            "observations": "Observation",
+        },
+        "expected_headers": {
+            "patients": {
+                "DW_LOAD_SEQ",
+                "PTKEY",
+                "NAME_FIRST",
+                "NAME_LAST",
+                "PATIENT_SSN",
+                "SX_FLAG",
+                "DT_BORN",
+                "COV_START",
+                "COV_END",
+                "REC_FLAG",
+            },
+            "encounters": {
+                "DW_LOAD_SEQ",
+                "CNTCT_ID",
+                "CLI_ID",
+                "EVT_DTTM",
+                "COVERAGE_STATUS",
+                "ROW_STS",
+            },
+            "conditions": {
+                "DW_LOAD_SEQ",
+                "CREF_ID",
+                "DX_CAT_CD",
+                "PID_REF",
+                "E_REF",
+                "DX_HINT",
+                "DX_STORY",
+                "STS_CD",
+            },
+            "medications": {
+                "DW_LOAD_SEQ",
+                "M_OCC_SEQ",
+                "M_KEY",
+                "PARENT_PT",
+                "EN_REF",
+                "DX_LINK_ID",
+                "MED_LBL",
+                "LINE_PRICE",
+                "MED_DT",
+                "ACT_FLAG",
+            },
+            "observations": {
+                "DW_LOAD_SEQ",
+                "OBV_ID",
+                "PT_LINK",
+                "VISIT_REF",
+                "TS_OBS",
+                "PL_DATA",
+                "REC_FLAG",
+            },
+        },
+        "sensitive_headers": {
+            "PTKEY",
+            "NAME_FIRST",
+            "NAME_LAST",
+            "PATIENT_SSN",
+            "SX_FLAG",
+            "DT_BORN",
+            "COV_START",
+            "COV_END",
+            "CNTCT_ID",
+            "CLI_ID",
+            "EVT_DTTM",
+            "COVERAGE_STATUS",
+            "CREF_ID",
+            "DX_CAT_CD",
+            "PID_REF",
+            "E_REF",
+            "DX_HINT",
+            "DX_STORY",
+            "M_OCC_SEQ",
+            "M_KEY",
+            "PARENT_PT",
+            "EN_REF",
+            "DX_LINK_ID",
+            "MED_LBL",
+            "LINE_PRICE",
+            "MED_DT",
+            "OBV_ID",
+            "PT_LINK",
+            "VISIT_REF",
+            "TS_OBS",
+            "PL_DATA",
+        },
+    },
 }
 
 ALLOWED_QA_DECISIONS = {"stop_pipeline", "quarantine_data", "warn"}
@@ -388,6 +488,12 @@ def test_unit_parser_profiles_declare_provider_contracts() -> None:
                 assert parser_options["header_segment"] == "HDR"
                 assert parser_options["entity_segment"] == config["expected_segments"][entity]
                 assert parser_options["field_paths"][row_key] == "segment[1]"
+            if config["parser_family"] == "fhir_stu3_bundle_with_comments":
+                assert parser_options["comment_prefix"] == "#"
+                assert parser_options["bundle_entry_path"] == "entry[].resource"
+                assert "cp1252" in parser_options["encoding_candidates"]
+                assert parser_options["resource_type"] == config["expected_resource_types"][entity]
+                assert parser_options["field_paths"][row_key] == "id"
 
 
 def test_integration_file_patterns_resolve_local_provider_files() -> None:

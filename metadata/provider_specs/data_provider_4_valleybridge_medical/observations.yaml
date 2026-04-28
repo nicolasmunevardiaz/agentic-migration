@@ -1,0 +1,35 @@
+{
+  "spec_version": "0.1",
+  "provider": {"provider_name": "ValleyBridge Medical", "provider_slug": "data_provider_4_valleybridge_medical", "provider_folder": "data_provider_4_valleybridge_medical", "source_type": "clinical_provider", "upload_partition": "year=2025"},
+  "source": {"entity": "observations", "filetype": "fhir_stu3", "file_extension": "json", "expected_file_patterns": ["data_500k/data_provider_4_valleybridge_medical/year=2025/observations/observations_*.json"], "column_dictionary_path": "data_500k/data_provider_4_valleybridge_medical/year=2025/column_dictionary.md"},
+  "parser_profile": {
+    "parser_family": "fhir_stu3_bundle_with_comments",
+    "parser_options": {
+      "comment_prefix": "#",
+      "encoding_candidates": ["utf-8", "utf-8-sig", "cp1252", "latin-1"],
+      "bundle_entry_path": "entry[].resource",
+      "resource_type": "Observation",
+      "field_paths": {"DW_LOAD_SEQ": "id", "OBV_ID": "identifier[0].value", "PT_LINK": "patient.reference", "VISIT_REF": "context.reference", "TS_OBS": "effectiveDateTime", "PL_DATA": "valueString", "REC_FLAG": "status"}
+    },
+    "source_row_key": "DW_LOAD_SEQ",
+    "canonical_row_key": "ROW_ID",
+    "record_grain": "one observation per FHIR STU3 Observation resource"
+  },
+  "mapping": {
+    "fields": [
+      {"source_header": "DW_LOAD_SEQ", "canonical_name": "ROW_ID", "description": "Unique id per source resource; not the business member key.", "inferred_type": "string", "pii_signal": false, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": false, "review_reason": ""},
+      {"source_header": "OBV_ID", "canonical_name": "OBS_KEY", "description": "Observation record identifier.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Observation identifier is linkable PHI."},
+      {"source_header": "PT_LINK", "canonical_name": "PT_001_ID", "description": "Member reference used as patient foreign-key hint.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Member identifier and relationship behavior require review."},
+      {"source_header": "VISIT_REF", "canonical_name": "APPT_REF", "description": "Appointment reference.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Encounter relationship identifier is linkable PHI."},
+      {"source_header": "TS_OBS", "canonical_name": "OBS_DT_RAW", "description": "Observation date.", "inferred_type": "date", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Clinical observation date is PHI."},
+      {"source_header": "PL_DATA", "canonical_name": "OBS_PAYLOAD", "description": "Fixed-shape vitals JSON preserved as source text.", "inferred_type": "json_string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Clinical observation payload is PHI and must not be semantically interpreted without approval."},
+      {"source_header": "REC_FLAG", "canonical_name": "REC_STS", "description": "Legacy observation status flag.", "inferred_type": "string", "pii_signal": false, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": false, "review_reason": ""}
+    ]
+  },
+  "relationships": {"primary_key_candidates": ["DW_LOAD_SEQ", "OBV_ID"], "foreign_key_hints": [{"source_header": "PT_LINK", "references_entity": "patients", "references_header": "PTKEY"}, {"source_header": "VISIT_REF", "references_entity": "encounters", "references_header": "CNTCT_ID"}], "relationship_risks": ["Observation links to patient and appointment require reconciliation before Silver joins.", "PL_DATA should remain source text until canonical semantics are approved."]},
+  "drift": {"row_key_drift": ["ValleyBridge uses DW_LOAD_SEQ while other provider row-key headers differ."], "filetype_drift": ["Dictionary describes CSV row grain, but raw files use commented FHIR STU3 Bundle JSON."], "mapping_drift": [], "schema_drift": []},
+  "quarantine_rules": {"file_level": ["stop_pipeline when JSON is malformed or missing Bundle entries", "stop_pipeline when parser family is unsupported"], "row_level": ["quarantine_data when DW_LOAD_SEQ is missing", "warn when PL_DATA is blank or cannot be interpreted by later approved validators"]},
+  "qa_expectations": {"unit_data_tests": ["parse synthetic Observation FHIR STU3 fixture"], "integration_tests": ["resolve observation JSON file patterns when local source data is present"], "schema_tests": ["validate required provider spec sections and parser profile"], "data_quality_tests": ["verify DW_LOAD_SEQ row-key presence"], "reconciliation_tests": ["match dictionary headers to YAML mappings and FHIR field paths"]},
+  "human_review": {"required": true, "reasons": ["PII/PHI classification requires governance review", "PL_DATA must remain source text until canonical modeling approval"]},
+  "readiness": {"adapter_ready": true, "blocked_reason": ""}
+}

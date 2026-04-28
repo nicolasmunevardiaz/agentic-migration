@@ -1,0 +1,38 @@
+{
+  "spec_version": "0.1",
+  "provider": {"provider_name": "ValleyBridge Medical", "provider_slug": "data_provider_4_valleybridge_medical", "provider_folder": "data_provider_4_valleybridge_medical", "source_type": "clinical_provider", "upload_partition": "year=2025"},
+  "source": {"entity": "medications", "filetype": "fhir_stu3", "file_extension": "json", "expected_file_patterns": ["data_500k/data_provider_4_valleybridge_medical/year=2025/medications/medications_*.json"], "column_dictionary_path": "data_500k/data_provider_4_valleybridge_medical/year=2025/column_dictionary.md"},
+  "parser_profile": {
+    "parser_family": "fhir_stu3_bundle_with_comments",
+    "parser_options": {
+      "comment_prefix": "#",
+      "encoding_candidates": ["utf-8", "utf-8-sig", "cp1252", "latin-1"],
+      "bundle_entry_path": "entry[].resource",
+      "resource_type": "MedicationOrder",
+      "field_paths": {"DW_LOAD_SEQ": "id", "M_OCC_SEQ": "identifier[0].value", "M_KEY": "medicationCodeableConcept.coding[0].code", "PARENT_PT": "patient.reference", "EN_REF": "context.reference", "DX_LINK_ID": "reasonReference[0].reference", "MED_LBL": "medicationCodeableConcept.text", "LINE_PRICE": "dosageInstruction[0].doseQuantity.value", "MED_DT": "dateWritten", "ACT_FLAG": "status"}
+    },
+    "source_row_key": "DW_LOAD_SEQ",
+    "canonical_row_key": "ROW_ID",
+    "record_grain": "one medication order per FHIR STU3 MedicationOrder resource"
+  },
+  "mapping": {
+    "fields": [
+      {"source_header": "DW_LOAD_SEQ", "canonical_name": "ROW_ID", "description": "Unique id per source resource; not the business member key.", "inferred_type": "string", "pii_signal": false, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": false, "review_reason": ""},
+      {"source_header": "M_OCC_SEQ", "canonical_name": "MED_OCC_KEY", "description": "Unique medication order occurrence id.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Medication occurrence identifier is linkable PHI."},
+      {"source_header": "M_KEY", "canonical_name": "MED_ID", "description": "Catalog medication id.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Medication code requires governance review."},
+      {"source_header": "PARENT_PT", "canonical_name": "PT_001_ID", "description": "Member reference used as patient foreign-key hint.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Member identifier and relationship behavior require review."},
+      {"source_header": "EN_REF", "canonical_name": "APPT_REF", "description": "Appointment reference.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Encounter relationship identifier is linkable PHI."},
+      {"source_header": "DX_LINK_ID", "canonical_name": "CND_REF", "description": "Parent condition reference.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Condition relationship identifier is linkable PHI."},
+      {"source_header": "MED_LBL", "canonical_name": "MED_DESC", "description": "Medication description.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Medication description is clinical PHI."},
+      {"source_header": "LINE_PRICE", "canonical_name": "MED_UNIT_PRICE", "description": "Billed unit price.", "inferred_type": "decimal", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Financial signal requires governance review."},
+      {"source_header": "MED_DT", "canonical_name": "ORD_DT_RAW", "description": "Medication order date.", "inferred_type": "date", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Clinical order date is PHI."},
+      {"source_header": "ACT_FLAG", "canonical_name": "REC_STS", "description": "Legacy medication status flag.", "inferred_type": "string", "pii_signal": false, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": false, "review_reason": ""}
+    ]
+  },
+  "relationships": {"primary_key_candidates": ["DW_LOAD_SEQ", "M_OCC_SEQ"], "foreign_key_hints": [{"source_header": "PARENT_PT", "references_entity": "patients", "references_header": "PTKEY"}, {"source_header": "EN_REF", "references_entity": "encounters", "references_header": "CNTCT_ID"}, {"source_header": "DX_LINK_ID", "references_entity": "conditions", "references_header": "CREF_ID"}], "relationship_risks": ["Medication links to patient, appointment, and condition require reconciliation before Silver joins."]},
+  "drift": {"row_key_drift": ["ValleyBridge uses DW_LOAD_SEQ while other provider row-key headers differ."], "filetype_drift": ["Dictionary describes CSV row grain, but raw files use commented FHIR STU3 Bundle JSON."], "mapping_drift": [], "schema_drift": []},
+  "quarantine_rules": {"file_level": ["stop_pipeline when JSON is malformed or missing Bundle entries", "stop_pipeline when parser family is unsupported"], "row_level": ["quarantine_data when DW_LOAD_SEQ is missing", "warn when DX_LINK_ID relationship cannot be reconciled later"]},
+  "qa_expectations": {"unit_data_tests": ["parse synthetic MedicationOrder FHIR STU3 fixture"], "integration_tests": ["resolve medication JSON file patterns when local source data is present"], "schema_tests": ["validate required provider spec sections and parser profile"], "data_quality_tests": ["verify DW_LOAD_SEQ row-key presence"], "reconciliation_tests": ["match dictionary headers to YAML mappings and FHIR field paths"]},
+  "human_review": {"required": true, "reasons": ["PII/PHI classification requires governance review", "Medication price and relationship hints require review before Silver semantics"]},
+  "readiness": {"adapter_ready": true, "blocked_reason": ""}
+}

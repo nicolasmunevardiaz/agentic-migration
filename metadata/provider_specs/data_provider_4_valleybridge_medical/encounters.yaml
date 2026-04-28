@@ -1,0 +1,34 @@
+{
+  "spec_version": "0.1",
+  "provider": {"provider_name": "ValleyBridge Medical", "provider_slug": "data_provider_4_valleybridge_medical", "provider_folder": "data_provider_4_valleybridge_medical", "source_type": "clinical_provider", "upload_partition": "year=2025"},
+  "source": {"entity": "encounters", "filetype": "fhir_stu3", "file_extension": "json", "expected_file_patterns": ["data_500k/data_provider_4_valleybridge_medical/year=2025/encounters/encounters_*.json"], "column_dictionary_path": "data_500k/data_provider_4_valleybridge_medical/year=2025/column_dictionary.md"},
+  "parser_profile": {
+    "parser_family": "fhir_stu3_bundle_with_comments",
+    "parser_options": {
+      "comment_prefix": "#",
+      "encoding_candidates": ["utf-8", "utf-8-sig", "cp1252", "latin-1"],
+      "bundle_entry_path": "entry[].resource",
+      "resource_type": "Encounter",
+      "field_paths": {"DW_LOAD_SEQ": "id", "CNTCT_ID": "identifier[0].value", "CLI_ID": "patient.reference", "EVT_DTTM": "period.start", "COVERAGE_STATUS": "COVERAGE_STATUS", "ROW_STS": "status"}
+    },
+    "source_row_key": "DW_LOAD_SEQ",
+    "canonical_row_key": "ROW_ID",
+    "record_grain": "one encounter per FHIR STU3 Encounter resource"
+  },
+  "mapping": {
+    "fields": [
+      {"source_header": "DW_LOAD_SEQ", "canonical_name": "ROW_ID", "description": "Unique id per source resource; not the business member key.", "inferred_type": "string", "pii_signal": false, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": false, "review_reason": ""},
+      {"source_header": "CNTCT_ID", "canonical_name": "APPT_KEY", "description": "Unique appointment id within the file bundle.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Encounter identifier is linkable PHI."},
+      {"source_header": "CLI_ID", "canonical_name": "PT_001_ID", "description": "Member reference used as patient foreign-key hint.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Member identifier and relationship behavior require review."},
+      {"source_header": "EVT_DTTM", "canonical_name": "APPT_DT_RAW", "description": "Appointment date.", "inferred_type": "date", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Encounter date is PHI."},
+      {"source_header": "COVERAGE_STATUS", "canonical_name": "COVERAGE_STATUS", "description": "Insurance coverage status at encounter time.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Coverage signal requires governance review."},
+      {"source_header": "ROW_STS", "canonical_name": "REC_STS", "description": "Legacy encounter status flag.", "inferred_type": "string", "pii_signal": false, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": false, "review_reason": ""}
+    ]
+  },
+  "relationships": {"primary_key_candidates": ["DW_LOAD_SEQ", "CNTCT_ID"], "foreign_key_hints": [{"source_header": "CLI_ID", "references_entity": "patients", "references_header": "PTKEY"}], "relationship_risks": ["CLI_ID may break by design and must not be treated as an approved Silver join without human review."]},
+  "drift": {"row_key_drift": ["ValleyBridge uses DW_LOAD_SEQ while other provider row-key headers differ."], "filetype_drift": ["Dictionary describes CSV row grain, but raw files use commented FHIR STU3 Bundle JSON."], "mapping_drift": [], "schema_drift": ["FHIR Encounter includes provider-specific COVERAGE_STATUS as a top-level flattened key."]},
+  "quarantine_rules": {"file_level": ["stop_pipeline when JSON is malformed or missing Bundle entries", "stop_pipeline when parser family is unsupported"], "row_level": ["quarantine_data when DW_LOAD_SEQ is missing", "warn when CLI_ID does not resolve during later reconciliation"]},
+  "qa_expectations": {"unit_data_tests": ["parse synthetic Encounter FHIR STU3 fixture"], "integration_tests": ["resolve encounter JSON file patterns when local source data is present"], "schema_tests": ["validate required provider spec sections and parser profile"], "data_quality_tests": ["verify DW_LOAD_SEQ row-key presence"], "reconciliation_tests": ["match dictionary headers to YAML mappings and FHIR field paths"]},
+  "human_review": {"required": true, "reasons": ["PII classification requires governance review", "Encounter-to-patient relationship hints require review before Silver semantics"]},
+  "readiness": {"adapter_ready": true, "blocked_reason": ""}
+}

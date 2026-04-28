@@ -1,0 +1,84 @@
+{
+  "spec_version": "0.1",
+  "provider": {
+    "provider_name": "ValleyBridge Medical",
+    "provider_slug": "data_provider_4_valleybridge_medical",
+    "provider_folder": "data_provider_4_valleybridge_medical",
+    "source_type": "clinical_provider",
+    "upload_partition": "year=2025"
+  },
+  "source": {
+    "entity": "patients",
+    "filetype": "fhir_stu3",
+    "file_extension": "json",
+    "expected_file_patterns": [
+      "data_500k/data_provider_4_valleybridge_medical/year=2025/patients/patients_*.json"
+    ],
+    "column_dictionary_path": "data_500k/data_provider_4_valleybridge_medical/year=2025/column_dictionary.md"
+  },
+  "parser_profile": {
+    "parser_family": "fhir_stu3_bundle_with_comments",
+    "parser_options": {
+      "comment_prefix": "#",
+      "encoding_candidates": ["utf-8", "utf-8-sig", "cp1252", "latin-1"],
+      "bundle_entry_path": "entry[].resource",
+      "resource_type": "Patient",
+      "field_paths": {
+        "DW_LOAD_SEQ": "id",
+        "PTKEY": "identifier[0].value",
+        "NAME_FIRST": "name[0].given[0]",
+        "NAME_LAST": "name[0].family",
+        "PATIENT_SSN": "identifier[1].value",
+        "SX_FLAG": "gender",
+        "DT_BORN": "birthDate",
+        "COV_START": "period.start",
+        "COV_END": "period.end",
+        "REC_FLAG": "active"
+      }
+    },
+    "source_row_key": "DW_LOAD_SEQ",
+    "canonical_row_key": "ROW_ID",
+    "record_grain": "one membership transaction event per FHIR STU3 Patient resource"
+  },
+  "mapping": {
+    "fields": [
+      {"source_header": "DW_LOAD_SEQ", "canonical_name": "ROW_ID", "description": "Unique id per source resource; not the business member key.", "inferred_type": "string", "pii_signal": false, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": false, "review_reason": ""},
+      {"source_header": "PTKEY", "canonical_name": "PT_001_ID", "description": "Member id present on every ValleyBridge table; may repeat by design.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Member identifier and relationship behavior require review."},
+      {"source_header": "NAME_FIRST", "canonical_name": "PT_FIRST_NM", "description": "Member first name.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Direct identifier."},
+      {"source_header": "NAME_LAST", "canonical_name": "PT_LAST_NM", "description": "Member last name.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Direct identifier."},
+      {"source_header": "PATIENT_SSN", "canonical_name": "SSN_VAL", "description": "Government identifier value.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Highly sensitive government identifier."},
+      {"source_header": "SX_FLAG", "canonical_name": "GDR_CD", "description": "Source gender code.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Demographic PHI signal."},
+      {"source_header": "DT_BORN", "canonical_name": "BDT_VAL", "description": "Birth date.", "inferred_type": "date", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Date of birth is PHI."},
+      {"source_header": "COV_START", "canonical_name": "INIT_DT_RAW", "description": "Coverage or event start date.", "inferred_type": "date", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Membership date is PHI."},
+      {"source_header": "COV_END", "canonical_name": "END_DT_RAW", "description": "Coverage end date when retired.", "inferred_type": "date", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Membership date is PHI."},
+      {"source_header": "REC_FLAG", "canonical_name": "REC_STS", "description": "Legacy membership status flag.", "inferred_type": "string", "pii_signal": false, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": false, "review_reason": ""}
+    ]
+  },
+  "relationships": {
+    "primary_key_candidates": ["DW_LOAD_SEQ"],
+    "foreign_key_hints": [],
+    "relationship_risks": ["PTKEY may repeat by design and must not be treated as a unique person key without human approval."]
+  },
+  "drift": {
+    "row_key_drift": ["ValleyBridge uses DW_LOAD_SEQ while other provider row-key headers differ."],
+    "filetype_drift": ["Dictionary describes CSV row grain, but raw files use commented FHIR STU3 Bundle JSON."],
+    "mapping_drift": [],
+    "schema_drift": ["Some ValleyBridge files require deterministic non-UTF-8 fallback decoding."]
+  },
+  "quarantine_rules": {
+    "file_level": ["stop_pipeline when JSON is malformed or missing Bundle entries", "stop_pipeline when parser family is unsupported"],
+    "row_level": ["quarantine_data when DW_LOAD_SEQ is missing", "warn when optional membership date fields are blank"]
+  },
+  "qa_expectations": {
+    "unit_data_tests": ["parse synthetic Patient FHIR STU3 fixture"],
+    "integration_tests": ["resolve patient JSON file patterns when local source data is present"],
+    "schema_tests": ["validate required provider spec sections and parser profile"],
+    "data_quality_tests": ["verify DW_LOAD_SEQ row-key presence"],
+    "reconciliation_tests": ["match dictionary headers to YAML mappings and FHIR field paths"]
+  },
+  "human_review": {
+    "required": true,
+    "reasons": ["PII classification requires governance review", "PTKEY repeat behavior requires relationship review before Silver semantics"]
+  },
+  "readiness": {"adapter_ready": true, "blocked_reason": ""}
+}

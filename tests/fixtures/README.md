@@ -11,6 +11,7 @@ Fixtures are not migration outputs and are not canonical model examples. They ex
 | `aegis/*.json` | Aegis Care Network | FHIR-style JSON bundles | `tests/adapters/test_aegis_care_network_parser.py` |
 | `bluestone/*.xml` | BlueStone Health | HL7-style XML messages | `tests/adapters/test_bluestone_health_parser.py` |
 | `northcare/*.txt` | NorthCare Clinics | X12-style segment envelopes | `tests/adapters/test_northcare_clinics_parser.py` |
+| `valleybridge/*.json` | ValleyBridge Medical | Commented FHIR STU3 JSON bundles | `tests/adapters/test_valleybridge_medical_parser.py` |
 
 ## Glossary
 
@@ -62,6 +63,20 @@ Current files:
 - `northcare/observations_message.txt`
 
 These fixtures validate that the NorthCare parser supports the `x12_segment_envelope` parser profile, reads the `HDR` segment as the authoritative field order, rejects malformed or mismatched envelopes, and preserves observation payload text without interpreting it.
+
+### ValleyBridge
+
+ValleyBridge fixtures are FHIR STU3-style JSON bundles with a leading metadata comment line. They use flattened FHIR path-like keys because the provider source exposes resource fields in that shape.
+
+Current files:
+
+- `valleybridge/patients_bundle.json`
+- `valleybridge/encounters_bundle.json`
+- `valleybridge/conditions_bundle.json`
+- `valleybridge/medications_bundle.json`
+- `valleybridge/observations_bundle.json`
+
+These fixtures validate that the ValleyBridge parser supports the `fhir_stu3_bundle_with_comments` parser profile, strips metadata comments, handles declared encoding fallbacks, rejects malformed or mismatched resources, and preserves observation payload text without interpreting it.
 
 ## Rules For Adding Fixtures
 
