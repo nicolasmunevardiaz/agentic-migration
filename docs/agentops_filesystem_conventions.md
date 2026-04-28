@@ -21,6 +21,8 @@ metadata/
     impact/
   deployment_specs/
     databricks/
+  runtime_specs/
+    local/
 reports/
   drift/
   hitl/
@@ -30,6 +32,7 @@ logs/
   provider_discovery/
   canonical_model/
   adapter_implementation/
+  local_runtime/
   databricks_rollout/
 src/
   adapters/
@@ -44,7 +47,7 @@ artifacts/
 
 ## Ownership
 
-`metadata/` contains versioned declarative contracts. Provider specs, model specs, mapping matrices, and deployment specs should be committed when they are reviewable. `reports/` contains versioned human-readable evidence such as drift summaries, HITL queues, QA summaries, privacy reviews, and risk reports. `logs/` contains concise append-only technical trace logs. `src/` contains implementation code only after the relevant specs and approvals exist. `tests/` contains deterministic Python tests and fixtures. `artifacts/` is for local or CI runtime outputs and is ignored by Git except for `.gitkeep`.
+`metadata/` contains versioned declarative contracts. Provider specs, model specs, mapping matrices, local runtime specs, and deployment specs should be committed when they are reviewable. `reports/` contains versioned human-readable evidence such as drift summaries, HITL queues, QA summaries, privacy reviews, dependency reviews, and risk reports. `logs/` contains concise append-only technical trace logs. `src/` contains implementation code only after the relevant specs and approvals exist. `tests/` contains deterministic Python tests and fixtures. `artifacts/` is for local or CI runtime outputs and is ignored by Git except for `.gitkeep`.
 
 ## Trace Logs
 
@@ -56,7 +59,7 @@ Use one line per event. Each line should follow this shape:
 YYYY-MM-DDTHH:MM:SS-05:00 | plan=<plan_id> | provider=<provider_slug|all> | skill=<skill_name> | event=<started|read|generated|validated|blocked|completed> | artifact=<path|none> | note=<short technical note>
 ```
 
-Discovery and provider profiling must work on exactly one provider at a time. The log file must be `logs/provider_discovery/<provider_slug>.md`. Canonical model review is the first phase that may read all providers together; its log file must be `logs/canonical_model/canonical_review.md` and should use `provider=all` unless a note concerns one provider specifically. Adapter work should log to `logs/adapter_implementation/<provider_slug>.md`. Databricks rollout planning should log to `logs/databricks_rollout/rollout_readiness.md`.
+Discovery and provider profiling must work on exactly one provider at a time. The log file must be `logs/provider_discovery/<provider_slug>.md`. Canonical model review is the first phase that may read all providers together; its log file must be `logs/canonical_model/canonical_review.md` and should use `provider=all` unless a note concerns one provider specifically. Adapter work should log to `logs/adapter_implementation/<provider_slug>.md`. Local runtime certification should log to `logs/local_runtime/local_runtime_certification.md`. Databricks rollout planning should log to `logs/databricks_rollout/rollout_readiness.md`.
 
 Logs are not long-form reports. Keep notes under one sentence, avoid prose, and link to artifacts instead of repeating their content.
 
@@ -72,6 +75,6 @@ Empty required directories are kept with `.gitkeep`. Runtime outputs, caches, lo
 
 ## Agent Permissions
 
-By default, an agent may read repository files, create or update files inside the approved structure, and run local validation with `uv`. An agent must ask for human approval before installing dependencies, using network access, creating cloud resources, applying Terraform, deploying Databricks Asset Bundles, running Databricks jobs, changing GitHub secrets, or executing production-impacting operations.
+By default, an agent may read repository files, create or update files inside the approved structure, and run local validation with `uv`. An agent must ask for human approval before installing dependencies, using network access, starting Docker services, enabling Spark/Delta/OpenLineage/Marquez runtime dependencies, creating cloud resources, applying Terraform, deploying Databricks Asset Bundles, running Databricks jobs, changing GitHub secrets, or executing production-impacting operations.
 
 Multiple agents may work in parallel only when their write scopes are separated. During discovery and provider profiling, parallelism must be provider-isolated and each agent must own exactly one provider. Two agents must not edit the same provider spec, provider log, report, or test file at the same time. Canonical model review is intentionally generalist and may read all provider specs together. Agent handoffs must happen through committed or reviewable files in `metadata/`, `reports/`, `logs/`, `src/`, and `tests/`, not through private local folders.

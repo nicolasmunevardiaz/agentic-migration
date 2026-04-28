@@ -8,7 +8,7 @@ Every prompt must follow `docs/technical_prd_agentops_operating_spec.md`, `docs/
 
 ## Global Prerequisites
 
-Human-in-the-loop must confirm that `uv`, `gh`, and the Codex/agent runtime are available. If Python dependencies are missing, request approval before installing them with `uv`; expected development packages are `pytest`, `ruff`, `pyyaml`, and a dependency scanner such as `pip-audit` when dependency manifests exist.
+Human-in-the-loop must confirm that `uv`, `gh`, and the Codex/agent runtime are available. If Python dependencies are missing, request approval before installing them with `uv`; expected development packages are `pytest`, `ruff`, `pyyaml`, and a dependency scanner such as `pip-audit` when dependency manifests exist. Spark Declarative Pipelines, Delta Lake OSS, OpenLineage, Marquez, Docker services, and Databricks packages are candidate runtime dependencies only; agents must not install or start them until HITL approval and privacy-governance review exist.
 
 GitHub access must be configured by a human with `gh auth login` or an approved enterprise mechanism. GitHub secrets must be created by a human, never by the agent. Use `OPENAI_API_KEY` only when OpenAI-powered review or Codex API usage is required. Databricks secrets such as workspace host and token or service-principal credentials are required only for approved Databricks validation phases.
 
@@ -16,14 +16,15 @@ Allowed `gh` usage is limited to `gh auth status`, `gh pr create`, `gh pr view`,
 
 ## Execution Order
 
-Provider profiling may run in parallel only if each agent owns one provider, one branch, one provider log, and one provider spec subtree. Canonical modeling starts only after provider profiling PRs are approved or explicitly accepted as blocked and the canonical drift decision runbook has no unresolved blocking decisions. Adapter implementation may run per provider after canonical contracts are approved. Databricks rollout is last and requires HITL approval.
+Provider profiling may run in parallel only if each agent owns one provider, one branch, one provider log, and one provider spec subtree. Canonical modeling starts only after provider profiling PRs are approved or explicitly accepted as blocked and the canonical drift decision runbook has no unresolved blocking decisions. Adapter implementation may run per provider after canonical contracts are approved. Local runtime certification runs after adapter implementation and before Databricks rollout. Databricks rollout is last and requires HITL approval.
 
 | Stage | Execution | Prompt |
 |---|---|---|
 | Provider profiling | Parallel or sequential by provider | Prompts 1A-1E |
 | Drift decision resolution and canonical model | Sequential, all providers | Prompt 2 |
 | Adapter implementation and CI | Parallel or sequential by provider | Prompts 3A-3E |
-| Databricks rollout planning | Sequential, all approved artifacts | Prompt 4 |
+| Local runtime certification | Sequential, all approved adapters/contracts | Prompt 4 |
+| Databricks rollout planning | Sequential, all approved artifacts | Prompt 5 |
 
 ## Prompt 1A: Aegis Provider Profiling
 
@@ -259,20 +260,42 @@ Run uv-based tests and linting. Do not install dependencies without HITL approva
 When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "adapter: pacific-shield - implement provider adapter". Include plan id, provider, skills, changed files, tests, evidence, risks, HITL, Databricks impact, and rollback notes.
 ```
 
-## Prompt 4: Databricks Validation And Rollout
+## Prompt 4: Local Runtime And Contract Certification
+
+Explanation: This prompt inserts the portable local runtime certification gate between provider adapters and Databricks rollout. It validates runtime-neutral interfaces, local QA evidence, dependency approval gaps, and lineage evidence shape without installing Spark/Delta/OpenLineage or using cloud credentials unless HITL explicitly approves.
+
+Prerequisites: Provider, canonical, and adapter PRs are approved or merged. Human has approved local `uv`, safe `gh`, and any missing dev dependencies. No Spark, Delta, OpenLineage, Marquez, Docker, Databricks package, cloud credential, or production data use is approved unless explicit HITL records exist.
+
+```text
+You are Codex executing Local Runtime And Contract Certification across all approved providers.
+
+Use docs/04_local_runtime_and_contract_certification_plan.md as the active plan. Read docs/technical_prd_agentops_operating_spec.md, docs/agentops_filesystem_conventions.md, docs/agentops_skill_strategy.md, metadata/provider_specs/**, metadata/model_specs/**, src/adapters/**, tests/**, reports/hitl/**, reports/privacy/**, and reports/qa/**.
+
+Use these skills: local-runtime-harness-planner, adapter-contract-reviewer, qa-evidence-reviewer, privacy-governance-reviewer, spec-test-generator, hitl-escalation-controller, and repo-governance-auditor before PR creation.
+
+Work as a local runtime architect. Define runtime-neutral interfaces for provider parser, Bronze writer, canonical mapper, Silver writer, quarantine writer, QA evidence writer, lineage emitter, and runtime adapter. Generate local runtime specs under metadata/runtime_specs/local/, local QA certification evidence under reports/qa/, dependency review under reports/privacy/, and runtime validation tests under tests/specs/. Append trace entries to logs/local_runtime/local_runtime_certification.md.
+
+Do not install dependencies, start Docker services, run Databricks jobs, apply Terraform, deploy bundles, create cloud resources, use production data, or claim Databricks parity. Spark Declarative Pipelines, Delta Lake OSS, OpenLineage, and Marquez are candidate local validation capabilities only until HITL approval exists.
+
+Run local validation with uv. If dependency approvals, adapter evidence, lineage evidence, local profile scope, or runtime interface evidence is missing, invoke hitl-escalation-controller and stop. Do not weaken local runtime checks.
+
+When local runtime QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "ci: local-runtime - add certification contract". Include plan id, provider=all, skills, changed files, tests, evidence, risks, HITL, Databricks impact, and rollback notes.
+```
+
+## Prompt 5: Databricks Validation And Rollout
 
 Explanation: This prompt plans Databricks rollout only after specs, adapters, QA evidence, and HITL approvals exist. Context engineering separates local readiness from runtime execution so the agent cannot use Databricks as a debugging loop.
 
-Prerequisites: Provider, canonical, and adapter PRs are approved or merged. GitHub CI has passed. Human has created required Databricks secrets only for approved validation environments and has explicitly approved Databricks readiness planning.
+Prerequisites: Provider, canonical, adapter, and local runtime certification PRs are approved or merged. GitHub CI has passed. Human has created required Databricks secrets only for approved validation environments and has explicitly approved Databricks readiness planning.
 
 ```text
 You are Codex executing Databricks Validation And Rollout planning across all approved providers.
 
-Use docs/04_databricks_validation_and_rollout_plan.md as the active plan. Read docs/technical_prd_agentops_operating_spec.md, docs/agentops_filesystem_conventions.md, docs/agentops_skill_strategy.md, metadata/provider_specs/**, metadata/model_specs/**, src/adapters/**, tests/**, reports/hitl/**, reports/privacy/**, and reports/qa/**.
+Use docs/05_databricks_validation_and_rollout_plan.md as the active plan. Read docs/technical_prd_agentops_operating_spec.md, docs/agentops_filesystem_conventions.md, docs/agentops_skill_strategy.md, metadata/provider_specs/**, metadata/model_specs/**, metadata/runtime_specs/local/**, src/adapters/**, tests/**, reports/hitl/**, reports/privacy/**, and reports/qa/**.
 
 Use these skills: databricks-rollout-planner, qa-evidence-reviewer, privacy-governance-reviewer, hitl-escalation-controller, and repo-governance-auditor before PR creation.
 
-Do not run Databricks jobs, apply Terraform, deploy bundles, create cloud resources, or execute full-volume data unless explicit HITL approval exists in the active evidence. Plan governed Databricks and Unity Catalog rollout only.
+Do not run Databricks jobs, apply Terraform, deploy bundles, create cloud resources, or execute full-volume data unless explicit HITL approval exists in the active evidence. Plan governed Databricks and Unity Catalog rollout only, using local runtime certification evidence as an input.
 
 Generate Databricks deployment specs under metadata/deployment_specs/databricks/, QA evidence plans under reports/qa/, privacy/governance findings under reports/privacy/, HITL approval records under reports/hitl/, and deployment validation tests under tests/specs/. Append trace entries to logs/databricks_rollout/rollout_readiness.md.
 
@@ -283,6 +306,6 @@ When local readiness QA passes, run repo-governance-auditor. If it returns allow
 
 ## Automation Notes
 
-Automation should preserve this manual order. Provider profiling can become a fan-out matrix by provider only when each job owns a branch, log file, spec subtree, and PR. Canonical modeling, Databricks rollout, and any permission-changing step must remain sequential and HITL-gated.
+Automation should preserve this manual order. Provider profiling can become a fan-out matrix by provider only when each job owns a branch, log file, spec subtree, and PR. Canonical modeling, local runtime certification, Databricks rollout, and any permission-changing step must remain sequential and HITL-gated.
 
-The automation controller should treat `drift-decision-resolver` as the plan 02 readiness gate, `hitl-escalation-controller` as a stop signal, `privacy-governance-reviewer` as a security/dependency gate, and `repo-governance-auditor` as the final PR-readiness gate.
+The automation controller should treat `drift-decision-resolver` as the plan 02 readiness gate, `local-runtime-harness-planner` as the plan 04 portability gate, `hitl-escalation-controller` as a stop signal, `privacy-governance-reviewer` as a security/dependency gate, and `repo-governance-auditor` as the final PR-readiness gate.

@@ -1,0 +1,1 @@
+2026-04-28T08:30:00-05:00 | plan=04_local_runtime_and_contract_certification_plan | provider=all | skill=local-runtime-harness-planner | event=generated | artifact=metadata/runtime_specs/local | note=Defined local runtime certification contracts without installing dependencies.

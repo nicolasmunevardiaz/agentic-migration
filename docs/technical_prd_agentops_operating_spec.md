@@ -4,28 +4,29 @@
 
 This specification defines the technical operating model for MediSynth's agentic healthcare data migration. MediSynth must unify five legacy exports from acquired or parallel systems into a governed Databricks platform without losing lineage, quality, security, or human accountability. The program must move quickly, but it must do so with enterprise discipline: AI agents accelerate discovery, specification, code generation, validation, and review while humans retain control over semantics, PII, quality, and promotion.
 
-The target operating model combines AgentOps, Codex skills, specs-as-code, config-as-code, GitHub CI, Databricks, Unity Catalog, and Human in the Loop. AgentOps provides the repeatable pattern of skill + plan + workflow. Codex skills encode reusable migration standards under `.agent/skills/<skill-name>/SKILL.md`. LangChain may provide lightweight tool abstractions where useful. LangGraph may orchestrate stateful multi-agent workflows when migration state, retries, routing, and approvals become complex. LangSmith, MLflow, or OpenTelemetry may capture traces. MCP may expose controlled tools for GitHub, Databricks, Unity Catalog, docs, diagrams, or validation evidence. Terraform, Databricks Asset Bundles, Lakeflow/DLT, and dlt-meta are expected implementation capabilities for infrastructure, deployment, and metadata-driven pipelines, not merely research references.
+The target operating model combines AgentOps, Codex skills, specs-as-code, config-as-code, GitHub CI, a portable local runtime certification loop, Databricks, Unity Catalog, and Human in the Loop. AgentOps provides the repeatable pattern of skill + plan + workflow. Codex skills encode reusable migration standards under `.agent/skills/<skill-name>/SKILL.md`. LangChain may provide lightweight tool abstractions where useful. LangGraph may orchestrate stateful multi-agent workflows when migration state, retries, routing, and approvals become complex. LangSmith, MLflow, or OpenTelemetry may capture traces. MCP may expose controlled tools for GitHub, Databricks, Unity Catalog, docs, diagrams, or validation evidence. Spark Declarative Pipelines, Delta Lake OSS, OpenLineage, and Marquez are local validation capabilities behind HITL-approved dependencies. Terraform, Databricks Asset Bundles, Lakeflow/DLT, and dlt-meta are expected implementation capabilities for governed target deployment and validation, not the source of modeling truth.
 
 The migration will cover `data_provider_1_aegis_care_network`, `data_provider_2_bluestone_health`, `data_provider_3_northcare_clinics`, `data_provider_4_valleybridge_medical`, and `data_provider_5_pacific_shield_insurance`. Each provider may have different file formats, schemas, naming conventions, data quality issues, and semantic uncertainty. The system must therefore be adapter-driven, evidence-driven, and approval-driven.
 
-The first governed delivery scope is Raw/Bronze -> Silver in Unity Catalog. The expected end state for this phase is a repeatable agentic workflow that discovers provider files, profiles schemas, designs provider adapters, materializes Bronze and Silver datasets, writes quarantine outputs, stores QA evidence, and registers governed data assets in Unity Catalog. Anything after Silver is intentionally deferred until the provider adapters, lineage, quarantine, QA evidence, and Unity Catalog governance are stable.
+The first governed delivery scope is Raw/Bronze -> Silver, with contracts and canonical models kept cloud-agnostic and with Unity Catalog as the governed Databricks target. The expected end state for this phase is a repeatable agentic workflow that discovers provider files, profiles schemas, designs provider adapters, certifies local Bronze/Silver behavior through portable runtime interfaces, writes quarantine and QA evidence, and then validates governed data assets in Databricks/Unity Catalog. Anything after Silver is intentionally deferred until the provider adapters, lineage, quarantine, QA evidence, local certification, and Unity Catalog governance are stable.
 
 ## 2. Scope And Non-Scope
 
-In scope are Raw file discovery, manifests, parsing strategy, provider adapter design, Bronze contracts, Silver contracts, quarantine behavior, PII handling, dependency safety, lineage, QA evidence, GitHub PR controls, Databricks validation execution, Unity Catalog registration, declarative provider specs, config-as-code, specs-as-code, CI/CD controls, and implementation planning for Terraform, Databricks Asset Bundles, Lakeflow/DLT, and dlt-meta where they reduce operational risk. The system must support both local planning with Codex and scalable validation in Databricks.
+In scope are Raw file discovery, manifests, parsing strategy, provider adapter design, Bronze contracts, Silver contracts, runtime-neutral adapter interfaces, local runtime certification, quarantine behavior, PII handling, dependency safety, lineage, QA evidence, GitHub PR controls, Databricks validation execution, Unity Catalog registration, declarative provider specs, runtime specs, config-as-code, specs-as-code, CI/CD controls, and implementation planning for Terraform, Databricks Asset Bundles, Lakeflow/DLT, and dlt-meta where they reduce operational risk. The system must support fast local planning and validation with Codex plus scalable certification in Databricks.
 
 Out of scope are Gold models, KPI definitions, downstream analytics, dashboards, production promotion, automated identity resolution across providers, automatic clinical code interpretation, and any semantic mapping without human approval. Terraform, Databricks Asset Bundles, Lakeflow/DLT, dlt-meta, LangGraph, LangSmith, and MCP are in scope as technical building blocks for the migration operating model. Creating cloud resources, applying Terraform, deploying Databricks bundles, or running production jobs still requires explicit human approval and environment-specific controls.
 
-## 3. Operating Principle: Two Planes
+## 3. Operating Principle: Three Planes
 
-For a stable agentic migration, the system is separated into two planes.
+For a stable agentic migration, the system is separated into three planes.
 
 | Plane | Primary Runtime | Responsibility | Exit Evidence |
 |---|---|---|---|
 | Control and Generation Plane | Codex, GitHub, skills, specs, CI | Discovery plans, adapter specs, code generation, static QA, PR review, HITL | PR diff, tests, manifests, risk report, approval record |
-| Data Execution and Validation Plane | Databricks, Unity Catalog, Spark/Delta, Lakeflow/Jobs | Real data execution, Bronze/Silver materialization, DQ over data, reconciliation, lineage, permissions | QA evidence tables/files, quarantine, UC lineage, validation run report |
+| Local Runtime Certification Plane | Local Python, Spark Declarative Pipelines when approved, Delta Lake OSS when approved, OpenLineage/Marquez when approved, fixtures, contracts | Fast portable validation of provider adapters, Bronze/Silver contracts, quarantine behavior, QA evidence, and lineage evidence shape | Local runtime specs, local certification report, fixture outputs, local lineage evidence, dependency review |
+| Databricks Certification Plane | Databricks Runtime, Lakeflow, Unity Catalog, governed storage, workflows/jobs | Representative target-runtime validation, UC governance, permissions, runtime compatibility, lineage, performance, rollout readiness | Databricks deployment specs, validation run report, QA evidence tables/files, quarantine, UC lineage |
 
-The agent must not jump to Databricks for every generated change. Codex works first in the control plane, producing specs, code, tests, and reviewable artifacts. Databricks is used after the local/static checks and human approval are sufficient to justify running against representative data.
+The agent must not jump to Databricks for every generated change. Codex works first in the control plane, producing specs, code, tests, and reviewable artifacts. The local runtime plane certifies that adapters and contracts work through portable interfaces. Databricks is used after local certification, GitHub checks, and human approval are sufficient to justify running against representative target-runtime data.
 
 ### 3.1 Control And Generation Plane: GitHub CI Before Databricks
 
@@ -41,19 +42,25 @@ All agent-created pull requests must target `main`. Additional integration or va
 
 Before creating a PR, the agent must confirm that the base branch is `main`, list the head branch, include branch cleanup notes, and record any branch-policy exception as a Human in the Loop decision. If the target is not `main` and no exception is recorded, `repo-governance-auditor` must block PR creation.
 
-### 3.2 Data Execution And Validation Plane: Databricks After Approval
+### 3.2 Local Runtime Certification Plane: Portable Before Databricks
 
-Databricks enters when validation depends on real or representative data, Spark/Delta behavior, Unity Catalog permissions, runtime configuration, lineage, or scalable execution. This plane must perform source profiling, Bronze/Silver data quality checks, source-to-target reconciliation, row counts, null-rate checks, duplicate checks, schema drift detection, CDC correctness where applicable, performance and cost benchmarks, Unity Catalog lineage validation, Lakeflow/DLT validation if used, comparison between legacy outputs and new outputs when available, and progressive testing from sampled data to larger volumes.
+The local runtime plane validates functional migration behavior without requiring cloud credentials or remote workspaces. Its role is to prove that provider parsers, adapter interfaces, Bronze preservation, canonical mapping, Silver output shape, quarantine behavior, QA evidence, and lineage evidence can be exercised quickly and cheaply from deterministic fixtures and approved samples.
+
+The local runtime may use Spark Declarative Pipelines, Delta Lake OSS, contracts-as-code, OpenLineage, and Marquez after dependency approval. These tools are local validation capabilities, not enterprise modeling authorities. Local certification must not claim equivalence with Databricks Runtime, Unity Catalog permissions, Lakeflow managed orchestration, Lakeflow Auto CDC, serverless behavior, production performance, cloud IAM, or exact Databricks event logs.
+
+### 3.3 Databricks Certification Plane: Target Runtime After Local Certification
+
+Databricks enters when validation depends on real or representative target-runtime data, Databricks Runtime behavior, Lakeflow behavior, Unity Catalog permissions, runtime configuration, UC lineage, governed storage, or scalable execution. This plane must perform source profiling, Bronze/Silver data quality checks, source-to-target reconciliation, row counts, null-rate checks, duplicate checks, schema drift detection, CDC correctness where applicable, performance and cost benchmarks, Unity Catalog lineage validation, Lakeflow/DLT validation if used, comparison between legacy outputs and new outputs when available, and progressive testing from sampled data to larger volumes.
 
 This QA belongs in Databricks because it depends on the actual execution engine, data permissions, Unity Catalog metadata, storage layout, runtime behavior, and lineage system tables. It must run first in dev or validation environments, not production.
 
-### 3.3 Databricks Readiness Gate
+### 3.4 Databricks Readiness Gate
 
-Databricks validation is allowed only after the PR has passed parser/conversion checks, local unit tests, static compilation or syntax checks, valid job/pipeline/spec configuration, generated migration plan, human approval, and a versioned CI artifact containing code, tests, manifest, expected checks, and risk report. This gate prevents the agent from using Databricks as an expensive debugging loop.
+Databricks validation is allowed only after the PR has passed parser/conversion checks, local unit tests, local runtime certification, static compilation or syntax checks, valid deployment/spec configuration, generated migration plan, human approval, and a versioned CI artifact containing code, tests, manifest, expected checks, local certification evidence, and risk report. This gate prevents the agent from using Databricks as an expensive debugging loop.
 
-### 3.4 Orchestration Responsibilities
+### 3.5 Orchestration Responsibilities
 
-The system should not use one orchestrator for everything. GitHub Actions orchestrates CI and PR gates. Databricks Workflows or Lakeflow Jobs orchestrate data execution. Codex plus skills performs local planning, editing, generation, and PR preparation. LangGraph may later orchestrate multi-step migration state, routing, retries, evaluations, and HITL checkpoints. MLflow, LangSmith, or OpenTelemetry may be used for agent tracing if approved. Unity Catalog system tables provide data lineage and auditability.
+The system should not use one orchestrator for everything. GitHub Actions orchestrates CI and PR gates. Local runtime certification orchestrates deterministic fixture and contract checks without cloud credentials. Databricks Workflows or Lakeflow Jobs orchestrate target-runtime validation after approval. Codex plus skills performs local planning, editing, generation, and PR preparation. LangGraph may later orchestrate multi-step migration state, routing, retries, evaluations, and HITL checkpoints. MLflow, LangSmith, or OpenTelemetry may be used for agent tracing if approved. OpenLineage/Marquez may provide local lineage evidence when approved; Unity Catalog system tables provide target-runtime lineage and auditability.
 
 ## 4. Agentic Architecture
 
@@ -80,11 +87,12 @@ The system must separate source contracts, model contracts, and deployment contr
 | Provider Source Specs | Capture provider/entity dialects, parser profile, row key, source fields, canonical hints, PII signals, drift, quarantine expectations, and executable provider parser behavior | `data_500k/**/column_dictionary.md`, raw file paths, topology PRD | `metadata/provider_specs/<provider_slug>/<entity>.yaml`, `src/adapters/<provider_parser>.py`, parser fixtures/tests, drift summary, HITL queue | `provider-spec-generator` |
 | Drift Decision Runbook | Resolve or explicitly defer blocking drift, privacy, relationship, status, parser-contract, and payload decisions before canonical modeling starts | Provider specs, drift reports, privacy reports, HITL queues, QA evidence | `reports/hitl/canonical_drift_decision_runbook.md`, applied decision evidence, plan 02 blockers | `drift-decision-resolver` |
 | Canonical Model Specs | Convert provider source evidence into shared Bronze/Silver contracts, canonical entities, types, required fields, lineage, keys, mappings, and modeling risks | Provider specs, topology PRD, governance requirements, drift decision runbook | `metadata/model_specs/bronze/bronze_contract.yaml`, `metadata/model_specs/silver/<entity>.yaml`, `metadata/model_specs/mappings/provider_to_silver_matrix.yaml`, `metadata/model_specs/impact/modeling_risk_report.md` | `canonical-model-planner` |
-| Adapter Implementation Specs | Define how parser and adapter code consumes provider specs and writes Bronze/Silver/quarantine according to approved model specs | Provider specs, model specs, adapter design | Adapter readiness report, parser/adapter task plan, implementation fixtures | `adapter-contract-reviewer` |
+| Adapter Implementation Specs | Define how parser and adapter code consumes provider specs and writes Bronze/Silver/quarantine according to approved model specs through runtime-neutral interfaces | Provider specs, model specs, adapter design | Adapter readiness report, parser/adapter task plan, implementation fixtures | `adapter-contract-reviewer` |
 | Adapter Code Artifacts | Generate parser/adapter code, local fixtures, and implementation tests from approved contracts | Provider specs, model specs, mapping matrix, adapter readiness report | Parser code, adapter code, fixtures, local tests, generation report | `adapter-code-generator` |
+| Local Runtime Specs | Define local runtime profiles, interface contracts, local lineage evidence shape, dependency gates, and local certification commands | Provider specs, model specs, adapter artifacts, QA evidence, HITL approvals | `metadata/runtime_specs/local/*.yaml`, local runtime certification report, dependency review, runtime validation tests | `local-runtime-harness-planner` |
 | Spec Validation Artifacts | Generate Python tests and validators that protect declarative contracts in GitHub CI | PRD test strategy, spec templates, provider/model/deployment specs | `tests/specs/*.py`, validator helpers, spec test report | `spec-test-generator` |
 | Privacy And Governance Review | Validate PII/PHI classification, evidence redaction, secrets, permissions, governed targets, and HITL approvals | Provider specs, model specs, QA evidence, deployment specs, PR risk report | Privacy/governance review report, blockers, approval queue | `privacy-governance-reviewer` |
-| Databricks Deployment Specs | Convert approved model specs into Databricks execution configuration, governed locations, Unity Catalog objects, expectations, jobs, bundles, or dlt-meta dataflowspecs | Model specs, adapter readiness, QA plan, environment strategy | `metadata/deployment_specs/databricks/*.yaml`, Lakeflow/DLT/dlt-meta specs, Databricks Asset Bundle config, UC rollout plan | `databricks-rollout-planner` |
+| Databricks Deployment Specs | Convert approved model specs and local certification evidence into Databricks execution configuration, governed locations, Unity Catalog objects, expectations, jobs, bundles, or dlt-meta dataflowspecs | Model specs, adapter readiness, local runtime certification, QA plan, environment strategy | `metadata/deployment_specs/databricks/*.yaml`, Lakeflow/DLT/dlt-meta specs, Databricks Asset Bundle config, UC rollout plan | `databricks-rollout-planner` |
 
 ### 5.2 Provider Specs Are Inputs, Not The Model
 
@@ -109,23 +117,25 @@ Each declarative layer requires different Python tests because each layer owns a
 | Provider-To-Silver Mapping Matrix | Integration tests, reconciliation tests, regression tests | Every model column maps to at least one approved source or approved lineage field, every provider mapping references valid source headers, no duplicate conflicting mappings, unsupported providers are explicitly marked | `tests/specs/test_provider_to_silver_matrix.py` |
 | Adapter Implementation Specs | Unit data tests, integration tests, schema tests, regression tests | Parser profile is implementable, adapter consumes declarative YAML, quarantine behavior exists for invalid casts/missing required fields, fixtures cover positive and negative cases | `tests/specs/test_adapter_specs.py` |
 | QA Evidence Specs | Schema tests, integration tests, regression tests | Required evidence fields exist, allowed decisions are `stop_pipeline`, `quarantine_data`, `warn`, every test links to provider/entity/model/deployment context, evidence paths are deterministic | `tests/specs/test_qa_evidence_specs.py` |
-| Databricks Deployment Specs | Schema tests, integration tests, security tests, regression tests | Deployment spec references approved model specs, Unity Catalog catalog/schema/table targets are declared, no hardcoded local paths, no production execution without approval, DAB/Lakeflow/DLT/dlt-meta references are coherent | `tests/specs/test_deployment_specs.py` |
+| Local Runtime Specs | Schema tests, integration tests, lineage evidence shape tests, scope guard tests, regression tests | Runtime profile references approved contracts, local paths are constrained to `artifacts/`, dependency approvals are explicit, local QA says `local_validated`, Databricks-only secrets and workspace paths are absent | `tests/specs/test_local_runtime_specs.py` |
+| Databricks Deployment Specs | Schema tests, integration tests, security tests, regression tests | Deployment spec references approved model specs and local certification evidence, Unity Catalog catalog/schema/table targets are declared, no hardcoded local paths, no production execution without approval, DAB/Lakeflow/DLT/dlt-meta references are coherent | `tests/specs/test_deployment_specs.py` |
 | Full Spec Chain | End-to-end/system tests, reconciliation tests, regression tests | Provider specs -> model specs -> adapter specs -> deployment specs can be resolved as one graph; no missing references; sample provider/entity can produce a deterministic dry-run plan | `tests/specs/test_spec_chain_system.py` |
 | Business Rules | Scope guard tests, schema tests | Post-Silver KPI/analytics rules are absent, deferred, or explicitly marked out-of-scope/HITL; no business rule silently changes Bronze/Silver semantics | `tests/specs/test_business_rule_scope.py` |
 
 The first CI gate should run these tests without Databricks. They should operate on YAML, small fixtures, and generated metadata only. Databricks validation starts after these tests pass and a human approves the PR.
 
-The minimum spec families are source profiles, parser profiles, adapter mapping specs, Bronze contract specs, Silver contract specs, provider-to-Silver mapping matrices, quarantine specs, QA evidence specs, deployment specs, and human approval records.
+The minimum spec families are source profiles, parser profiles, adapter mapping specs, Bronze contract specs, Silver contract specs, provider-to-Silver mapping matrices, quarantine specs, QA evidence specs, local runtime specs, deployment specs, and human approval records.
 
 ## 6. Responsibilities
 
 | Component | Responsibility |
 |---|---|
 | Codex | Plans, edits, generates specs/code/tests/docs, runs local checks, prepares PR-ready artifacts |
-| Skills | Encode reusable domain rules for discovery, modeling, adapters, Bronze/Silver contracts, QA, PII, and Databricks validation |
+| Skills | Encode reusable domain rules for discovery, modeling, adapters, Bronze/Silver contracts, local runtime certification, QA, PII, and Databricks validation |
 | GitHub CI | Runs static validation, unit tests, fixture tests, security checks, spec validation, and PR evidence checks |
 | Human Reviewer | Approves source coverage, uncertain mappings, PII classification, ambiguous types, Silver contracts, and Databricks execution |
-| Databricks | Executes representative and scalable data validation, materializes Bronze/Silver, stores Delta outputs, validates permissions and lineage |
+| Local Runtime | Executes fast fixture/sample validation through runtime-neutral interfaces, local Delta/Spark capabilities when approved, and local lineage evidence when approved |
+| Databricks | Executes representative and scalable target-runtime validation, materializes Bronze/Silver, stores Delta outputs, validates permissions and Unity Catalog lineage |
 | Unity Catalog | Governs datasets, permissions, lineage, tables, volumes, schemas, and auditability |
 | Terraform | Infrastructure-as-code for approved Databricks/cloud resources and environment separation |
 | Databricks Asset Bundles | Versioned packaging and deployment of Databricks jobs, pipelines, and configuration |
@@ -140,16 +150,17 @@ The minimum spec families are source profiles, parser profiles, adapter mapping 
 | Validation | GitHub CI | Databricks |
 |---|---:|---:|
 | SQL, notebook, job, and config parsing | Required | Optional |
-| Conversion logic unit tests | Required | Optional unless Spark runtime is required |
+| Conversion logic unit tests | Required | Optional unless target-runtime behavior is required |
 | Generated SQL/spec snapshot tests | Required | Optional |
 | Linting, formatting, and type checks | Required | Optional |
 | Manifest and declarative spec validation | Required | Optional |
 | Security checks for secrets, hardcoded paths, unsafe permissions, `DROP`, `TRUNCATE` | Required | Optional runtime confirmation |
 | PR impact report and migration plan validation | Required | No |
-| Data quality over representative or real data | No | Required |
-| Source-to-target reconciliation | No | Required |
-| Row counts, null rates, duplicate checks | Fixture-only | Required |
-| Schema drift over actual sources | Partial | Required |
+| Data quality over fixtures and approved local samples | Required | Optional follow-up |
+| Data quality over representative or real target-runtime data | No | Required |
+| Source-to-target reconciliation | Fixture/local sample | Required |
+| Row counts, null rates, duplicate checks | Fixture/local sample | Required |
+| Schema drift over actual sources | Partial/local sample | Required |
 | CDC correctness | Static/spec partial | Required when CDC applies |
 | Performance and cost benchmark | No | Required before scale-up |
 | Unity Catalog permissions and lineage | No | Required |
@@ -157,7 +168,7 @@ The minimum spec families are source profiles, parser profiles, adapter mapping 
 
 ## 7. Required Skills
 
-The initial AgentOps skill set should be small, precise, and complete enough to move from specs into implementation. The recommended v1 skills are `provider-spec-generator`, `drift-decision-resolver`, `canonical-model-planner`, `adapter-contract-reviewer`, `adapter-code-generator`, `spec-test-generator`, `privacy-governance-reviewer`, `qa-evidence-reviewer`, `repo-governance-auditor`, `hitl-escalation-controller`, and `databricks-rollout-planner`.
+The initial AgentOps skill set should be small, precise, and complete enough to move from specs into implementation. The recommended v1 skills are `provider-spec-generator`, `drift-decision-resolver`, `canonical-model-planner`, `adapter-contract-reviewer`, `adapter-code-generator`, `local-runtime-harness-planner`, `spec-test-generator`, `privacy-governance-reviewer`, `qa-evidence-reviewer`, `repo-governance-auditor`, `hitl-escalation-controller`, and `databricks-rollout-planner`.
 
 Skill names must describe operating responsibility instead of layer ownership. `generator` means the skill creates a durable declarative artifact, `planner` means it designs a target contract or rollout, and `reviewer` means it validates readiness, evidence, or implementation risk. The layer still appears inside the skill contract, but it should not be the primary name because names like Raw, Bronze, or Silver are too broad to explain what the skill does.
 
@@ -177,22 +188,22 @@ If an agent reaches repeated failed attempts, missing source evidence, ambiguous
 
 QA is the feedback loop, not a naming taxonomy. The approved test families are unit tests de datos, integration tests, end-to-end/system tests, data quality tests, schema tests, regression tests, and reconciliation tests. Each check must produce evidence with test name, family, stage, provider, entity, source file, checksum, expected value, observed value, failure count, decision, and evidence path.
 
-GitHub CI validates code and specs before data execution. It should run parser tests, adapter fixture tests, schema/spec validation, static SQL/Python checks, generated artifact checks, security scans for secrets or dangerous operations, and PR risk reports. Databricks validates behavior against data. It should run profiling, Bronze/Silver data quality checks, reconciliation, schema drift detection, quarantine summaries, performance checks, permissions checks, and Unity Catalog lineage validation.
+GitHub CI validates code and specs before target-runtime data execution. It should run parser tests, adapter fixture tests, local runtime spec tests, schema/spec validation, static SQL/Python checks, generated artifact checks, security scans for secrets or dangerous operations, and PR risk reports. Local runtime certification validates portable behavior against fixtures and approved local samples. Databricks validates target-runtime behavior against representative data after approval. It should run profiling, Bronze/Silver data quality checks, reconciliation, schema drift detection, quarantine summaries, performance checks, permissions checks, and Unity Catalog lineage validation.
 
 The valid QA decisions are `stop_pipeline`, `quarantine_data`, and `warn`. A `stop_pipeline` decision blocks the current run. `quarantine_data` isolates a file or row and allows valid data to continue. `warn` allows continuation but requires visible evidence.
 
-## 9. Databricks And Unity Catalog Requirements
+## 9. Local Runtime, Databricks, And Unity Catalog Requirements
 
-Databricks is the protagonist runtime for real validation and execution. Bronze, Silver, quarantine, QA evidence, and manifests must be stored in governed locations and later registered or exposed through Unity Catalog. Tables and volumes must be designed so provider, entity, source file, source checksum, source row reference, ingestion run, adapter version, and schema version remain traceable.
+Contracts and canonical models are the source of truth. The local runtime is the fast certification loop for functional correctness and portability. Databricks is the governed target runtime for representative validation and execution. Bronze, Silver, quarantine, QA evidence, and manifests must be stored in governed locations when running in Databricks and later registered or exposed through Unity Catalog. Tables and volumes must be designed so provider, entity, source file, source checksum, source row reference, ingestion run, adapter version, and schema version remain traceable.
 
-Unity Catalog is the governance target. The migration must be able to answer which provider, file, adapter version, and run produced a Silver record. The platform must also support permissions, auditability, and lineage inspection. If dlt-meta or Lakeflow Declarative Pipelines are used later, their specs must remain versioned in Git and reviewed through the same PR/HITL process.
+Unity Catalog is the Databricks governance target. The migration must be able to answer which provider, file, adapter version, and run produced a Silver record both in local certification evidence and in Databricks validation evidence. The platform must also support permissions, auditability, and lineage inspection. If Spark Declarative Pipelines, Delta Lake OSS, OpenLineage, Marquez, dlt-meta, Databricks Asset Bundles, or Lakeflow Declarative Pipelines are used later, their specs must remain versioned in Git and reviewed through the same PR/HITL process.
 
 ## 10. Human In The Loop
 
-Human approval is required when a decision changes data meaning or governance posture. Required approval points are source coverage, field mappings with low confidence, ambiguous types, identifiers with leading zeros, PII classification, quarantine rules, Silver required columns, candidate keys, and Databricks validation execution. Approval records must include owner, decision, date, evidence path, impacted provider/entity, and next action.
+Human approval is required when a decision changes data meaning or governance posture. Required approval points are source coverage, field mappings with low confidence, ambiguous types, identifiers with leading zeros, PII classification, quarantine rules, Silver required columns, candidate keys, local runtime dependency installation, Docker/Marquez usage, OpenLineage transport, and Databricks validation execution. Approval records must include owner, decision, date, evidence path, impacted provider/entity, environment, and next action.
 
 The agent may recommend, summarize, and prepare review packets. It must not silently approve mappings, infer identity resolution, downgrade PII classification, or promote data beyond Silver.
 
 ## 11. Acceptance Criteria
 
-This PRD is satisfied when the repository contains the operating spec, the skill strategy, a minimal `.agent/skills/` structure, compact plan prompts for the four planning tasks, and a clear path from provider discovery to Unity Catalog-governed Silver validation. The team must be able to explain what happens in GitHub, what happens in Databricks, what requires human approval, what is out of scope, and how QA evidence drives the next iteration.
+This PRD is satisfied when the repository contains the operating spec, the skill strategy, a minimal `.agent/skills/` structure, compact plan prompts for the five planning tasks, and a clear path from provider discovery to local runtime certification to Unity Catalog-governed Silver validation. The team must be able to explain what happens in GitHub, what happens locally, what happens in Databricks, what requires human approval, what is out of scope, and how QA evidence drives the next iteration.
