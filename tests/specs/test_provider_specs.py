@@ -198,6 +198,101 @@ PROVIDER_CONFIGS = {
             "OBS_JSON",
         },
     },
+    "data_provider_3_northcare_clinics": {
+        "provider_name": "NorthCare Clinics",
+        "filetype": "x12",
+        "file_extension": "txt",
+        "parser_family": "x12_segment_envelope",
+        "row_key": "EXPORT_ID",
+        "expected_segments": {
+            "patients": "DMG",
+            "encounters": "CLM",
+            "conditions": "HI",
+            "medications": "SV1",
+            "observations": "REF",
+        },
+        "expected_headers": {
+            "patients": {
+                "EXPORT_ID",
+                "PT_001_ID",
+                "PT_GIVEN_NAME",
+                "PT_FAMILY_NAME",
+                "SSN_NUM",
+                "GDR_CD",
+                "BDT_VAL",
+                "REG_START_RAW",
+                "REG_END_RAW",
+                "REC_STS",
+            },
+            "encounters": {
+                "EXPORT_ID",
+                "APPT_KEY",
+                "PT_REF",
+                "APPT_DT_RAW",
+                "COVERAGE_STATUS",
+                "REC_STS",
+            },
+            "conditions": {
+                "EXPORT_ID",
+                "CND_KEY",
+                "CND_TYPE_ID",
+                "PT_REF",
+                "APPT_REF",
+                "ICD_HINT",
+                "CND_LONG_TXT",
+                "REC_STS",
+            },
+            "medications": {
+                "EXPORT_ID",
+                "RX_ROW_KEY",
+                "MED_KEY",
+                "PT_REF",
+                "APPT_REF",
+                "PARENT_CND",
+                "MED_PRODUCT_NM",
+                "MED_PRICE",
+                "ORD_DT_RAW",
+                "REC_STS",
+            },
+            "observations": {
+                "EXPORT_ID",
+                "OBS_KEY",
+                "PT_REF",
+                "APPT_REF",
+                "OBS_DT_RAW",
+                "OBS_PAYLOAD",
+                "REC_STS",
+            },
+        },
+        "sensitive_headers": {
+            "PT_001_ID",
+            "PT_GIVEN_NAME",
+            "PT_FAMILY_NAME",
+            "SSN_NUM",
+            "GDR_CD",
+            "BDT_VAL",
+            "REG_START_RAW",
+            "REG_END_RAW",
+            "APPT_KEY",
+            "PT_REF",
+            "APPT_DT_RAW",
+            "COVERAGE_STATUS",
+            "CND_KEY",
+            "CND_TYPE_ID",
+            "APPT_REF",
+            "ICD_HINT",
+            "CND_LONG_TXT",
+            "RX_ROW_KEY",
+            "MED_KEY",
+            "PARENT_CND",
+            "MED_PRODUCT_NM",
+            "MED_PRICE",
+            "ORD_DT_RAW",
+            "OBS_KEY",
+            "OBS_DT_RAW",
+            "OBS_PAYLOAD",
+        },
+    },
 }
 
 ALLOWED_QA_DECISIONS = {"stop_pipeline", "quarantine_data", "warn"}
@@ -287,6 +382,12 @@ def test_unit_parser_profiles_declare_provider_contracts() -> None:
                 assert parser_options["root_tag"] == "HL7Messages"
                 assert parser_options["message_segment"] == config["expected_segments"][entity]
                 assert parser_options["field_paths"][row_key] == "MSH.10"
+            if config["parser_family"] == "x12_segment_envelope":
+                assert parser_options["segment_terminator"] == "~"
+                assert parser_options["element_separator"] == "*"
+                assert parser_options["header_segment"] == "HDR"
+                assert parser_options["entity_segment"] == config["expected_segments"][entity]
+                assert parser_options["field_paths"][row_key] == "segment[1]"
 
 
 def test_integration_file_patterns_resolve_local_provider_files() -> None:

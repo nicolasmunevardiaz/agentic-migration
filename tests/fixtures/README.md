@@ -10,6 +10,7 @@ Fixtures are not migration outputs and are not canonical model examples. They ex
 | --- | --- | --- | --- |
 | `aegis/*.json` | Aegis Care Network | FHIR-style JSON bundles | `tests/adapters/test_aegis_care_network_parser.py` |
 | `bluestone/*.xml` | BlueStone Health | HL7-style XML messages | `tests/adapters/test_bluestone_health_parser.py` |
+| `northcare/*.txt` | NorthCare Clinics | X12-style segment envelopes | `tests/adapters/test_northcare_clinics_parser.py` |
 
 ## Glossary
 
@@ -47,6 +48,20 @@ Current files:
 - `bluestone/observations_message.xml`
 
 These fixtures validate that the BlueStone parser supports the `hl7_v2_xml_messages` parser profile, reads entity-specific message segments, rejects malformed or mismatched XML, and preserves embedded observation JSON without interpreting it.
+
+### NorthCare
+
+NorthCare fixtures are X12-style text envelopes with `~` segment terminators, `*` element separators, an `HDR` segment that declares source headers by position, and one entity segment per fixture.
+
+Current files:
+
+- `northcare/patients_message.txt`
+- `northcare/encounters_message.txt`
+- `northcare/conditions_message.txt`
+- `northcare/medications_message.txt`
+- `northcare/observations_message.txt`
+
+These fixtures validate that the NorthCare parser supports the `x12_segment_envelope` parser profile, reads the `HDR` segment as the authoritative field order, rejects malformed or mismatched envelopes, and preserves observation payload text without interpreting it.
 
 ## Rules For Adding Fixtures
 
