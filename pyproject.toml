@@ -3,7 +3,9 @@ name = "agentic-migration"
 version = "0.1.0"
 description = "AgentOps-governed healthcare data migration operating model."
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "pyyaml>=6.0.3",
+]
 
 [dependency-groups]
 dev = [
@@ -13,6 +15,7 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 
 [tool.ruff]
 line-length = 100
