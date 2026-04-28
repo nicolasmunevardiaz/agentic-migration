@@ -1,0 +1,9 @@
+# synthetic NorthCare fixture
+ISA*00*          *00*          *ZZ*NORTHCARETEST  *ZZ*MEDISYNTH      *202501*1200*^*00501*000000001*0*T*:~
+GS*HC*NORTHCARETEST*MEDISYNTH*20250101*1200*1*X*005010X222~
+ST*837*0001~
+HDR*REF01:EXPORT_ID*REF02:OBS_KEY*REF03:PT_REF*REF04:APPT_REF*REF05:OBS_DT_RAW*REF06:OBS_PAYLOAD*REF07:REC_STS~
+REF*export-observation-001*observation-alpha*member-alpha*appt-alpha*2025-02-01*{"type":"vitals","heart_rate":72,"blood_pressure":{"systolic":120,"diastolic":80}}*1~
+SE*5*0001~
+GE*1*1~
+IEA*1*000000001~

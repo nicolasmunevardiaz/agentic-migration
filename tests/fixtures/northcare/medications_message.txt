@@ -1,0 +1,9 @@
+# synthetic NorthCare fixture
+ISA*00*          *00*          *ZZ*NORTHCARETEST  *ZZ*MEDISYNTH      *202501*1200*^*00501*000000001*0*T*:~
+GS*HC*NORTHCARETEST*MEDISYNTH*20250101*1200*1*X*005010X222~
+ST*837*0001~
+HDR*SV101:EXPORT_ID*SV102:RX_ROW_KEY*SV103:MED_KEY*SV104:PT_REF*SV105:APPT_REF*SV106:PARENT_CND*SV107:MED_PRODUCT_NM*SV108:MED_PRICE*SV109:ORD_DT_RAW*SV110:REC_STS~
+SV1*export-medication-001*medication-occurrence-alpha*medication-catalog-alpha*member-alpha*appt-alpha*condition-occurrence-alpha*synthetic medication product*12.34*2025-02-01*1~
+SE*5*0001~
+GE*1*1~
+IEA*1*000000001~

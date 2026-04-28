@@ -1,0 +1,36 @@
+{
+  "spec_version": "0.1",
+  "provider": {"provider_name": "NorthCare Clinics", "provider_slug": "data_provider_3_northcare_clinics", "provider_folder": "data_provider_3_northcare_clinics", "source_type": "clinical_provider", "upload_partition": "year=2025"},
+  "source": {"entity": "observations", "filetype": "x12", "file_extension": "txt", "expected_file_patterns": ["data_500k/data_provider_3_northcare_clinics/year=2025/observations/observations_*.txt"], "column_dictionary_path": "data_500k/data_provider_3_northcare_clinics/year=2025/column_dictionary.md"},
+  "parser_profile": {
+    "parser_family": "x12_segment_envelope",
+    "parser_options": {
+      "segment_terminator": "~",
+      "element_separator": "*",
+      "comment_prefix": "#",
+      "header_segment": "HDR",
+      "entity_segment": "REF",
+      "field_paths": {"EXPORT_ID": "segment[1]", "OBS_KEY": "segment[2]", "PT_REF": "segment[3]", "APPT_REF": "segment[4]", "OBS_DT_RAW": "segment[5]", "OBS_PAYLOAD": "segment[6]", "REC_STS": "segment[7]"}
+    },
+    "source_row_key": "EXPORT_ID",
+    "canonical_row_key": "ROW_ID",
+    "record_grain": "one observation per X12-like REF segment"
+  },
+  "mapping": {
+    "fields": [
+      {"source_header": "EXPORT_ID", "canonical_name": "ROW_ID", "description": "Unique id per X12-like segment row; not the business member key.", "inferred_type": "string", "pii_signal": false, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": false, "review_reason": ""},
+      {"source_header": "OBS_KEY", "canonical_name": "OBS_KEY", "description": "Observation record identifier.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Observation identifier is linkable PHI."},
+      {"source_header": "PT_REF", "canonical_name": "PT_001_ID", "description": "Member reference used as patient foreign-key hint.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Member identifier and relationship behavior require review."},
+      {"source_header": "APPT_REF", "canonical_name": "APPT_REF", "description": "Appointment reference.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Encounter relationship identifier is linkable PHI."},
+      {"source_header": "OBS_DT_RAW", "canonical_name": "OBS_DT_RAW", "description": "Observation date.", "inferred_type": "date", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Clinical observation date is PHI."},
+      {"source_header": "OBS_PAYLOAD", "canonical_name": "OBS_PAYLOAD", "description": "Fixed-shape vitals JSON preserved as source text.", "inferred_type": "json_string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Clinical observation payload is PHI and must not be semantically interpreted without approval."},
+      {"source_header": "REC_STS", "canonical_name": "REC_STS", "description": "Legacy clinical status code.", "inferred_type": "string", "pii_signal": false, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": false, "review_reason": ""}
+    ]
+  },
+  "relationships": {"primary_key_candidates": ["EXPORT_ID", "OBS_KEY"], "foreign_key_hints": [{"source_header": "PT_REF", "references_entity": "patients", "references_header": "PT_001_ID"}, {"source_header": "APPT_REF", "references_entity": "encounters", "references_header": "APPT_KEY"}], "relationship_risks": ["Observation links to patient and appointment require reconciliation before Silver joins.", "OBS_PAYLOAD should remain source text until canonical semantics are approved."]},
+  "drift": {"row_key_drift": ["NorthCare uses EXPORT_ID while other provider row-key headers differ."], "filetype_drift": ["Dictionary describes CSV row grain, but raw files use X12-style segment envelopes with HDR field mapping."], "mapping_drift": [], "schema_drift": []},
+  "quarantine_rules": {"file_level": ["stop_pipeline when X12-like envelope is malformed or missing HDR", "stop_pipeline when parser family is unsupported"], "row_level": ["quarantine_data when EXPORT_ID is missing", "warn when OBS_PAYLOAD is blank or cannot be interpreted by later approved validators"]},
+  "qa_expectations": {"unit_data_tests": ["parse synthetic observation X12-like fixture"], "integration_tests": ["resolve observation text file patterns when local source data is present"], "schema_tests": ["validate required provider spec sections and parser profile"], "data_quality_tests": ["verify EXPORT_ID row-key presence"], "reconciliation_tests": ["match dictionary headers to YAML mappings and HDR positions"]},
+  "human_review": {"required": true, "reasons": ["PII/PHI classification requires governance review", "OBS_PAYLOAD must remain source text until canonical modeling approval"]},
+  "readiness": {"adapter_ready": true, "blocked_reason": ""}
+}

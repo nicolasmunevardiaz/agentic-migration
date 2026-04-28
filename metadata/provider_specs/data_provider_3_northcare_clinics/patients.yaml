@@ -1,0 +1,85 @@
+{
+  "spec_version": "0.1",
+  "provider": {
+    "provider_name": "NorthCare Clinics",
+    "provider_slug": "data_provider_3_northcare_clinics",
+    "provider_folder": "data_provider_3_northcare_clinics",
+    "source_type": "clinical_provider",
+    "upload_partition": "year=2025"
+  },
+  "source": {
+    "entity": "patients",
+    "filetype": "x12",
+    "file_extension": "txt",
+    "expected_file_patterns": [
+      "data_500k/data_provider_3_northcare_clinics/year=2025/patients/patients_*.txt"
+    ],
+    "column_dictionary_path": "data_500k/data_provider_3_northcare_clinics/year=2025/column_dictionary.md"
+  },
+  "parser_profile": {
+    "parser_family": "x12_segment_envelope",
+    "parser_options": {
+      "segment_terminator": "~",
+      "element_separator": "*",
+      "comment_prefix": "#",
+      "header_segment": "HDR",
+      "entity_segment": "DMG",
+      "field_paths": {
+        "EXPORT_ID": "segment[1]",
+        "PT_001_ID": "segment[2]",
+        "PT_GIVEN_NAME": "segment[3]",
+        "PT_FAMILY_NAME": "segment[4]",
+        "SSN_NUM": "segment[5]",
+        "GDR_CD": "segment[6]",
+        "BDT_VAL": "segment[7]",
+        "REG_START_RAW": "segment[8]",
+        "REG_END_RAW": "segment[9]",
+        "REC_STS": "segment[10]"
+      }
+    },
+    "source_row_key": "EXPORT_ID",
+    "canonical_row_key": "ROW_ID",
+    "record_grain": "one membership transaction event per X12-like DMG segment"
+  },
+  "mapping": {
+    "fields": [
+      {"source_header": "EXPORT_ID", "canonical_name": "ROW_ID", "description": "Unique id per X12-like segment row; not the business member key.", "inferred_type": "string", "pii_signal": false, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": false, "review_reason": ""},
+      {"source_header": "PT_001_ID", "canonical_name": "PT_001_ID", "description": "Member id present on every NorthCare table; may repeat by design.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Member identifier and relationship behavior require review."},
+      {"source_header": "PT_GIVEN_NAME", "canonical_name": "PT_FIRST_NM", "description": "Member first name.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Direct identifier."},
+      {"source_header": "PT_FAMILY_NAME", "canonical_name": "PT_LAST_NM", "description": "Member last name.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Direct identifier."},
+      {"source_header": "SSN_NUM", "canonical_name": "SSN_VAL", "description": "Government identifier value.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Highly sensitive government identifier."},
+      {"source_header": "GDR_CD", "canonical_name": "GDR_CD", "description": "Source gender code.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Demographic PHI signal."},
+      {"source_header": "BDT_VAL", "canonical_name": "BDT_VAL", "description": "Birth date.", "inferred_type": "date", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Date of birth is PHI."},
+      {"source_header": "REG_START_RAW", "canonical_name": "INIT_DT_RAW", "description": "Ingress or event start date.", "inferred_type": "date", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Membership date is PHI."},
+      {"source_header": "REG_END_RAW", "canonical_name": "END_DT_RAW", "description": "Exit date when retired.", "inferred_type": "date", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Membership date is PHI."},
+      {"source_header": "REC_STS", "canonical_name": "REC_STS", "description": "Legacy status code for membership transaction rows.", "inferred_type": "string", "pii_signal": false, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": false, "review_reason": ""}
+    ]
+  },
+  "relationships": {
+    "primary_key_candidates": ["EXPORT_ID"],
+    "foreign_key_hints": [],
+    "relationship_risks": ["PT_001_ID may repeat by design and must not be treated as a unique person key without human approval."]
+  },
+  "drift": {
+    "row_key_drift": ["NorthCare uses EXPORT_ID while other provider row-key headers differ."],
+    "filetype_drift": ["Dictionary describes CSV row grain, but raw files use X12-style segment envelopes with HDR field mapping."],
+    "mapping_drift": [],
+    "schema_drift": []
+  },
+  "quarantine_rules": {
+    "file_level": ["stop_pipeline when X12-like envelope is malformed or missing HDR", "stop_pipeline when parser family is unsupported"],
+    "row_level": ["quarantine_data when EXPORT_ID is missing", "warn when optional membership date fields are blank"]
+  },
+  "qa_expectations": {
+    "unit_data_tests": ["parse synthetic patient X12-like fixture"],
+    "integration_tests": ["resolve patient text file patterns when local source data is present"],
+    "schema_tests": ["validate required provider spec sections and parser profile"],
+    "data_quality_tests": ["verify EXPORT_ID row-key presence"],
+    "reconciliation_tests": ["match dictionary headers to YAML mappings and HDR positions"]
+  },
+  "human_review": {
+    "required": true,
+    "reasons": ["PII classification requires governance review", "PT_001_ID repeat behavior requires relationship review before Silver semantics"]
+  },
+  "readiness": {"adapter_ready": true, "blocked_reason": ""}
+}

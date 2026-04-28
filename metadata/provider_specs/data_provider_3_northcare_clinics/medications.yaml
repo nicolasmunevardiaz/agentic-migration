@@ -1,0 +1,39 @@
+{
+  "spec_version": "0.1",
+  "provider": {"provider_name": "NorthCare Clinics", "provider_slug": "data_provider_3_northcare_clinics", "provider_folder": "data_provider_3_northcare_clinics", "source_type": "clinical_provider", "upload_partition": "year=2025"},
+  "source": {"entity": "medications", "filetype": "x12", "file_extension": "txt", "expected_file_patterns": ["data_500k/data_provider_3_northcare_clinics/year=2025/medications/medications_*.txt"], "column_dictionary_path": "data_500k/data_provider_3_northcare_clinics/year=2025/column_dictionary.md"},
+  "parser_profile": {
+    "parser_family": "x12_segment_envelope",
+    "parser_options": {
+      "segment_terminator": "~",
+      "element_separator": "*",
+      "comment_prefix": "#",
+      "header_segment": "HDR",
+      "entity_segment": "SV1",
+      "field_paths": {"EXPORT_ID": "segment[1]", "RX_ROW_KEY": "segment[2]", "MED_KEY": "segment[3]", "PT_REF": "segment[4]", "APPT_REF": "segment[5]", "PARENT_CND": "segment[6]", "MED_PRODUCT_NM": "segment[7]", "MED_PRICE": "segment[8]", "ORD_DT_RAW": "segment[9]", "REC_STS": "segment[10]"}
+    },
+    "source_row_key": "EXPORT_ID",
+    "canonical_row_key": "ROW_ID",
+    "record_grain": "one medication order per X12-like SV1 segment"
+  },
+  "mapping": {
+    "fields": [
+      {"source_header": "EXPORT_ID", "canonical_name": "ROW_ID", "description": "Unique id per X12-like segment row; not the business member key.", "inferred_type": "string", "pii_signal": false, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": false, "review_reason": ""},
+      {"source_header": "RX_ROW_KEY", "canonical_name": "MED_OCC_KEY", "description": "Unique medication order occurrence id.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Medication occurrence identifier is linkable PHI."},
+      {"source_header": "MED_KEY", "canonical_name": "MED_ID", "description": "Catalog medication id.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Medication code requires governance review."},
+      {"source_header": "PT_REF", "canonical_name": "PT_001_ID", "description": "Member reference used as patient foreign-key hint.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Member identifier and relationship behavior require review."},
+      {"source_header": "APPT_REF", "canonical_name": "APPT_REF", "description": "Appointment reference.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Encounter relationship identifier is linkable PHI."},
+      {"source_header": "PARENT_CND", "canonical_name": "CND_REF", "description": "Parent condition row reference.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Condition relationship identifier is linkable PHI."},
+      {"source_header": "MED_PRODUCT_NM", "canonical_name": "MED_DESC", "description": "Medication description.", "inferred_type": "string", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Medication description is clinical PHI."},
+      {"source_header": "MED_PRICE", "canonical_name": "MED_UNIT_PRICE", "description": "Billed unit price.", "inferred_type": "decimal", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Financial signal requires governance review."},
+      {"source_header": "ORD_DT_RAW", "canonical_name": "ORD_DT_RAW", "description": "Medication order date.", "inferred_type": "date", "pii_signal": true, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": true, "review_reason": "Clinical order date is PHI."},
+      {"source_header": "REC_STS", "canonical_name": "REC_STS", "description": "Legacy clinical status code.", "inferred_type": "string", "pii_signal": false, "required_for_bronze": true, "required_for_silver": false, "needs_human_review": false, "review_reason": ""}
+    ]
+  },
+  "relationships": {"primary_key_candidates": ["EXPORT_ID", "RX_ROW_KEY"], "foreign_key_hints": [{"source_header": "PT_REF", "references_entity": "patients", "references_header": "PT_001_ID"}, {"source_header": "APPT_REF", "references_entity": "encounters", "references_header": "APPT_KEY"}, {"source_header": "PARENT_CND", "references_entity": "conditions", "references_header": "CND_KEY"}], "relationship_risks": ["Medication links to patient, appointment, and condition require reconciliation before Silver joins."]},
+  "drift": {"row_key_drift": ["NorthCare uses EXPORT_ID while other provider row-key headers differ."], "filetype_drift": ["Dictionary describes CSV row grain, but raw files use X12-style segment envelopes with HDR field mapping."], "mapping_drift": [], "schema_drift": []},
+  "quarantine_rules": {"file_level": ["stop_pipeline when X12-like envelope is malformed or missing HDR", "stop_pipeline when parser family is unsupported"], "row_level": ["quarantine_data when EXPORT_ID is missing", "warn when PARENT_CND relationship cannot be reconciled later"]},
+  "qa_expectations": {"unit_data_tests": ["parse synthetic medication X12-like fixture"], "integration_tests": ["resolve medication text file patterns when local source data is present"], "schema_tests": ["validate required provider spec sections and parser profile"], "data_quality_tests": ["verify EXPORT_ID row-key presence"], "reconciliation_tests": ["match dictionary headers to YAML mappings and HDR positions"]},
+  "human_review": {"required": true, "reasons": ["PII/PHI classification requires governance review", "Medication price and relationship hints require review before Silver semantics"]},
+  "readiness": {"adapter_ready": true, "blocked_reason": ""}
+}
