@@ -30,3 +30,5 @@ artifacts/**
 *.tmp
 tmp/
 temp/
+codex.png
+spike.md
