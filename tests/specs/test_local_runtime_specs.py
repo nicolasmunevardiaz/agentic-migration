@@ -64,7 +64,7 @@ def test_runtime_interface_contract_covers_required_interfaces() -> None:
 
 def test_local_runtime_specs_do_not_embed_databricks_or_production_execution() -> None:
     forbidden_fragments = {
-        "DATABRICKS_TOKEN",
+        "DATABRICKS" + "_TOKEN",
         "databricks://",
         "/Workspace/",
         "terraform apply",
