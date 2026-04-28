@@ -1,0 +1,21 @@
+# format=fhir+json
+{
+  "resourceType": "Bundle",
+  "type": "searchset",
+  "total": 1,
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Condition",
+        "id": "dw-condition-001",
+        "identifier[0].value": "condition-occurrence-alpha",
+        "code.coding[0].code": "condition-catalog-alpha",
+        "patient.reference": "member-alpha",
+        "context.reference": "contact-alpha",
+        "code.coding[0].display": "DX-SYNTHETIC",
+        "code.text": "synthetic condition description",
+        "clinicalStatus": "1"
+      }
+    }
+  ]
+}

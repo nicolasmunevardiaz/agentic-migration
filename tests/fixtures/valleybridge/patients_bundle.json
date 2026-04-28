@@ -1,0 +1,23 @@
+# format=fhir+json
+{
+  "resourceType": "Bundle",
+  "type": "searchset",
+  "total": 1,
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "dw-patient-001",
+        "identifier[0].value": "member-alpha",
+        "identifier[1].value": "synthetic-tax-id",
+        "name[0].given[0]": "synthetic-given",
+        "name[0].family": "synthetic-family",
+        "gender": "U",
+        "birthDate": "1980-01-01",
+        "period.start": "2025-01-01",
+        "period.end": "",
+        "active": "1"
+      }
+    }
+  ]
+}

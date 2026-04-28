@@ -1,0 +1,19 @@
+# format=fhir+json
+{
+  "resourceType": "Bundle",
+  "type": "searchset",
+  "total": 1,
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "dw-encounter-001",
+        "identifier[0].value": "contact-alpha",
+        "patient.reference": "member-alpha",
+        "period.start": "2025-02-01",
+        "COVERAGE_STATUS": "COVERED",
+        "status": "1"
+      }
+    }
+  ]
+}
