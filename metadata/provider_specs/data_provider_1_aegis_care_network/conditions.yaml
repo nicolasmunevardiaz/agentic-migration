@@ -1,0 +1,148 @@
+spec_version: 0.1
+provider:
+  provider_name: "Aegis Care Network"
+  provider_slug: "data_provider_1_aegis_care_network"
+  provider_folder: "data_500k/data_provider_1_aegis_care_network"
+  source_type: "clinical_provider"
+  upload_partition: "year=2025"
+source:
+  entity: "conditions"
+  filetype: "fhir_r4"
+  file_extension: "json"
+  expected_file_patterns:
+    - "data_500k/data_provider_1_aegis_care_network/year=2025/conditions/conditions_*.json"
+  column_dictionary_path: "data_500k/data_provider_1_aegis_care_network/year=2025/column_dictionary.md"
+parser_profile:
+  parser_family: "fhir_r4_bundle"
+  parser_options:
+    bundle_entry_path: "entry[].resource"
+    resource_type: "Condition"
+    field_paths:
+      SRC_ROW: "id"
+      CND_KEY: "identifier[0].value"
+      CND_SRC_ID: "code.coding[0].code"
+      PT_001_ID: "subject.reference"
+      APPT_REF: "encounter.reference"
+      ICD_HINT: "code.coding[0].code"
+      DX_DESCR: "code.text"
+      REC_STS: "clinicalStatus.coding[0].code"
+  source_row_key: "SRC_ROW"
+  canonical_row_key: "ROW_ID"
+  record_grain: "one condition occurrence per bundle entry"
+mapping:
+  fields:
+    - source_header: "SRC_ROW"
+      canonical_name: "ROW_ID"
+      description: "Unique source row identifier represented by the FHIR resource id."
+      inferred_type: "string"
+      pii_signal: false
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: false
+      review_reason: ""
+    - source_header: "CND_KEY"
+      canonical_name: "CND_KEY"
+      description: "Unique condition occurrence identifier."
+      inferred_type: "string"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Clinical occurrence identifiers are PHI-bearing linkage keys."
+    - source_header: "CND_SRC_ID"
+      canonical_name: "CND_ID"
+      description: "Catalog condition identifier."
+      inferred_type: "string"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Clinical coding semantics require human approval."
+    - source_header: "PT_001_ID"
+      canonical_name: "PT_001_ID"
+      description: "Member reference for the condition."
+      inferred_type: "string"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Patient reference is PHI-bearing and may not be globally unique."
+    - source_header: "APPT_REF"
+      canonical_name: "APPT_REF"
+      description: "Appointment reference for the condition."
+      inferred_type: "string"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Encounter linkage can break by design and requires reconciliation."
+    - source_header: "ICD_HINT"
+      canonical_name: "ICD_HINT"
+      description: "ICD-like condition hint."
+      inferred_type: "string"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Clinical code interpretation is not approved in provider discovery."
+    - source_header: "DX_DESCR"
+      canonical_name: "CND_DESC"
+      description: "Human-readable condition text."
+      inferred_type: "string"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Clinical description is PHI-bearing and needs semantic approval."
+    - source_header: "REC_STS"
+      canonical_name: "REC_STS"
+      description: "Legacy clinical status represented by FHIR clinicalStatus."
+      inferred_type: "string"
+      pii_signal: false
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Dictionary lists legacy 0/1/X/Z mix while FHIR exposes clinical status."
+relationships:
+  primary_key_candidates:
+    - "SRC_ROW"
+    - "CND_KEY"
+  foreign_key_hints:
+    - "PT_001_ID references patients.PT_001_ID."
+    - "APPT_REF references encounters.APPT_KEY."
+  relationship_risks:
+    - "Encounter references may not resolve for all rows and require reconciliation."
+drift:
+  row_key_drift:
+    - "Aegis uses SRC_ROW as logical row key and FHIR resource id as extraction path."
+  filetype_drift:
+    - "Condition files are FHIR bundle JSON."
+  mapping_drift:
+    - "CND_SRC_ID and ICD_HINT both map to code.coding[0].code and need semantic review."
+  schema_drift: []
+quarantine_rules:
+  file_level:
+    - "stop_pipeline when bundle JSON cannot be parsed or resourceType is not Bundle."
+    - "stop_pipeline when expected Condition entries are absent."
+  row_level:
+    - "quarantine_data when SRC_ROW, CND_KEY, PT_001_ID, or APPT_REF is missing."
+    - "warn when clinical code text is missing but code is present."
+qa_expectations:
+  unit_data_tests:
+    - "Validate Condition bundle resource paths for all dictionary headers."
+  integration_tests:
+    - "Validate conditions_*.json file pattern resolves local source files."
+  schema_tests:
+    - "Validate provider spec required keys and parser profile."
+  data_quality_tests:
+    - "Validate row key, condition key, patient reference, and encounter reference are present for sampled entries."
+  reconciliation_tests:
+    - "Validate all conditions dictionary headers are represented in mapping.fields."
+human_review:
+  required: true
+  reasons:
+    - "Clinical code semantics require HITL approval before canonical modeling."
+    - "Condition-to-encounter relationship confidence requires review."
+readiness:
+  adapter_ready: false
+  blocked_reason: "Pending HITL approval for clinical code semantics and relationship confidence."

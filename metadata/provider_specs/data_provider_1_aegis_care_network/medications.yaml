@@ -1,0 +1,169 @@
+spec_version: 0.1
+provider:
+  provider_name: "Aegis Care Network"
+  provider_slug: "data_provider_1_aegis_care_network"
+  provider_folder: "data_500k/data_provider_1_aegis_care_network"
+  source_type: "clinical_provider"
+  upload_partition: "year=2025"
+source:
+  entity: "medications"
+  filetype: "fhir_r4"
+  file_extension: "json"
+  expected_file_patterns:
+    - "data_500k/data_provider_1_aegis_care_network/year=2025/medications/medications_*.json"
+  column_dictionary_path: "data_500k/data_provider_1_aegis_care_network/year=2025/column_dictionary.md"
+parser_profile:
+  parser_family: "fhir_r4_bundle"
+  parser_options:
+    bundle_entry_path: "entry[].resource"
+    resource_type: "MedicationRequest"
+    field_paths:
+      SRC_ROW: "id"
+      RX_OCC_KEY: "identifier[0].value"
+      MED_KEY: "medicationCodeableConcept.coding[0].code"
+      PT_001_ID: "subject.reference"
+      APPT_REF: "encounter.reference"
+      LINK_CND: "reasonReference[0].reference"
+      MED_NM_TXT: "medicationCodeableConcept.text"
+      UNIT_COST: "dosageInstruction[0].doseAndRate[0].rateQuantity.value"
+      ORD_DT_RAW: "authoredOn"
+      REC_STS: "status"
+  source_row_key: "SRC_ROW"
+  canonical_row_key: "ROW_ID"
+  record_grain: "one medication order per bundle entry"
+mapping:
+  fields:
+    - source_header: "SRC_ROW"
+      canonical_name: "ROW_ID"
+      description: "Unique source row identifier represented by the FHIR resource id."
+      inferred_type: "string"
+      pii_signal: false
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: false
+      review_reason: ""
+    - source_header: "RX_OCC_KEY"
+      canonical_name: "MED_OCC_KEY"
+      description: "Unique medication order occurrence identifier."
+      inferred_type: "string"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Medication occurrence identifiers are PHI-bearing linkage keys."
+    - source_header: "MED_KEY"
+      canonical_name: "MED_ID"
+      description: "Catalog medication identifier."
+      inferred_type: "string"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Medication coding semantics require human approval."
+    - source_header: "PT_001_ID"
+      canonical_name: "PT_001_ID"
+      description: "Member reference for medication order."
+      inferred_type: "string"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Patient reference is PHI-bearing and may not be globally unique."
+    - source_header: "APPT_REF"
+      canonical_name: "APPT_REF"
+      description: "Appointment reference for medication order."
+      inferred_type: "string"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Encounter linkage can break by design and requires reconciliation."
+    - source_header: "LINK_CND"
+      canonical_name: "CND_REF"
+      description: "Condition reference for medication order."
+      inferred_type: "string"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Medication-to-condition relationship requires semantic approval."
+    - source_header: "MED_NM_TXT"
+      canonical_name: "MED_DESC"
+      description: "Medication description."
+      inferred_type: "string"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Medication text is PHI-bearing and requires approved exposure policy."
+    - source_header: "UNIT_COST"
+      canonical_name: "MED_UNIT_PRICE"
+      description: "Billed unit price for medication order."
+      inferred_type: "decimal"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Financial value requires approval before analytics use."
+    - source_header: "ORD_DT_RAW"
+      canonical_name: "ORD_DT_RAW"
+      description: "Order date."
+      inferred_type: "datetime"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: false
+      review_reason: ""
+    - source_header: "REC_STS"
+      canonical_name: "REC_STS"
+      description: "Legacy clinical status represented by FHIR medication request status."
+      inferred_type: "string"
+      pii_signal: false
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Dictionary lists legacy 0/1/X/Z mix while FHIR exposes status text."
+relationships:
+  primary_key_candidates:
+    - "SRC_ROW"
+    - "RX_OCC_KEY"
+  foreign_key_hints:
+    - "PT_001_ID references patients.PT_001_ID."
+    - "APPT_REF references encounters.APPT_KEY."
+    - "LINK_CND references conditions.CND_KEY."
+  relationship_risks:
+    - "Medication-to-condition and medication-to-encounter references require reconciliation."
+drift:
+  row_key_drift:
+    - "Aegis uses SRC_ROW as logical row key and FHIR resource id as extraction path."
+  filetype_drift:
+    - "Medication files are FHIR bundle JSON."
+  mapping_drift:
+    - "UNIT_COST is represented by a FHIR rateQuantity value and needs adapter validation."
+  schema_drift: []
+quarantine_rules:
+  file_level:
+    - "stop_pipeline when bundle JSON cannot be parsed or resourceType is not Bundle."
+    - "stop_pipeline when expected MedicationRequest entries are absent."
+  row_level:
+    - "quarantine_data when SRC_ROW, RX_OCC_KEY, MED_KEY, PT_001_ID, APPT_REF, or LINK_CND is missing."
+    - "warn when UNIT_COST is missing or cannot be parsed as decimal."
+qa_expectations:
+  unit_data_tests:
+    - "Validate MedicationRequest bundle resource paths for all dictionary headers."
+  integration_tests:
+    - "Validate medications_*.json file pattern resolves local source files."
+  schema_tests:
+    - "Validate provider spec required keys and parser profile."
+  data_quality_tests:
+    - "Validate row key, medication key, patient reference, encounter reference, and condition reference are present for sampled entries."
+  reconciliation_tests:
+    - "Validate all medications dictionary headers are represented in mapping.fields."
+human_review:
+  required: true
+  reasons:
+    - "Medication code and text semantics require HITL approval before canonical modeling."
+    - "Financial medication unit cost requires approved governance handling."
+readiness:
+  adapter_ready: false
+  blocked_reason: "Pending HITL approval for medication semantics, financial value handling, and relationship confidence."

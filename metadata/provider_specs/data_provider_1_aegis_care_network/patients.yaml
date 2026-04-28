@@ -1,0 +1,167 @@
+spec_version: 0.1
+provider:
+  provider_name: "Aegis Care Network"
+  provider_slug: "data_provider_1_aegis_care_network"
+  provider_folder: "data_500k/data_provider_1_aegis_care_network"
+  source_type: "clinical_provider"
+  upload_partition: "year=2025"
+source:
+  entity: "patients"
+  filetype: "fhir_r4"
+  file_extension: "json"
+  expected_file_patterns:
+    - "data_500k/data_provider_1_aegis_care_network/year=2025/patients/patients_*.json"
+  column_dictionary_path: "data_500k/data_provider_1_aegis_care_network/year=2025/column_dictionary.md"
+parser_profile:
+  parser_family: "fhir_r4_bundle"
+  parser_options:
+    bundle_entry_path: "entry[].resource"
+    resource_type: "Patient"
+    field_paths:
+      SRC_ROW: "id"
+      PT_001_ID: "identifier[0].value"
+      FIRST_NAME: "name[0].given[0]"
+      LAST_NAME: "name[0].family"
+      SSN: "identifier[1].value"
+      GDR_CD: "gender"
+      BDT_VAL: "birthDate"
+      INIT_DT_RAW: "period.start"
+      END_DT_RAW: "period.end"
+      REC_STS: "active"
+  source_row_key: "SRC_ROW"
+  canonical_row_key: "ROW_ID"
+  record_grain: "one membership transaction event per bundle entry"
+mapping:
+  fields:
+    - source_header: "SRC_ROW"
+      canonical_name: "ROW_ID"
+      description: "Unique source row identifier represented by the FHIR resource id."
+      inferred_type: "string"
+      pii_signal: false
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: false
+      review_reason: ""
+    - source_header: "PT_001_ID"
+      canonical_name: "PT_001_ID"
+      description: "Member identifier used by related clinical entities; may intentionally duplicate."
+      inferred_type: "string"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Member ids may be shared by design and must not be treated as enterprise identity."
+    - source_header: "FIRST_NAME"
+      canonical_name: "PT_FIRST_NM"
+      description: "Member given name."
+      inferred_type: "string"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Direct PII requires masking and approval before downstream exposure."
+    - source_header: "LAST_NAME"
+      canonical_name: "PT_LAST_NM"
+      description: "Member surname."
+      inferred_type: "string"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Direct PII requires masking and approval before downstream exposure."
+    - source_header: "SSN"
+      canonical_name: "SSN_VAL"
+      description: "Social Security Number or Tax ID."
+      inferred_type: "string"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Sensitive direct identifier requires explicit redaction policy."
+    - source_header: "GDR_CD"
+      canonical_name: "GDR_CD"
+      description: "Gender code from source domain."
+      inferred_type: "string"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Demographic PHI classification requires human confirmation."
+    - source_header: "BDT_VAL"
+      canonical_name: "BDT_VAL"
+      description: "Birth date."
+      inferred_type: "date"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Birth date is identifying PHI and needs approval for use."
+    - source_header: "INIT_DT_RAW"
+      canonical_name: "INIT_DT_RAW"
+      description: "Ingress or event start date."
+      inferred_type: "date"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: false
+      review_reason: ""
+    - source_header: "END_DT_RAW"
+      canonical_name: "END_DT_RAW"
+      description: "Retirement or exit date when present."
+      inferred_type: "date"
+      pii_signal: true
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: false
+      review_reason: ""
+    - source_header: "REC_STS"
+      canonical_name: "REC_STS"
+      description: "Legacy membership status represented by FHIR active."
+      inferred_type: "boolean"
+      pii_signal: false
+      required_for_bronze: true
+      required_for_silver: false
+      needs_human_review: true
+      review_reason: "Dictionary describes 1/0 status while bundle exposes active boolean."
+relationships:
+  primary_key_candidates:
+    - "SRC_ROW"
+  foreign_key_hints:
+    - "PT_001_ID is referenced by encounters, conditions, medications, and observations."
+  relationship_risks:
+    - "PT_001_ID may be shared by design and must not be assumed unique."
+drift:
+  row_key_drift:
+    - "Aegis uses SRC_ROW as the dictionary row key and FHIR resource id as the extraction path."
+  filetype_drift:
+    - "Dictionary calls the export fhir_r4 json; files are JSON bundles with entry[].resource."
+  mapping_drift:
+    - "REC_STS maps to active boolean and requires adapter normalization."
+  schema_drift: []
+quarantine_rules:
+  file_level:
+    - "stop_pipeline when bundle JSON cannot be parsed or resourceType is not Bundle."
+    - "stop_pipeline when expected Patient entries are absent."
+  row_level:
+    - "quarantine_data when SRC_ROW, PT_001_ID, or REC_STS is missing."
+    - "warn when END_DT_RAW is missing on ingress rows."
+qa_expectations:
+  unit_data_tests:
+    - "Validate Patient bundle resource paths for all dictionary headers."
+  integration_tests:
+    - "Validate patients_*.json file pattern resolves local source files."
+  schema_tests:
+    - "Validate provider spec required keys and parser profile."
+  data_quality_tests:
+    - "Validate row key and member id are present for sampled entries without exposing values."
+  reconciliation_tests:
+    - "Validate all patients dictionary headers are represented in mapping.fields."
+human_review:
+  required: true
+  reasons:
+    - "Direct PII fields require masking and downstream exposure approval."
+    - "REC_STS boolean normalization must be approved before adapter implementation."
+    - "Shared member identifiers must not be interpreted as unique enterprise identity."
+readiness:
+  adapter_ready: false
+  blocked_reason: "Pending HITL approval for PII handling and REC_STS normalization."

@@ -62,3 +62,26 @@ def test_local_and_secret_files_are_not_tracked() -> None:
             violations.append(path)
 
     assert violations == []
+
+
+def test_dependabot_is_not_configured() -> None:
+    assert not (REPO_ROOT / ".github" / "dependabot.yml").exists()
+
+
+def test_issue_templates_exist() -> None:
+    required_templates = [
+        ".github/ISSUE_TEMPLATE/task.yml",
+        ".github/ISSUE_TEMPLATE/hitl-decision.yml",
+    ]
+
+    missing = [path for path in required_templates if not (REPO_ROOT / path).exists()]
+
+    assert missing == []
+
+
+def test_contributing_documents_minimal_governance() -> None:
+    contributing = (REPO_ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
+
+    assert "`main` is the only long-lived branch" in contributing
+    assert "Conventional Commits" in contributing
+    assert "chore: remove dependabot config" in contributing

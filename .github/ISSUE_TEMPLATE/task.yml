@@ -1,0 +1,58 @@
+name: AgentOps task
+description: Track implementation, documentation, CI, spec, adapter, or Databricks planning work.
+title: "[Task]: "
+labels:
+  - area:governance
+body:
+  - type: input
+    id: scope
+    attributes:
+      label: Scope
+      description: Short workstream or component name.
+      placeholder: provider specs, CI, adapter, Databricks readiness
+    validations:
+      required: true
+  - type: dropdown
+    id: provider
+    attributes:
+      label: Provider
+      options:
+        - all
+        - data_provider_1_aegis_care_network
+        - data_provider_2_bluestone_health
+        - data_provider_3_northcare_clinics
+        - data_provider_4_valleybridge_medical
+        - data_provider_5_pacific_shield_insurance
+        - not provider-specific
+    validations:
+      required: true
+  - type: textarea
+    id: task
+    attributes:
+      label: Task
+      description: What should change?
+    validations:
+      required: true
+  - type: textarea
+    id: definition_of_done
+    attributes:
+      label: Definition of done
+      description: Observable completion criteria.
+      placeholder: Files updated, evidence produced, tests passing, PR ready.
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Expected validation
+      description: Commands, CI checks, or evidence paths expected for this work.
+      placeholder: uv run pytest; uv run ruff check; reports/qa/...
+    validations:
+      required: true
+  - type: textarea
+    id: risk
+    attributes:
+      label: Risks or HITL needs
+      description: Note PII/PHI, Databricks, Terraform, mappings, dependencies, or unknowns.
+    validations:
+      required: false

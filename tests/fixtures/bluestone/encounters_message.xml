@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HL7Messages xmlns="urn:hl7-org:v2xml">
+  <SIU_S12>
+    <MSH.10>line-encounter-001</MSH.10>
+    <SCH.1>visit-alpha</SCH.1>
+    <PID.3>member-alpha</PID.3>
+    <SCH.11>2025-02-03</SCH.11>
+    <COVERAGE_STATUS>COVERED</COVERAGE_STATUS>
+    <SCH.25>1</SCH.25>
+  </SIU_S12>
+</HL7Messages>

@@ -1,0 +1,72 @@
+name: HITL decision
+description: Record a human decision for mappings, PII/PHI, Databricks, types, or quarantine behavior.
+title: "[HITL]: "
+labels:
+  - risk:hitl
+body:
+  - type: dropdown
+    id: decision_type
+    attributes:
+      label: Decision type
+      options:
+        - source coverage
+        - field mapping
+        - ambiguous type
+        - identifier handling
+        - PII/PHI classification
+        - quarantine rule
+        - Silver contract
+        - Databricks validation
+        - other governance decision
+    validations:
+      required: true
+  - type: dropdown
+    id: provider
+    attributes:
+      label: Provider
+      options:
+        - all
+        - data_provider_1_aegis_care_network
+        - data_provider_2_bluestone_health
+        - data_provider_3_northcare_clinics
+        - data_provider_4_valleybridge_medical
+        - data_provider_5_pacific_shield_insurance
+        - not provider-specific
+    validations:
+      required: true
+  - type: input
+    id: entity
+    attributes:
+      label: Entity or table
+      placeholder: patients, encounters, observations, all
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What evidence or uncertainty requires a human decision?
+    validations:
+      required: true
+  - type: textarea
+    id: options
+    attributes:
+      label: Options considered
+      description: List the practical options and tradeoffs.
+    validations:
+      required: true
+  - type: textarea
+    id: decision
+    attributes:
+      label: Decision
+      description: Final human decision, owner, date, and next action.
+      placeholder: Owner, decision, date, evidence path, next action.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence paths
+      description: Link files under reports/, metadata/, tests/, logs/, or PR evidence.
+    validations:
+      required: true
