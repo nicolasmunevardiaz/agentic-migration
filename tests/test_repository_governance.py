@@ -25,10 +25,12 @@ def test_agentops_required_paths_exist() -> None:
         "metadata/model_specs/silver",
         "metadata/model_specs/mappings",
         "metadata/deployment_specs/databricks",
+        "metadata/runtime_specs/local",
         "reports/qa",
         "reports/privacy",
         "reports/hitl",
         "logs",
+        "logs/local_runtime",
         "src/adapters",
         "src/common",
         "src/handlers",
@@ -161,3 +163,22 @@ def test_agentic_rollout_invokes_drift_decision_gate() -> None:
     assert "drift-decision-resolver" in rollout
     assert "canonical_drift_decision_runbook.md" in rollout
     assert "Do not generate Bronze/Silver model specs" in rollout
+
+
+def test_local_runtime_stage_is_registered() -> None:
+    rollout = (REPO_ROOT / "docs" / "agentic_rollout.md").read_text(encoding="utf-8")
+    strategy = (REPO_ROOT / "docs" / "agentops_skill_strategy.md").read_text(
+        encoding="utf-8"
+    )
+    prd = (
+        REPO_ROOT / "docs" / "technical_prd_agentops_operating_spec.md"
+    ).read_text(encoding="utf-8")
+
+    assert (REPO_ROOT / "docs" / "04_local_runtime_and_contract_certification_plan.md").exists()
+    assert (REPO_ROOT / "docs" / "05_databricks_validation_and_rollout_plan.md").exists()
+    assert (
+        REPO_ROOT / ".agent" / "skills" / "local-runtime-harness-planner" / "SKILL.md"
+    ).exists()
+    assert "local-runtime-harness-planner" in rollout
+    assert "local-runtime-harness-planner" in strategy
+    assert "Local Runtime Certification Plane" in prd

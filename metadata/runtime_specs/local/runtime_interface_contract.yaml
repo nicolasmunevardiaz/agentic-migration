@@ -1,0 +1,55 @@
+spec_version: "0.1"
+contract_name: "local_runtime_interface_contract"
+status: "contract_defined_not_executed"
+source_of_truth:
+  - "metadata/provider_specs"
+  - "metadata/model_specs"
+  - "metadata/runtime_specs/local"
+flow:
+  - "provider_parser"
+  - "bronze_writer"
+  - "canonical_mapper"
+  - "silver_writer"
+  - "quarantine_writer"
+  - "qa_evidence_writer"
+  - "lineage_emitter"
+  - "runtime_adapter"
+interfaces:
+  provider_parser:
+    input_contract: "provider_entity_profile"
+    output_contract: "source_records_with_values_by_header_and_canonical"
+    required_trace_fields: ["provider", "entity", "source_file", "source_checksum", "source_row_reference"]
+  bronze_writer:
+    input_contract: "source_records"
+    output_contract: "bronze_records_with_raw_payload_and_lineage"
+    required_trace_fields: ["ingestion_run", "schema_version", "spec_version", "adapter_version"]
+  canonical_mapper:
+    input_contract: "bronze_records_and_provider_to_silver_matrix"
+    output_contract: "canonical_records_or_quarantine_decisions"
+    required_trace_fields: ["source_field", "canonical_field", "mapping_confidence", "hitl_decision"]
+  silver_writer:
+    input_contract: "canonical_records_and_silver_entity_specs"
+    output_contract: "silver_records"
+    required_trace_fields: ["silver_entity", "silver_schema_version", "source_row_reference"]
+  quarantine_writer:
+    input_contract: "invalid_files_or_rows"
+    output_contract: "quarantine_records"
+    required_trace_fields: ["decision", "failure_reason", "evidence_path"]
+  qa_evidence_writer:
+    input_contract: "validation_results"
+    output_contract: "qa_evidence_records"
+    required_trace_fields: ["test_name", "family", "stage", "expected_value", "observed_value", "decision"]
+  lineage_emitter:
+    input_contract: "runtime_events"
+    output_contract: "local_lineage_evidence_shape"
+    required_trace_fields: ["source_dataset", "target_dataset", "job_name", "run_id", "runtime_profile"]
+  runtime_adapter:
+    input_contract: "runtime_profile_and_interface_contract"
+    output_contract: "runtime_execution_plan"
+    required_trace_fields: ["profile_name", "runtime_name", "execution_mode", "dependency_approval_status"]
+local_certification_rules:
+  - "Adapters must consume contracts instead of hardcoding provider or runtime assumptions."
+  - "Local runtime output paths must stay under artifacts/."
+  - "Local evidence may use local_validated but must not use databricks_certified."
+  - "Local runtime contracts must not contain Unity Catalog targets, Databricks tokens, or workspace paths."
+  - "Dependency installation remains blocked until HITL approval exists."

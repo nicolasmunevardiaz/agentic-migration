@@ -2,9 +2,9 @@
 
 ## Goal
 
-Prepare approved Databricks and Unity Catalog validation for Raw/Bronze to Silver migration outputs. This plan defines how reviewed specs, adapter artifacts, QA evidence, and governance controls become a Databricks-ready validation package.
+Prepare approved Databricks and Unity Catalog validation for Raw/Bronze to Silver migration outputs after local runtime certification is complete. This plan defines how reviewed specs, adapter artifacts, local certification evidence, QA evidence, and governance controls become a Databricks-ready validation package.
 
-This plan covers validation and rollout planning only. It must not apply Terraform, deploy bundles, create cloud resources, run production jobs, promote beyond Silver, or execute full-volume data without explicit Human in the Loop approval.
+This plan covers Databricks validation and rollout planning only. It must not discover provider behavior, design the canonical model, build the local runtime harness, apply Terraform, deploy bundles, create cloud resources, run production jobs, promote beyond Silver, or execute full-volume data without explicit Human in the Loop approval.
 
 ## Required Skills
 
@@ -12,11 +12,11 @@ Use `databricks-rollout-planner` as the primary rollout planning skill. Use `qa-
 
 ## Definition Of Ready
 
-Provider specs, canonical model specs, adapter readiness report, generated adapter artifacts, spec tests, adapter tests, QA evidence contract, and privacy review findings are available. GitHub CI has passed local/static validation. Human approval exists for Databricks validation execution.
+Provider specs, canonical model specs, adapter readiness report, generated adapter artifacts, local runtime specs, local runtime certification report, spec tests, adapter tests, QA evidence contract, and privacy review findings are available. GitHub CI has passed local/static validation. Human approval exists for Databricks validation execution.
 
 ## Inputs
 
-Read model specs, deployment templates, adapter readiness output, QA evidence expectations, privacy review output, Unity Catalog target assumptions, Databricks environment constraints, and the Technical PRD. Use Databricks as the runtime for representative data validation only after GitHub CI and human approval.
+Read model specs, local runtime specs, deployment templates, adapter readiness output, QA evidence expectations, local certification evidence, privacy review output, Unity Catalog target assumptions, Databricks environment constraints, and the Technical PRD. Use Databricks as the runtime for representative data validation only after local certification, GitHub CI, and human approval.
 
 ## Filesystem Contract
 
@@ -28,7 +28,7 @@ Append concise technical entries to `logs/databricks_rollout/rollout_readiness.m
 
 ## Expected Outputs
 
-Create Databricks deployment specs under `metadata/deployment_specs/databricks/*.yaml`, a Databricks validation plan, a QA evidence contract, a Unity Catalog governance checklist, and a HITL approval record. Deployment specs may reference Databricks Asset Bundles, Lakeflow/DLT, dlt-meta, workflows, jobs, governed storage locations, quarantine outputs, manifests, and QA evidence tables, but execution remains approval-gated.
+Create Databricks deployment specs under `metadata/deployment_specs/databricks/*.yaml`, a Databricks validation plan, a QA evidence contract, a Unity Catalog governance checklist, and a HITL approval record. Deployment specs may reference Databricks Asset Bundles, Lakeflow/DLT, dlt-meta, workflows, jobs, governed storage locations, quarantine outputs, manifests, and QA evidence tables, but execution remains approval-gated. Deployment specs must consume the runtime-neutral contracts certified by plan 04 instead of redefining provider, canonical, or Silver semantics.
 
 ## Python And Implementation Standards
 
@@ -36,7 +36,7 @@ Any Python support code must be English-only, idiomatic, and executed through `u
 
 ## QA Gates
 
-Deployment planning must be protected by deployment schema tests, Databricks readiness checks, reconciliation planning, lineage validation planning, permissions validation, and regression tests over deployment specs. Tests should validate approved model references, Unity Catalog catalog/schema/table targets, governed locations, no local absolute paths, no production execution without approval, coherent Lakeflow/DLT or dlt-meta references when used, QA evidence destinations, and explicit rollback or rerun expectations.
+Deployment planning must be protected by deployment schema tests, Databricks readiness checks, local certification reference checks, reconciliation planning, lineage validation planning, permissions validation, and regression tests over deployment specs. Tests should validate approved model references, approved local runtime evidence references, Unity Catalog catalog/schema/table targets, governed locations, no local absolute paths, no production execution without approval, coherent Lakeflow/DLT or dlt-meta references when used, QA evidence destinations, and explicit rollback or rerun expectations.
 
 Expected local commands are `uv run pytest tests/specs/test_deployment_specs.py`, `uv run pytest tests/specs/test_qa_evidence_specs.py`, `uv run pytest tests/specs/test_spec_chain_system.py`, and `uv run ruff check`. Databricks runtime checks must be executed only by an approved workflow or approved operator action.
 
@@ -50,4 +50,4 @@ Human approval is required for Databricks validation execution, Unity Catalog ta
 
 ## Definition Of Done
 
-The plan is done when deployment specs, QA evidence expectations, Unity Catalog governance checklist, readiness checks, and HITL approvals are prepared and reviewable. Databricks validation may proceed only through approved dev or validation workflows. Production promotion and post-Silver delivery remain out of scope.
+The plan is done when deployment specs, QA evidence expectations, Unity Catalog governance checklist, local-certification references, readiness checks, and HITL approvals are prepared and reviewable. Databricks validation may proceed only through approved dev or validation workflows. Production promotion and post-Silver delivery remain out of scope.
