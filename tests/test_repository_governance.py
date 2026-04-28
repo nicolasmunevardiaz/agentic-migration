@@ -98,3 +98,13 @@ def test_drift_reports_are_human_readable() -> None:
         assert "## How To Read This" in content
         assert "## Reader Glossary" in content
         assert "HITL" in content
+
+
+def test_fixture_directory_is_documented() -> None:
+    readme = REPO_ROOT / "tests" / "fixtures" / "README.md"
+    content = readme.read_text(encoding="utf-8")
+
+    assert "synthetic source files" in content
+    assert "Aegis" in content
+    assert "BlueStone" in content
+    assert "Do not copy real records" in content
