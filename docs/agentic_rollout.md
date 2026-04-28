@@ -4,7 +4,7 @@
 
 This document contains plug-and-play prompts for the manual AgentOps rollout from provider profiling to Databricks rollout. The manual sequence is the reference path that will later be automated.
 
-Every prompt must follow `docs/technical_prd_agentops_operating_spec.md`, `docs/agentops_filesystem_conventions.md`, `.agent/spec_templates/`, and the active plan document. Agents must respect `drift-decision-resolver`, `hitl-escalation-controller`, `privacy-governance-reviewer`, and `repo-governance-auditor` when those controls apply to the active stage.
+Every prompt must follow `docs/technical_prd_agentops_operating_spec.md`, `docs/agentops_filesystem_conventions.md`, `docs/healthcare_source_standards_reference.md`, `.agent/spec_templates/`, and the active plan document. Agents must respect `drift-decision-resolver`, `hitl-escalation-controller`, `privacy-governance-reviewer`, and `repo-governance-auditor` when those controls apply to the active stage.
 
 ## Global Prerequisites
 
