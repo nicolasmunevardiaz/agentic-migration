@@ -40,14 +40,17 @@ def resolve_aegis_resource_path(resource: dict[str, Any], path: str) -> Any:
         return resource[path]
 
     current: Any = resource
-    for part in path.split("."):
-        if "[" in part:
-            name, index_text = part.split("[", 1)
-            index = int(index_text.rstrip("]"))
-            current = current[name][index]
-        else:
-            current = current[part]
-    return current
+    try:
+        for part in path.split("."):
+            if "[" in part:
+                name, index_text = part.split("[", 1)
+                index = int(index_text.rstrip("]"))
+                current = current[name][index]
+            else:
+                current = current[part]
+        return current
+    except (KeyError, IndexError, TypeError, ValueError) as error:
+        raise AegisParseError(f"Missing declared Aegis resource path: {path}") from error
 
 
 def parse_aegis_entity_file(
@@ -69,7 +72,10 @@ def parse_aegis_bundle_with_spec(
     if parser_profile["parser_family"] != "fhir_r4_bundle":
         raise AegisParseError("Aegis parser only supports fhir_r4_bundle specs")
 
-    bundle = json.loads(source_file.read_text())
+    try:
+        bundle = json.loads(source_file.read_text())
+    except json.JSONDecodeError as error:
+        raise AegisParseError(f"Malformed Aegis FHIR bundle JSON in {source_file}") from error
     if bundle.get("resourceType") != "Bundle":
         raise AegisParseError(f"Expected FHIR Bundle in {source_file}")
 

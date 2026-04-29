@@ -11,7 +11,7 @@
         "subject.reference": "Patient/member-1",
         "encounter.reference": "Encounter/encounter-1",
         "effectiveDateTime": "2025-01-01T00:00:00",
-        "valueString": "{\"heart_rate\": 72}",
+        "valueString": "{\"heart_rate\":72,\"height_cm\":170,\"weight_kg\":70,\"blood_pressure\":{\"systolic\":120,\"diastolic\":80}}",
         "status": "final"
       }
     }

@@ -1,0 +1,19 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "total": 1,
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Condition",
+        "id": "row-condition-1",
+        "identifier[0].value": "condition-1",
+        "code.coding[0].code": "condition-code-1",
+        "subject.reference": "Patient/member-1",
+        "encounter.reference": "Encounter/encounter-1",
+        "code.text": "synthetic condition description",
+        "clinicalStatus.coding[0].code": "active"
+      }
+    }
+  ]
+}
