@@ -190,7 +190,7 @@ def test_model_specs_do_not_introduce_forbidden_scope_or_sensitive_examples() ->
 def test_model_evolution_snapshots_are_complete_and_local_only() -> None:
     snapshots = sorted(path for path in EVOLUTION_ROOT.glob("V0_*") if path.is_dir())
 
-    assert [path.name for path in snapshots] == ["V0_1"]
+    assert [path.name for path in snapshots] == ["V0_1", "V0_2"]
 
     for snapshot_dir in snapshots:
         snapshot = load_yaml(snapshot_dir / "model_snapshot.yaml")
@@ -200,7 +200,10 @@ def test_model_evolution_snapshots_are_complete_and_local_only() -> None:
 
         assert snapshot["artifact"] == "model_evolution_snapshot"
         assert snapshot["snapshot_id"] == snapshot_dir.name
-        assert snapshot["plan_id"] == "04_5_local_data_workbench_and_drift_resolution_plan"
+        assert snapshot["plan_id"] in {
+            "04_5_local_data_workbench_and_drift_resolution_plan",
+            "04_5_local_data_workbench_and_model_evolution_plan",
+        }
         assert snapshot["modeling_scope"]["max_layer_count"] <= 4
         assert snapshot["ci_cd_contract"]["deploy_style"] == "full_snapshot_redeploy"
         assert snapshot["ci_cd_contract"]["compatibility_policy"] == (
@@ -221,25 +224,26 @@ def test_model_evolution_snapshots_are_complete_and_local_only() -> None:
             snapshot["guardrails"]["no_gold_schema_without_resolved_business_questions"]
             is True
         )
-        assert snapshot["iteration_packet_contract"]["status"] == (
-            "planned_required_before_next_material_iteration"
-        )
+        assert snapshot["iteration_packet_contract"]["status"] in {
+            "planned_required_before_next_material_iteration",
+            "complete",
+        }
 
         bq_registry = snapshot["business_question_registry"]
         bq_path = REPO_ROOT / bq_registry["profile_path"]
         bq_profile = load_yaml(bq_path)
         bq_checksum = hashlib.sha256(bq_path.read_bytes()).hexdigest()
 
-        assert bq_registry["version_id"] == "BQ_V0_1"
+        assert bq_registry["version_id"] == f"BQ_{snapshot_dir.name}"
         assert bq_registry["profile_sha256"] == bq_checksum
         assert bq_registry["question_count"] == len(
             bq_profile["business_question_profiles"]
         )
         assert bq_registry["field_decision_count"] == len(bq_profile["field_decisions"])
-        assert (
-            bq_registry["completion_status"]
-            == "plan_02_allowed_not_plan_04_5_complete"
-        )
+        assert bq_registry["completion_status"] in {
+            "plan_02_allowed_not_plan_04_5_complete",
+            "plan_04_5_complete_sql_answered",
+        }
         assert "tested local SQL outputs" in bq_registry["acceptance_rule"]
 
         declared_paths = [
@@ -276,6 +280,16 @@ def test_model_evolution_snapshots_are_complete_and_local_only() -> None:
         assert "DROP " not in ddl_upper
         assert "TRUNCATE " not in ddl_upper
         assert "DELETE " not in ddl_upper
+
+        if snapshot_dir.name == "V0_2":
+            assert snapshot["rollback"]["current_previous_snapshot"] == "V0_1"
+            assert snapshot["dbt_contract"]["approved_adapter"] == "dbt-postgres"
+            assert (
+                snapshot["normalization_iteration_rules"]["terminal_sql_requirement"][
+                    "status"
+                ]
+                == "satisfied"
+            )
 
 
 def test_model_evolution_iteration_packet_maps_required_feedback() -> None:
@@ -339,3 +353,35 @@ def test_model_evolution_iteration_packet_maps_required_feedback() -> None:
     }
     assert rollback["rollback_strategy"] == "redeploy_previous_complete_snapshot"
     assert "weakening tests to preserve a broken iteration" in rollback["blocked_actions"]
+
+
+def test_model_evolution_v0_2_answers_all_business_questions() -> None:
+    snapshot_dir = EVOLUTION_ROOT / "V0_2"
+    packet = load_yaml(snapshot_dir / "iteration_packet.yaml")
+    registry = load_yaml(snapshot_dir / "business_question_registry.yaml")
+    sql_evidence = load_yaml(snapshot_dir / "sql_answer_evidence.yaml")
+    dbt_manifest = load_yaml(snapshot_dir / "dbt_artifacts_manifest.yaml")
+
+    assert packet["status"] == "complete"
+    assert packet["previous_iteration_id"] == "V0_1"
+    assert packet["business_question_registry_version"] == "BQ_V0_2"
+    assert packet["business_question_progress"]["partial"] == []
+    assert packet["business_question_progress"]["unanswered"] == []
+    assert packet["business_question_progress"]["deferred_hitl"] == []
+    assert len(packet["business_question_progress"]["answered"]) == 16
+
+    assert registry["registry_version"] == "BQ_V0_2"
+    assert registry["status"] == "plan_04_5_complete_sql_answered"
+    assert registry["question_count"] == 16
+    assert registry["field_decision_count"] == 205
+    assert len(registry["question_states"]) == 16
+    assert all(item["status"] == "answered" for item in registry["question_states"])
+    assert all(
+        item["sql_output"].startswith("evidence.bq_")
+        for item in registry["question_states"]
+    )
+
+    assert sql_evidence["artifact"] == "sql_answer_evidence"
+    assert sql_evidence["iteration_id"] == "V0_2"
+    assert dbt_manifest["approved_adapter"] == "dbt-postgres"
+    assert dbt_manifest["project"] == "dbt/dbt_project.yml"

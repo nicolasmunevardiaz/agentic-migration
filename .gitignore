@@ -21,6 +21,11 @@ data_500k/
 artifacts/**
 !artifacts/.gitkeep
 
+# Local dbt runtime artifacts
+dbt/target/
+dbt/logs/
+dbt/.user.yml
+
 # Databricks local deployment state
 .databricks/
 .bundle/

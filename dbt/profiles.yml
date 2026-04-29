@@ -1,0 +1,13 @@
+agentic_migration_local:
+  target: local
+  outputs:
+    local:
+      type: postgres
+      host: "{{ env_var('PGHOST', 'localhost') }}"
+      user: "{{ env_var('PGUSER', env_var('USER', 'postgres')) }}"
+      password: "{{ env_var('PGPASSWORD', '') }}"
+      port: "{{ env_var('PGPORT', '5432') | as_number }}"
+      dbname: "{{ env_var('PGDATABASE', 'agentic_migration_local') }}"
+      schema: evidence
+      threads: 1
+      connect_timeout: 10

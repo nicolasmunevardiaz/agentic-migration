@@ -6,6 +6,7 @@ requires-python = ">=3.12"
 dependencies = [
     "dbt-core>=1.11.8",
     "dbt-duckdb>=1.10.1",
+    "dbt-postgres>=1.10.0",
     "delta-spark>=4.2.0",
     "duckdb>=1.5.2",
     "openlineage-python>=1.46.0",
