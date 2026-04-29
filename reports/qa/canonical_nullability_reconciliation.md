@@ -24,8 +24,8 @@ status: `local_validation_passed`
 | `uv run --no-sync pytest tests/specs/test_model_specs.py tests/specs/test_provider_to_silver_matrix.py tests/specs/test_spec_chain_system.py` | passed, 13 tests |
 | `uv run --no-sync pytest tests/adapters/test_aegis_adapter_runtime.py tests/adapters/test_bluestone_health_parser.py` | passed, 26 tests |
 | `uv run --no-sync pytest tests/specs` | passed, 37 tests |
-| `uv run --no-sync pytest tests/adapters` | passed, 93 tests |
-| `uv run --no-sync pytest` | passed, 144 tests |
+| `uv run --no-sync pytest tests/adapters` | passed, 97 tests |
+| `uv run --no-sync pytest` | passed, 148 tests |
 | `uv run --no-sync ruff check` | passed |
 
 ## Evidence Notes

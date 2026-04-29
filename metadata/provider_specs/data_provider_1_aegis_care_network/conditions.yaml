@@ -16,6 +16,8 @@ parser_profile:
   parser_family: "fhir_r4_bundle"
   parser_options:
     bundle_entry_path: "entry[].resource"
+    comment_prefix: "//"
+    export_trailer: "###END_OF_EXPORT###"
     resource_type: "Condition"
     field_paths:
       SRC_ROW: "id"

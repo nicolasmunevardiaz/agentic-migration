@@ -1,4 +1,5 @@
 import json
+from hashlib import sha256
 from pathlib import Path
 
 import pytest
@@ -136,24 +137,37 @@ def test_aegis_adapter_evidence_does_not_include_raw_sensitive_values() -> None:
 
 
 @pytest.mark.parametrize("entity", sorted(EXPECTED_SILVER_ENTITIES))
-def test_aegis_adapter_runs_against_local_data_500k_sample(entity: str) -> None:
-    sample_file = DATA_ROOT / entity / f"{entity}_001.json"
-    if not sample_file.exists():
-        pytest.skip("data_500k local Aegis sample is not present in this environment")
+def test_aegis_adapter_runs_against_local_data_500k_files(entity: str) -> None:
+    sample_files = sorted((DATA_ROOT / entity).glob(f"{entity}_*.json"))
+    if not sample_files:
+        pytest.skip("data_500k local Aegis dataset is not present in this environment")
 
-    result = run_aegis_adapter_for_file(
-        entity=entity,
-        source_file=sample_file,
-        ingestion_run_id="local-data-500k-sample",
-        provider_spec_root=SPEC_ROOT,
-        model_root=MODEL_ROOT,
-    )
+    assert len(sample_files) == 10
+    failures = []
+    for sample_file in sample_files:
+        try:
+            result = run_aegis_adapter_for_file(
+                entity=entity,
+                source_file=sample_file,
+                ingestion_run_id="local-data-500k-sample",
+                provider_spec_root=SPEC_ROOT,
+                model_root=MODEL_ROOT,
+            )
 
-    assert result.bronze_records
-    assert set(result.silver_rows) <= EXPECTED_SILVER_ENTITIES[entity]
-    assert set(result.silver_rows) | {
-        record.silver_entity for record in result.quarantine_records
-    } == EXPECTED_SILVER_ENTITIES[entity]
-    assert all(record.source_checksum for record in result.bronze_records)
-    assert all(record.source_lineage_ref for record in result.bronze_records)
-    assert not evidence_contains_sensitive_raw_value(result.qa_evidence)
+            assert result.bronze_records, sample_file
+            assert set(result.silver_rows) <= EXPECTED_SILVER_ENTITIES[entity], sample_file
+            assert set(result.silver_rows) | {
+                record.silver_entity for record in result.quarantine_records
+            } == EXPECTED_SILVER_ENTITIES[entity], sample_file
+            assert all(record.source_checksum for record in result.bronze_records)
+            assert all(record.source_lineage_ref for record in result.bronze_records)
+            assert not evidence_contains_sensitive_raw_value(result.qa_evidence)
+        except Exception as error:  # noqa: BLE001
+            checksum = sha256(sample_file.read_bytes()).hexdigest()
+            failures.append(
+                "provider=data_provider_1_aegis_care_network "
+                f"entity={entity} source_file={sample_file} checksum={checksum} "
+                f"error_type={type(error).__name__} decision=fail message={error}"
+            )
+
+    assert failures == []

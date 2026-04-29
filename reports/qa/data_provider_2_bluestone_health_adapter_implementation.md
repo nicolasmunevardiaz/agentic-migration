@@ -23,7 +23,9 @@ status: `local_validation_passed`
 
 - Unit data tests: parser compatibility, malformed XML rejection, missing row-key rejection, wrong message segment rejection, and source-file XML preamble handling.
 - Integration tests: handler emits Bronze and provider-filtered Silver rows from fixture files.
-- Local sample integration tests: handler runs against `data_500k/data_provider_2_bluestone_health/year=2025/<entity>/<entity>_001.xml` when the ignored local dataset is present.
+- Local data integration tests: handler runs against all 10 files per entity under `data_500k/data_provider_2_bluestone_health/year=2025/<entity>/` when the ignored local dataset is present.
+- Local data failure evidence includes provider, entity, source file, checksum, error type, decision, and message.
+- Local data audit logs: generated under `artifacts/qa/data_500k_adapter_load_audit.jsonl` and summarized by `artifacts/qa/data_500k_adapter_load_audit.md`.
 - Data quality tests: invalid ingestion decimal and malformed optional observation payload warn without quarantining.
 - Schema tests: BlueStone canonical mappings reference existing provider fields.
 - Regression tests: direct identifier provider fields are not promoted as Silver column names.
@@ -41,9 +43,10 @@ status: `local_validation_passed`
 | Command | Result |
 | --- | --- |
 | `uv run --no-sync pytest tests/specs` | passed, 37 tests |
-| `uv run --no-sync pytest tests/adapters` | passed, 93 tests |
-| `uv run --no-sync pytest` | passed, 144 tests |
+| `uv run --no-sync pytest tests/adapters` | passed, 97 tests |
+| `uv run --no-sync pytest` | passed, 148 tests |
 | `uv run --no-sync ruff check` | passed |
+| `uv run --no-sync python -m src.handlers.data_500k_adapter_audit --provider data_provider_2_bluestone_health` | writes data_500k file-level audit logs under `artifacts/qa/` |
 
 ## Risks And Boundaries
 
