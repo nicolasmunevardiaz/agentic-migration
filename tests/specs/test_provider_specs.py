@@ -612,6 +612,8 @@ def test_unit_parser_profiles_declare_provider_contracts() -> None:
 
             if config["parser_family"] == "fhir_r4_bundle":
                 assert parser_options["bundle_entry_path"] == "entry[].resource"
+                assert parser_options["comment_prefix"] == "//"
+                assert parser_options["export_trailer"] == "###END_OF_EXPORT###"
                 assert parser_options["resource_type"] == config["expected_resource_types"][entity]
                 assert parser_options["field_paths"][row_key] == "id"
             if config["parser_family"] == "hl7_v2_xml_messages":

@@ -73,7 +73,8 @@ def parse_aegis_bundle_with_spec(
         raise AegisParseError("Aegis parser only supports fhir_r4_bundle specs")
 
     try:
-        bundle = json.loads(source_file.read_text())
+        source_text = read_aegis_source_text(source_file)
+        bundle = json.loads(normalize_aegis_bundle_text(source_text, parser_options))
     except json.JSONDecodeError as error:
         raise AegisParseError(f"Malformed Aegis FHIR bundle JSON in {source_file}") from error
     if bundle.get("resourceType") != "Bundle":
@@ -124,3 +125,30 @@ def parse_aegis_bundle_with_spec(
         )
 
     return records
+
+
+def read_aegis_source_text(source_file: Path) -> str:
+    raw_bytes = source_file.read_bytes()
+    try:
+        return raw_bytes.decode("utf-8")
+    except UnicodeDecodeError:
+        return raw_bytes.decode("cp1252")
+
+
+def normalize_aegis_bundle_text(text: str, parser_options: dict[str, Any]) -> str:
+    comment_prefix = parser_options.get("comment_prefix", "//")
+    cleaned_lines = [
+        line for line in text.splitlines() if not line.strip().startswith(comment_prefix)
+    ]
+    cleaned_text = "\n".join(cleaned_lines).strip()
+
+    export_trailer = parser_options.get("export_trailer")
+    if export_trailer and export_trailer in cleaned_text:
+        cleaned_text = cleaned_text.split(export_trailer, 1)[0].rstrip()
+
+    first_object_index = cleaned_text.find("{")
+    last_object_index = cleaned_text.rfind("}")
+    if first_object_index >= 0 and last_object_index >= first_object_index:
+        return cleaned_text[first_object_index : last_object_index + 1]
+
+    return cleaned_text

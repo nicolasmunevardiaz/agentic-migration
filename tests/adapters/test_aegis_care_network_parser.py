@@ -67,6 +67,23 @@ def test_aegis_parser_maps_observation_payload_without_interpreting_vitals() -> 
     assert isinstance(record.values_by_header["OBS_PAYLOAD"], str)
 
 
+def test_aegis_parser_accepts_declared_export_comments_and_trailer(
+    tmp_path: Path,
+) -> None:
+    wrapped_bundle = tmp_path / "patients_bundle.json"
+    wrapped_bundle.write_text(
+        "// extract_ts=2025-12-31T00:00:00+00:00\n"
+        + (FIXTURE_ROOT / "patients_bundle.json").read_text(encoding="utf-8")
+        + "\n###END_OF_EXPORT###\n",
+        encoding="utf-8",
+    )
+
+    records = parse_aegis_entity_file("patients", wrapped_bundle, SPEC_ROOT)
+
+    assert len(records) == 1
+    assert records[0].values_by_header["SRC_ROW"] == "row-1"
+
+
 def test_aegis_parser_rejects_wrong_resource_type() -> None:
     spec = record_spec("patients")
     source_file = FIXTURE_ROOT / "observations_bundle.json"

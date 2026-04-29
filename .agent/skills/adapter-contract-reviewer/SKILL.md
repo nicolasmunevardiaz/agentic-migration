@@ -12,6 +12,10 @@ Validate that each adapter consumes declarative YAML metadata instead of hardcod
 
 Adapter contracts must be runtime-neutral. Review whether the adapter can run through the local runtime interfaces before Databricks rollout: provider parser interface, Bronze writer interface, canonical mapper interface, Silver writer interface, quarantine writer interface, QA evidence writer interface, lineage emitter interface, and runtime adapter interface. Do not approve adapter readiness when Databricks workspace paths, Unity Catalog objects, Lakeflow APIs, bundle layout, or cloud credentials are embedded into the adapter logic.
 
+Review local source coverage rules before approving readiness. If `data_500k/<provider>/year=2025/` exists, the adapter contract must support running every file matching each provider/entity pattern and must report exact file-level failures. Do not approve readiness when tests only exercise a handpicked `_001` sample while additional local source files are available, or when corrupt files are skipped without QA evidence.
+
+For implemented adapters with local source data, require registration in the reusable `src.handlers.data_500k_adapter_audit` target registry before approving PR readiness. Complete evidence is the unfiltered audit command over all registered targets, which writes `artifacts/qa/data_500k_adapter_load_audit.jsonl`; a provider-only audit is not sufficient for integration signoff.
+
 Do not approve adapter readiness when the provider parser is missing, untested, unable to parse representative provider fixtures, or unable to support local runtime certification. Do not approve silent type coercion, invented values, hardcoded provider paths, hidden row loss, runtime-specific model semantics, or semantic mappings without human approval. Do not introduce post-Silver scope.
 
 Return a concise report with status, impacted provider/entity, YAML spec path, adapter readiness, findings, missing evidence, required human decisions, and recommended next action.

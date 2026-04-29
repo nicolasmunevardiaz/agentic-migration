@@ -16,7 +16,7 @@ def load_spec(spec_path: Path | str) -> dict[str, Any]:
 
 def parse_file(xml_path: Path | str, spec_path: Path | str) -> list[dict[str, dict[str, str]]]:
     spec = load_spec(spec_path)
-    return parse_xml_text(Path(xml_path).read_text(), spec)
+    return parse_xml_text(read_bluestone_xml_text(Path(xml_path)), spec)
 
 
 def parse_xml_text(xml_text: str, spec: dict[str, Any]) -> list[dict[str, dict[str, str]]]:
@@ -27,12 +27,12 @@ def parse_xml_text(xml_text: str, spec: dict[str, Any]) -> list[dict[str, dict[s
         )
 
     parser_options = parser_profile["parser_options"]
+    expected_root_tag = parser_options["root_tag"]
     try:
-        root = ET.fromstring(xml_text)
+        root = ET.fromstring(normalize_xml_document_text(xml_text, expected_root_tag))
     except ET.ParseError as error:
         raise BlueStoneParseError(f"Malformed BlueStone HL7 XML: {error}") from error
 
-    expected_root_tag = parser_options["root_tag"]
     if local_name(root.tag) != expected_root_tag:
         raise BlueStoneParseError(
             f"Expected root tag {expected_root_tag}, found {local_name(root.tag)}"
@@ -70,6 +70,28 @@ def parse_xml_text(xml_text: str, spec: dict[str, Any]) -> list[dict[str, dict[s
         )
 
     return records
+
+
+def read_bluestone_xml_text(xml_path: Path) -> str:
+    raw_bytes = xml_path.read_bytes()
+    try:
+        return raw_bytes.decode("utf-8")
+    except UnicodeDecodeError:
+        return raw_bytes.decode("cp1252")
+
+
+def normalize_xml_document_text(xml_text: str, root_tag: str) -> str:
+    stripped_text = xml_text.lstrip()
+    declaration_index = stripped_text.find("<?xml")
+    if declaration_index > 0:
+        stripped_text = stripped_text[declaration_index:]
+
+    closing_tag = f"</{root_tag}>"
+    closing_index = stripped_text.rfind(closing_tag)
+    if closing_index >= 0:
+        return stripped_text[: closing_index + len(closing_tag)]
+
+    return stripped_text
 
 
 def extract_required_text(message: ET.Element, field_path: str) -> str:

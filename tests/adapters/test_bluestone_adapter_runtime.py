@@ -5,13 +5,13 @@ from pathlib import Path
 import pytest
 
 from src.common.adapter_runtime import evidence_contains_sensitive_raw_value
-from src.handlers.aegis_adapter import run_aegis_adapter_for_file
+from src.handlers.bluestone_adapter import run_bluestone_adapter_for_file
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-SPEC_ROOT = REPO_ROOT / "metadata/provider_specs/data_provider_1_aegis_care_network"
+SPEC_ROOT = REPO_ROOT / "metadata/provider_specs/data_provider_2_bluestone_health"
 MODEL_ROOT = REPO_ROOT / "metadata/model_specs"
-FIXTURE_ROOT = REPO_ROOT / "tests/fixtures/aegis"
-DATA_ROOT = REPO_ROOT / "data_500k/data_provider_1_aegis_care_network/year=2025"
+FIXTURE_ROOT = REPO_ROOT / "tests/fixtures/bluestone"
+DATA_ROOT = REPO_ROOT / "data_500k/data_provider_2_bluestone_health/year=2025"
 
 EXPECTED_SILVER_ENTITIES = {
     "patients": {"members", "coverage_periods"},
@@ -23,10 +23,10 @@ EXPECTED_SILVER_ENTITIES = {
 
 
 @pytest.mark.parametrize("entity", sorted(EXPECTED_SILVER_ENTITIES))
-def test_aegis_adapter_emits_bronze_and_canonical_silver_rows(entity: str) -> None:
-    result = run_aegis_adapter_for_file(
+def test_bluestone_adapter_emits_bronze_and_canonical_silver_rows(entity: str) -> None:
+    result = run_bluestone_adapter_for_file(
         entity=entity,
-        source_file=FIXTURE_ROOT / f"{entity}_bundle.json",
+        source_file=FIXTURE_ROOT / f"{entity}_message.xml",
         ingestion_run_id="test-run-001",
         provider_spec_root=SPEC_ROOT,
         model_root=MODEL_ROOT,
@@ -34,7 +34,7 @@ def test_aegis_adapter_emits_bronze_and_canonical_silver_rows(entity: str) -> No
 
     assert len(result.bronze_records) == 1
     bronze = result.bronze_records[0]
-    assert bronze.provider_slug == "data_provider_1_aegis_care_network"
+    assert bronze.provider_slug == "data_provider_2_bluestone_health"
     assert bronze.source_entity == entity
     assert bronze.source_checksum
     assert bronze.source_lineage_ref
@@ -46,49 +46,48 @@ def test_aegis_adapter_emits_bronze_and_canonical_silver_rows(entity: str) -> No
     assert result.quarantine_records == []
 
 
-def test_aegis_adapter_uses_model_specs_for_silver_column_names() -> None:
-    result = run_aegis_adapter_for_file(
+def test_bluestone_adapter_uses_model_specs_for_silver_column_names() -> None:
+    result = run_bluestone_adapter_for_file(
         entity="conditions",
-        source_file=FIXTURE_ROOT / "conditions_bundle.json",
+        source_file=FIXTURE_ROOT / "conditions_message.xml",
         ingestion_run_id="test-run-001",
         provider_spec_root=SPEC_ROOT,
         model_root=MODEL_ROOT,
     )
     condition_row = result.silver_rows["conditions"][0]
 
-    assert condition_row["condition_reference"] == "condition-1"
-    assert condition_row["member_reference"] == "Patient/member-1"
-    assert "CND_KEY" not in condition_row
-    assert "PT_001_ID" not in condition_row
+    assert condition_row["condition_reference"] == "condition-occurrence-alpha"
+    assert condition_row["member_reference"] == "member-alpha"
+    assert "COND_REF" not in condition_row
+    assert "CUST_REF" not in condition_row
 
 
-def test_aegis_adapter_derives_observation_values_from_approved_payload_contract() -> None:
-    result = run_aegis_adapter_for_file(
+def test_bluestone_adapter_derives_observation_values_from_approved_payload_contract() -> None:
+    result = run_bluestone_adapter_for_file(
         entity="observations",
-        source_file=FIXTURE_ROOT / "observations_bundle.json",
+        source_file=FIXTURE_ROOT / "observations_message.xml",
         ingestion_run_id="test-run-001",
         provider_spec_root=SPEC_ROOT,
         model_root=MODEL_ROOT,
     )
     observation_row = result.silver_rows["observations"][0]
+    payload = json.loads(observation_row["observation_payload_raw"])
 
-    assert observation_row["observation_payload_raw"] == (
-        '{"heart_rate":72,"height_cm":170,"weight_kg":70,'
-        '"blood_pressure":{"systolic":120,"diastolic":80}}'
-    )
+    assert payload["type"] == "vitals"
     assert observation_row["height_cm"] == "170"
-    assert observation_row["weight_kg"] == "70"
+    assert observation_row["weight_kg"] is None
     assert observation_row["systolic_bp"] == "120"
 
 
-def test_aegis_adapter_warns_on_invalid_ingestion_decimal(tmp_path: Path) -> None:
-    invalid_medication = tmp_path / "medications_bundle.json"
-    bundle = json.loads((FIXTURE_ROOT / "medications_bundle.json").read_text())
-    resource = bundle["entry"][0]["resource"]
-    resource["dosageInstruction[0].doseAndRate[0].rateQuantity.value"] = "not-decimal"
-    invalid_medication.write_text(json.dumps(bundle), encoding="utf-8")
+def test_bluestone_adapter_warns_on_invalid_ingestion_decimal(tmp_path: Path) -> None:
+    invalid_medication = tmp_path / "medications_message.xml"
+    xml_text = (FIXTURE_ROOT / "medications_message.xml").read_text(encoding="utf-8")
+    invalid_medication.write_text(
+        xml_text.replace("<RXE.22>12.34</RXE.22>", "<RXE.22>not-decimal</RXE.22>"),
+        encoding="utf-8",
+    )
 
-    result = run_aegis_adapter_for_file(
+    result = run_bluestone_adapter_for_file(
         entity="medications",
         source_file=invalid_medication,
         ingestion_run_id="test-run-001",
@@ -102,13 +101,21 @@ def test_aegis_adapter_warns_on_invalid_ingestion_decimal(tmp_path: Path) -> Non
     assert {item.decision for item in result.qa_evidence} == {"warn"}
 
 
-def test_aegis_adapter_warns_on_malformed_optional_observation_payload(tmp_path: Path) -> None:
-    invalid_observation = tmp_path / "observations_bundle.json"
-    bundle = json.loads((FIXTURE_ROOT / "observations_bundle.json").read_text())
-    bundle["entry"][0]["resource"]["valueString"] = "{not-json"
-    invalid_observation.write_text(json.dumps(bundle), encoding="utf-8")
+def test_bluestone_adapter_warns_on_malformed_optional_observation_payload(
+    tmp_path: Path,
+) -> None:
+    invalid_observation = tmp_path / "observations_message.xml"
+    xml_text = (FIXTURE_ROOT / "observations_message.xml").read_text(encoding="utf-8")
+    invalid_observation.write_text(
+        xml_text.replace(
+            '{"type":"vitals","height":{"value":170,"u":"cm"},'
+            '"blood_pressure":{"systolic":120,"diastolic":80,"u":"mmHg"}}',
+            "{not-json",
+        ),
+        encoding="utf-8",
+    )
 
-    result = run_aegis_adapter_for_file(
+    result = run_bluestone_adapter_for_file(
         entity="observations",
         source_file=invalid_observation,
         ingestion_run_id="test-run-001",
@@ -121,10 +128,10 @@ def test_aegis_adapter_warns_on_malformed_optional_observation_payload(tmp_path:
     assert {item.decision for item in result.qa_evidence} == {"warn"}
 
 
-def test_aegis_adapter_evidence_does_not_include_raw_sensitive_values() -> None:
-    result = run_aegis_adapter_for_file(
+def test_bluestone_adapter_evidence_does_not_include_raw_sensitive_values() -> None:
+    result = run_bluestone_adapter_for_file(
         entity="patients",
-        source_file=FIXTURE_ROOT / "patients_bundle.json",
+        source_file=FIXTURE_ROOT / "patients_message.xml",
         ingestion_run_id="test-run-001",
         provider_spec_root=SPEC_ROOT,
         model_root=MODEL_ROOT,
@@ -132,21 +139,21 @@ def test_aegis_adapter_evidence_does_not_include_raw_sensitive_values() -> None:
 
     assert not evidence_contains_sensitive_raw_value(result.qa_evidence)
     evidence_text = " ".join(str(item.to_dict()) for item in result.qa_evidence)
-    assert "synthetic-ssn" not in evidence_text
-    assert "Synthetic" not in evidence_text
+    assert "tax-synthetic" not in evidence_text
+    assert "synthetic-given" not in evidence_text
 
 
 @pytest.mark.parametrize("entity", sorted(EXPECTED_SILVER_ENTITIES))
-def test_aegis_adapter_runs_against_local_data_500k_files(entity: str) -> None:
-    sample_files = sorted((DATA_ROOT / entity).glob(f"{entity}_*.json"))
+def test_bluestone_adapter_runs_against_local_data_500k_files(entity: str) -> None:
+    sample_files = sorted((DATA_ROOT / entity).glob(f"{entity}_*.xml"))
     if not sample_files:
-        pytest.skip("data_500k local Aegis dataset is not present in this environment")
+        pytest.skip("data_500k local BlueStone dataset is not present in this environment")
 
     assert len(sample_files) == 10
     failures = []
     for sample_file in sample_files:
         try:
-            result = run_aegis_adapter_for_file(
+            result = run_bluestone_adapter_for_file(
                 entity=entity,
                 source_file=sample_file,
                 ingestion_run_id="local-data-500k-sample",
@@ -155,17 +162,15 @@ def test_aegis_adapter_runs_against_local_data_500k_files(entity: str) -> None:
             )
 
             assert result.bronze_records, sample_file
-            assert set(result.silver_rows) <= EXPECTED_SILVER_ENTITIES[entity], sample_file
-            assert set(result.silver_rows) | {
-                record.silver_entity for record in result.quarantine_records
-            } == EXPECTED_SILVER_ENTITIES[entity], sample_file
+            assert set(result.silver_rows) == EXPECTED_SILVER_ENTITIES[entity], sample_file
+            assert result.quarantine_records == [], sample_file
             assert all(record.source_checksum for record in result.bronze_records)
             assert all(record.source_lineage_ref for record in result.bronze_records)
             assert not evidence_contains_sensitive_raw_value(result.qa_evidence)
         except Exception as error:  # noqa: BLE001
             checksum = sha256(sample_file.read_bytes()).hexdigest()
             failures.append(
-                "provider=data_provider_1_aegis_care_network "
+                "provider=data_provider_2_bluestone_health "
                 f"entity={entity} source_file={sample_file} checksum={checksum} "
                 f"error_type={type(error).__name__} decision=fail message={error}"
             )

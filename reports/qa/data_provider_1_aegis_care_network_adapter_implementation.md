@@ -23,8 +23,10 @@ status: `local_validation_passed`
 
 - Unit data tests: parser compatibility, malformed JSON rejection, missing row-key rejection, and wrong resource type rejection.
 - Integration tests: handler emits Bronze and provider-filtered Silver rows from fixture files.
-- Local sample integration tests: handler runs against `data_500k/data_provider_1_aegis_care_network/year=2025/<entity>/<entity>_001.json` when the ignored local dataset is present.
-- Data quality tests: invalid required decimal quarantines `cost_records.cost_amount`.
+- Local data integration tests: handler runs against all 10 files per entity under `data_500k/data_provider_1_aegis_care_network/year=2025/<entity>/` when the ignored local dataset is present.
+- Local data failure evidence includes provider, entity, source file, checksum, error type, decision, and message.
+- Local data audit logs: generated under `artifacts/qa/data_500k_adapter_load_audit.jsonl` and summarized by `artifacts/qa/data_500k_adapter_load_audit.md`.
+- Data quality tests: invalid ingestion decimal warns and leaves `cost_records.cost_amount` nullable.
 - Schema tests: Aegis canonical mappings reference existing provider fields.
 - Regression tests: direct identifier provider fields are not promoted as Silver column names.
 - QA evidence tests: malformed optional observation payload emits warnings without raw sensitive values.
@@ -33,17 +35,18 @@ status: `local_validation_passed`
 
 | Command | Result |
 | --- | --- |
-| `uv run --no-sync pytest tests/adapters/test_aegis_care_network_parser.py tests/adapters/test_aegis_adapter_runtime.py tests/specs/test_aegis_adapter_contract.py` | passed, 27 tests |
+| `uv run --no-sync pytest tests/adapters/test_aegis_care_network_parser.py tests/adapters/test_aegis_adapter_runtime.py tests/specs/test_aegis_adapter_contract.py` | passed, 28 tests |
 | `uv run --no-sync ruff check src/common/adapter_runtime.py src/handlers/aegis_adapter.py tests/adapters/test_aegis_care_network_parser.py tests/adapters/test_aegis_adapter_runtime.py tests/specs/test_aegis_adapter_contract.py` | passed |
 
 ## Full Local Results
 
 | Command | Result |
 | --- | --- |
-| `uv run --no-sync pytest tests/specs` | passed, 34 tests |
-| `uv run --no-sync pytest tests/adapters` | passed, 78 tests |
-| `uv run --no-sync pytest` | passed, 126 tests |
+| `uv run --no-sync pytest tests/specs` | passed, 37 tests |
+| `uv run --no-sync pytest tests/adapters` | passed, 97 tests |
+| `uv run --no-sync pytest` | passed, 148 tests |
 | `uv run --no-sync ruff check` | passed |
+| `uv run --no-sync python -m src.handlers.data_500k_adapter_audit --provider data_provider_1_aegis_care_network` | writes data_500k file-level audit logs under `artifacts/qa/` |
 
 ## Risks And Boundaries
 
