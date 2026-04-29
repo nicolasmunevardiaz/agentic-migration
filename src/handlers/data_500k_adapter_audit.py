@@ -12,6 +12,7 @@ from typing import Any
 from src.common.adapter_runtime import AdapterRunResult, compute_file_checksum, load_yaml
 from src.handlers.aegis_adapter import run_aegis_adapter_for_file
 from src.handlers.bluestone_adapter import run_bluestone_adapter_for_file
+from src.handlers.northcare_adapter import run_northcare_adapter_for_file
 
 DEFAULT_PLAN_ID = "03_adapter_implementation_and_ci_plan"
 DEFAULT_ENTITIES = ("conditions", "encounters", "medications", "observations", "patients")
@@ -45,6 +46,13 @@ def build_provider_targets(repo_root: Path) -> dict[str, ProviderAuditTarget]:
             provider_spec_root=provider_spec_root / "data_provider_2_bluestone_health",
             data_root=repo_root / "data_500k/data_provider_2_bluestone_health/year=2025",
             evidence_path="reports/qa/data_provider_2_bluestone_health_adapter_implementation.md",
+        ),
+        "data_provider_3_northcare_clinics": ProviderAuditTarget(
+            provider_slug="data_provider_3_northcare_clinics",
+            runner=run_northcare_adapter_for_file,
+            provider_spec_root=provider_spec_root / "data_provider_3_northcare_clinics",
+            data_root=repo_root / "data_500k/data_provider_3_northcare_clinics/year=2025",
+            evidence_path="reports/qa/data_provider_3_northcare_clinics_adapter_implementation.md",
         ),
     }
 
