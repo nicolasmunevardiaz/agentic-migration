@@ -1,0 +1,22 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "total": 1,
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "MedicationRequest",
+        "id": "row-medication-1",
+        "identifier[0].value": "medication-order-1",
+        "medicationCodeableConcept.coding[0].code": "medication-code-1",
+        "subject.reference": "Patient/member-1",
+        "encounter.reference": "Encounter/encounter-1",
+        "reasonReference[0].reference": "Condition/condition-1",
+        "medicationCodeableConcept.text": "synthetic medication description",
+        "dosageInstruction[0].doseAndRate[0].rateQuantity.value": "12.34",
+        "authoredOn": "2025-01-01T09:00:00",
+        "status": "active"
+      }
+    }
+  ]
+}

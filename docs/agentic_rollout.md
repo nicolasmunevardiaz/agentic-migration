@@ -200,6 +200,8 @@ Use docs/03_adapter_implementation_and_ci_plan.md as the active plan. Read docs/
 
 Use these skills: adapter-contract-reviewer, adapter-code-generator, spec-test-generator, qa-evidence-reviewer, privacy-governance-reviewer, hitl-escalation-controller, and repo-governance-auditor before PR creation.
 
+Treat `metadata/model_specs/**` as the primary canonical metadata for Bronze/Silver behavior. Read `metadata/model_specs/bronze/bronze_contract.yaml`, `metadata/model_specs/silver/*.yaml`, and `metadata/model_specs/mappings/provider_to_silver_matrix.yaml` before generating adapter behavior; filter canonical mappings to the active provider. Use Aegis provider specs only to interpret source dialect, parser profile, row keys, and source fields. Do not derive Silver columns directly from provider specs when canonical model specs disagree or are missing; invoke hitl-escalation-controller and stop.
+
 Implement only the Aegis adapter scope. Put adapter code under src/adapters/, shared logic under src/common/, handlers under src/handlers/, tests under tests/adapters/ and tests/specs/, and fixtures under tests/fixtures/. Append trace entries to logs/adapter_implementation/data_provider_1_aegis_care_network.md.
 
 Run uv-based tests and linting. Do not install dependencies without HITL approval and privacy-governance review. If failures repeat, semantics are unclear, or tests require weakening, invoke hitl-escalation-controller and stop.
@@ -219,6 +221,8 @@ You are Codex executing Adapter Implementation And CI for provider data_provider
 Use docs/03_adapter_implementation_and_ci_plan.md as the active plan. Read docs/technical_prd_agentops_operating_spec.md, docs/agentops_filesystem_conventions.md, docs/agentops_skill_strategy.md, metadata/provider_specs/data_provider_2_bluestone_health/**, metadata/model_specs/**, reports/hitl/**, and reports/privacy/**.
 
 Use these skills: adapter-contract-reviewer, adapter-code-generator, spec-test-generator, qa-evidence-reviewer, privacy-governance-reviewer, hitl-escalation-controller, and repo-governance-auditor before PR creation.
+
+Treat `metadata/model_specs/**` as the primary canonical metadata for Bronze/Silver behavior. Read `metadata/model_specs/bronze/bronze_contract.yaml`, `metadata/model_specs/silver/*.yaml`, and `metadata/model_specs/mappings/provider_to_silver_matrix.yaml` before generating adapter behavior; filter canonical mappings to the active provider. Use BlueStone provider specs only to interpret source dialect, parser profile, row keys, and source fields. Do not derive Silver columns directly from provider specs when canonical model specs disagree or are missing; invoke hitl-escalation-controller and stop.
 
 Implement only the BlueStone adapter scope. Put adapter code under src/adapters/, shared logic under src/common/, handlers under src/handlers/, tests under tests/adapters/ and tests/specs/, and fixtures under tests/fixtures/. Append trace entries to logs/adapter_implementation/data_provider_2_bluestone_health.md.
 
@@ -240,6 +244,8 @@ Use docs/03_adapter_implementation_and_ci_plan.md as the active plan. Read docs/
 
 Use these skills: adapter-contract-reviewer, adapter-code-generator, spec-test-generator, qa-evidence-reviewer, privacy-governance-reviewer, hitl-escalation-controller, and repo-governance-auditor before PR creation.
 
+Treat `metadata/model_specs/**` as the primary canonical metadata for Bronze/Silver behavior. Read `metadata/model_specs/bronze/bronze_contract.yaml`, `metadata/model_specs/silver/*.yaml`, and `metadata/model_specs/mappings/provider_to_silver_matrix.yaml` before generating adapter behavior; filter canonical mappings to the active provider. Use NorthCare provider specs only to interpret source dialect, parser profile, row keys, and source fields. Do not derive Silver columns directly from provider specs when canonical model specs disagree or are missing; invoke hitl-escalation-controller and stop.
+
 Implement only the NorthCare adapter scope. Put adapter code under src/adapters/, shared logic under src/common/, handlers under src/handlers/, tests under tests/adapters/ and tests/specs/, and fixtures under tests/fixtures/. Append trace entries to logs/adapter_implementation/data_provider_3_northcare_clinics.md.
 
 Run uv-based tests and linting. Do not install dependencies without HITL approval and privacy-governance review. If failures repeat, semantics are unclear, or tests require weakening, invoke hitl-escalation-controller and stop.
@@ -260,6 +266,8 @@ Use docs/03_adapter_implementation_and_ci_plan.md as the active plan. Read docs/
 
 Use these skills: adapter-contract-reviewer, adapter-code-generator, spec-test-generator, qa-evidence-reviewer, privacy-governance-reviewer, hitl-escalation-controller, and repo-governance-auditor before PR creation.
 
+Treat `metadata/model_specs/**` as the primary canonical metadata for Bronze/Silver behavior. Read `metadata/model_specs/bronze/bronze_contract.yaml`, `metadata/model_specs/silver/*.yaml`, and `metadata/model_specs/mappings/provider_to_silver_matrix.yaml` before generating adapter behavior; filter canonical mappings to the active provider. Use ValleyBridge provider specs only to interpret source dialect, parser profile, row keys, and source fields. Do not derive Silver columns directly from provider specs when canonical model specs disagree or are missing; invoke hitl-escalation-controller and stop.
+
 Implement only the ValleyBridge adapter scope. Put adapter code under src/adapters/, shared logic under src/common/, handlers under src/handlers/, tests under tests/adapters/ and tests/specs/, and fixtures under tests/fixtures/. Append trace entries to logs/adapter_implementation/data_provider_4_valleybridge_medical.md.
 
 Run uv-based tests and linting. Do not install dependencies without HITL approval and privacy-governance review. If failures repeat, semantics are unclear, or tests require weakening, invoke hitl-escalation-controller and stop.
@@ -279,6 +287,8 @@ You are Codex executing Adapter Implementation And CI for provider data_provider
 Use docs/03_adapter_implementation_and_ci_plan.md as the active plan. Read docs/technical_prd_agentops_operating_spec.md, docs/agentops_filesystem_conventions.md, docs/agentops_skill_strategy.md, metadata/provider_specs/data_provider_5_pacific_shield_insurance/**, metadata/model_specs/**, reports/hitl/**, and reports/privacy/**.
 
 Use these skills: adapter-contract-reviewer, adapter-code-generator, spec-test-generator, qa-evidence-reviewer, privacy-governance-reviewer, hitl-escalation-controller, and repo-governance-auditor before PR creation.
+
+Treat `metadata/model_specs/**` as the primary canonical metadata for Bronze/Silver behavior. Read `metadata/model_specs/bronze/bronze_contract.yaml`, `metadata/model_specs/silver/*.yaml`, and `metadata/model_specs/mappings/provider_to_silver_matrix.yaml` before generating adapter behavior; filter canonical mappings to the active provider. Use Pacific Shield provider specs only to interpret source dialect, parser profile, row keys, and source fields. Do not derive Silver columns directly from provider specs when canonical model specs disagree or are missing; invoke hitl-escalation-controller and stop.
 
 Implement only the Pacific Shield adapter scope. Put adapter code under src/adapters/, shared logic under src/common/, handlers under src/handlers/, tests under tests/adapters/ and tests/specs/, and fixtures under tests/fixtures/. Append trace entries to logs/adapter_implementation/data_provider_5_pacific_shield_insurance.md.
 

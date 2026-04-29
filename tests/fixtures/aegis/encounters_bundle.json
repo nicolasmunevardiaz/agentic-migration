@@ -1,0 +1,18 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "total": 1,
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "row-encounter-1",
+        "identifier[0].value": "encounter-1",
+        "subject.reference": "Patient/member-1",
+        "period.start": "2025-01-01T08:30:00",
+        "COVERAGE_STATUS": "COVERED",
+        "status": "finished"
+      }
+    }
+  ]
+}
