@@ -1,7 +1,26 @@
 spec_version: "0.1"
 profile_name: "local_dev"
-status: "contract_defined_not_executed"
+status: "local_runtime_contract_validated"
 purpose: "Fast cloud-agnostic certification of adapter and contract behavior before Databricks rollout."
+profiles:
+  local_dev:
+    execution_mode: "local_fixture_and_approved_sample_validation"
+    allowed_state: "local_validated"
+    blocked_targets:
+      - "databricks_workspace"
+      - "unity_catalog"
+      - "cloud_storage"
+      - "production_data"
+  databricks_dev:
+    execution_mode: "blocked_until_plan_05_hitl_approval"
+    allowed_state: "not_databricks_certified"
+    blocked_targets:
+      - "local_plan_04_execution"
+  databricks_prod:
+    execution_mode: "blocked_until_future_production_promotion_approval"
+    allowed_state: "not_databricks_certified"
+    blocked_targets:
+      - "local_plan_04_execution"
 runtime_scope:
   validates:
     - "provider_parser_output"
@@ -34,18 +53,28 @@ blocked_in_local_dev:
   - "cloud_resource_creation"
   - "production_data"
 candidate_dependencies:
-  - name: "pyspark[pipelines]"
-    purpose: "Optional Spark Declarative Pipelines local run and dry-run capability."
-    approval_status: "pending_human_approval"
-    blocked_action: "Do not install or run Spark pipelines."
+  - name: "pyspark"
+    purpose: "Approved local import and Spark API availability check for future fixture validation."
+    approval_status: "approved_for_local_import_only"
+    installed_version: "4.1.1"
+    evidence: "pyproject.toml; uv.lock; reports/privacy/local_runtime_dependency_review.md"
+    blocked_action: "Do not run Spark Declarative Pipelines or production-scale Spark jobs."
   - name: "delta-spark"
-    purpose: "Optional Delta Lake OSS table behavior for local Bronze/Silver tests."
-    approval_status: "pending_human_approval"
-    blocked_action: "Do not install or write Delta tables."
+    purpose: "Approved local import check for future Delta Lake OSS table-shape validation."
+    approval_status: "approved_for_local_import_only"
+    installed_version: "4.2.0"
+    evidence: "pyproject.toml; uv.lock; reports/privacy/local_runtime_dependency_review.md"
+    blocked_action: "Do not write Delta tables or claim Delta runtime certification."
+  - name: "openlineage-python"
+    purpose: "Approved local import check for future lineage event-shape validation."
+    approval_status: "approved_for_local_import_only"
+    installed_version: "1.46.0"
+    evidence: "pyproject.toml; uv.lock; reports/privacy/local_runtime_dependency_review.md"
+    blocked_action: "Do not emit OpenLineage events to local, remote, Kafka, or cloud transports."
   - name: "openlineage-spark"
     purpose: "Optional Spark listener for local lineage event capture."
     approval_status: "pending_human_approval"
-    blocked_action: "Do not install or emit OpenLineage events."
+    blocked_action: "Do not install listener jars or emit Spark OpenLineage events."
   - name: "marquez"
     purpose: "Optional local lineage backend/UI when Docker is approved."
     approval_status: "pending_human_approval"
@@ -53,4 +82,12 @@ candidate_dependencies:
 evidence_status:
   local_validation_state: "local_validated"
   databricks_validation_state: "not_databricks_certified"
-  dependency_installation_state: "not_installed"
+  dependency_installation_state: "python_packages_installed_import_only"
+  java_state: "homebrew_openjdk17_installed_shell_path_unconfigured"
+  colima_state: "installed_not_running"
+  runtime_service_state: "not_started"
+validation_evidence:
+  dependency_import_check: "UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -c \"import pyspark; import delta; import openlineage.client; print(pyspark.__version__)\""
+  java_direct_check: "/opt/homebrew/opt/openjdk@17/bin/java -version"
+  adapter_audit: "artifacts/qa/data_500k_adapter_load_audit.jsonl"
+  spec_tests: "tests/specs/test_local_runtime_specs.py"

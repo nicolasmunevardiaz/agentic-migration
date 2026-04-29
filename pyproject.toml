@@ -4,6 +4,9 @@ version = "0.1.0"
 description = "AgentOps-governed healthcare data migration operating model."
 requires-python = ">=3.12"
 dependencies = [
+    "delta-spark>=4.2.0",
+    "openlineage-python>=1.46.0",
+    "pyspark>=4.1.1",
     "pyyaml>=6.0.3",
 ]
 
