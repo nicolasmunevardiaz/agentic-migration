@@ -1,0 +1,3009 @@
+spec_version: 0.1
+artifact: bronze_contract
+plan_id: 02_canonical_model_and_contracts_plan
+status: approved
+layer: bronze
+provider_scope: all
+source_preservation_policy:
+  raw_payload_policy: preserve_source_without_irreversible_masking
+  sensitive_value_policy: raw sensitive values must not appear in reports, logs, fixtures, or PR evidence
+  lineage_policy: all records require provider, source entity, source row key, source file pattern, parser family, schema
+    version, load timestamp, and quarantine status
+required_lineage_columns:
+- name: provider_slug
+  type: string
+  required: true
+- name: provider_name
+  type: string
+  required: true
+- name: source_entity
+  type: string
+  required: true
+- name: source_row_key_header
+  type: string
+  required: true
+- name: source_row_key_value
+  type: string
+  required: true
+- name: source_file_pattern
+  type: string
+  required: true
+- name: upload_partition
+  type: string
+  required: true
+- name: parser_family
+  type: string
+  required: true
+- name: schema_version
+  type: string
+  required: true
+- name: load_timestamp
+  type: datetime
+  required: true
+- name: quarantine_status
+  type: string
+  required: true
+source_contracts:
+- provider_slug: data_provider_1_aegis_care_network
+  provider_name: Aegis Care Network
+  source_type: clinical_provider
+  source_entity: conditions
+  provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/conditions.yaml
+  filetype: fhir_r4
+  file_extension: json
+  expected_file_patterns:
+  - data_500k/data_provider_1_aegis_care_network/year=2025/conditions/conditions_*.json
+  upload_partition: year=2025
+  parser_family: fhir_r4_bundle
+  source_row_key: SRC_ROW
+  canonical_row_key: ROW_ID
+  record_grain: one condition occurrence per bundle entry
+  field_count: 8
+  fields:
+  - source_header: SRC_ROW
+    source_index: null
+    source_field_key: SRC_ROW
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-1-conditions-src_row-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+  - source_header: CND_KEY
+    source_index: null
+    source_field_key: CND_KEY
+    canonical_hint: CND_KEY
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-conditions-cnd_key-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+  - source_header: CND_SRC_ID
+    source_index: null
+    source_field_key: CND_SRC_ID
+    canonical_hint: CND_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-conditions-cnd_src_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-014
+  - source_header: PT_001_ID
+    source_index: null
+    source_field_key: PT_001_ID
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-conditions-pt_001_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+  - source_header: APPT_REF
+    source_index: null
+    source_field_key: APPT_REF
+    canonical_hint: APPT_REF
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-conditions-appt_ref-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+  - source_header: ICD_HINT
+    source_index: null
+    source_field_key: ICD_HINT
+    canonical_hint: ICD_HINT
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-conditions-icd_hint-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-014
+  - source_header: DX_DESCR
+    source_index: null
+    source_field_key: DX_DESCR
+    canonical_hint: CND_DESC
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-conditions-dx_descr-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-014
+  - source_header: REC_STS
+    source_index: null
+    source_field_key: REC_STS
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-1-conditions-rec_sts-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when bundle JSON cannot be parsed or resourceType is not Bundle.
+    - stop_pipeline when expected Condition entries are absent.
+    row_level:
+    - quarantine_data when SRC_ROW, CND_KEY, PT_001_ID, or APPT_REF is missing.
+    - warn when clinical code text is missing but code is present.
+- provider_slug: data_provider_1_aegis_care_network
+  provider_name: Aegis Care Network
+  source_type: clinical_provider
+  source_entity: encounters
+  provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/encounters.yaml
+  filetype: fhir_r4
+  file_extension: json
+  expected_file_patterns:
+  - data_500k/data_provider_1_aegis_care_network/year=2025/encounters/encounters_*.json
+  upload_partition: year=2025
+  parser_family: fhir_r4_bundle
+  source_row_key: SRC_ROW
+  canonical_row_key: ROW_ID
+  record_grain: one encounter visit per bundle entry
+  field_count: 6
+  fields:
+  - source_header: SRC_ROW
+    source_index: null
+    source_field_key: SRC_ROW
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-1-encounters-src_row-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+  - source_header: APPT_KEY
+    source_index: null
+    source_field_key: APPT_KEY
+    canonical_hint: APPT_KEY
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-encounters-appt_key-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+  - source_header: PT_001_ID
+    source_index: null
+    source_field_key: PT_001_ID
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-encounters-pt_001_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+  - source_header: APPT_DT_RAW
+    source_index: null
+    source_field_key: APPT_DT_RAW
+    canonical_hint: APPT_DT_RAW
+    inferred_type: datetime
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-encounters-appt_dt_raw-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+  - source_header: COVERAGE_STATUS
+    source_index: null
+    source_field_key: COVERAGE_STATUS
+    canonical_hint: COVERAGE_STATUS
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-encounters-coverage_status-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-012
+  - source_header: REC_STS
+    source_index: null
+    source_field_key: REC_STS
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-1-encounters-rec_sts-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when bundle JSON cannot be parsed or resourceType is not Bundle.
+    - stop_pipeline when expected Encounter entries are absent.
+    row_level:
+    - quarantine_data when SRC_ROW, APPT_KEY, PT_001_ID, or APPT_DT_RAW is missing.
+    - warn when COVERAGE_STATUS is outside expected source domain.
+- provider_slug: data_provider_1_aegis_care_network
+  provider_name: Aegis Care Network
+  source_type: clinical_provider
+  source_entity: medications
+  provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/medications.yaml
+  filetype: fhir_r4
+  file_extension: json
+  expected_file_patterns:
+  - data_500k/data_provider_1_aegis_care_network/year=2025/medications/medications_*.json
+  upload_partition: year=2025
+  parser_family: fhir_r4_bundle
+  source_row_key: SRC_ROW
+  canonical_row_key: ROW_ID
+  record_grain: one medication order per bundle entry
+  field_count: 10
+  fields:
+  - source_header: SRC_ROW
+    source_index: null
+    source_field_key: SRC_ROW
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-1-medications-src_row-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+  - source_header: RX_OCC_KEY
+    source_index: null
+    source_field_key: RX_OCC_KEY
+    canonical_hint: MED_OCC_KEY
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-medications-rx_occ_key-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+  - source_header: MED_KEY
+    source_index: null
+    source_field_key: MED_KEY
+    canonical_hint: MED_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-medications-med_key-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-014
+  - source_header: PT_001_ID
+    source_index: null
+    source_field_key: PT_001_ID
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-medications-pt_001_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+  - source_header: APPT_REF
+    source_index: null
+    source_field_key: APPT_REF
+    canonical_hint: APPT_REF
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-medications-appt_ref-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+  - source_header: LINK_CND
+    source_index: null
+    source_field_key: LINK_CND
+    canonical_hint: CND_REF
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-medications-link_cnd-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+  - source_header: MED_NM_TXT
+    source_index: null
+    source_field_key: MED_NM_TXT
+    canonical_hint: MED_DESC
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-medications-med_nm_txt-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-014
+  - source_header: UNIT_COST
+    source_index: null
+    source_field_key: UNIT_COST
+    canonical_hint: MED_UNIT_PRICE
+    inferred_type: decimal
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-medications-unit_cost-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-013
+  - source_header: ORD_DT_RAW
+    source_index: null
+    source_field_key: ORD_DT_RAW
+    canonical_hint: ORD_DT_RAW
+    inferred_type: datetime
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-medications-ord_dt_raw-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+  - source_header: REC_STS
+    source_index: null
+    source_field_key: REC_STS
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-1-medications-rec_sts-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when bundle JSON cannot be parsed or resourceType is not Bundle.
+    - stop_pipeline when expected MedicationRequest entries are absent.
+    row_level:
+    - quarantine_data when SRC_ROW, RX_OCC_KEY, MED_KEY, PT_001_ID, APPT_REF, or LINK_CND is missing.
+    - warn when UNIT_COST is missing or cannot be parsed as decimal.
+- provider_slug: data_provider_1_aegis_care_network
+  provider_name: Aegis Care Network
+  source_type: clinical_provider
+  source_entity: observations
+  provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/observations.yaml
+  filetype: fhir_r4
+  file_extension: json
+  expected_file_patterns:
+  - data_500k/data_provider_1_aegis_care_network/year=2025/observations/observations_*.json
+  upload_partition: year=2025
+  parser_family: fhir_r4_bundle
+  source_row_key: SRC_ROW
+  canonical_row_key: ROW_ID
+  record_grain: one observation per bundle entry
+  field_count: 7
+  fields:
+  - source_header: SRC_ROW
+    source_index: null
+    source_field_key: SRC_ROW
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-1-observations-src_row-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+  - source_header: OBS_KEY
+    source_index: null
+    source_field_key: OBS_KEY
+    canonical_hint: OBS_KEY
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-observations-obs_key-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+  - source_header: PT_001_ID
+    source_index: null
+    source_field_key: PT_001_ID
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-observations-pt_001_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+  - source_header: APPT_REF
+    source_index: null
+    source_field_key: APPT_REF
+    canonical_hint: APPT_REF
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-observations-appt_ref-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+  - source_header: OBS_DT_RAW
+    source_index: null
+    source_field_key: OBS_DT_RAW
+    canonical_hint: OBS_DT_RAW
+    inferred_type: datetime
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-observations-obs_dt_raw-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+  - source_header: OBS_PAYLOAD
+    source_index: null
+    source_field_key: OBS_PAYLOAD
+    canonical_hint: OBS_PAYLOAD
+    inferred_type: json_string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-observations-obs_payload-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-005
+  - source_header: REC_STS
+    source_index: null
+    source_field_key: REC_STS
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-1-observations-rec_sts-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when bundle JSON cannot be parsed or resourceType is not Bundle.
+    - stop_pipeline when expected Observation entries are absent.
+    row_level:
+    - quarantine_data when SRC_ROW, OBS_KEY, PT_001_ID, APPT_REF, or OBS_DT_RAW is missing.
+    - warn when OBS_PAYLOAD is missing or cannot be parsed as JSON string.
+- provider_slug: data_provider_1_aegis_care_network
+  provider_name: Aegis Care Network
+  source_type: clinical_provider
+  source_entity: patients
+  provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/patients.yaml
+  filetype: fhir_r4
+  file_extension: json
+  expected_file_patterns:
+  - data_500k/data_provider_1_aegis_care_network/year=2025/patients/patients_*.json
+  upload_partition: year=2025
+  parser_family: fhir_r4_bundle
+  source_row_key: SRC_ROW
+  canonical_row_key: ROW_ID
+  record_grain: one membership transaction event per bundle entry
+  field_count: 10
+  fields:
+  - source_header: SRC_ROW
+    source_index: null
+    source_field_key: SRC_ROW
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-1-patients-src_row-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+  - source_header: PT_001_ID
+    source_index: null
+    source_field_key: PT_001_ID
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-patients-pt_001_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+  - source_header: FIRST_NAME
+    source_index: null
+    source_field_key: FIRST_NAME
+    canonical_hint: PT_FIRST_NM
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-patients-first_name-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+  - source_header: LAST_NAME
+    source_index: null
+    source_field_key: LAST_NAME
+    canonical_hint: PT_LAST_NM
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-patients-last_name-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+  - source_header: SSN
+    source_index: null
+    source_field_key: SSN
+    canonical_hint: SSN_VAL
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-patients-ssn-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+  - source_header: GDR_CD
+    source_index: null
+    source_field_key: GDR_CD
+    canonical_hint: GDR_CD
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-patients-gdr_cd-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+  - source_header: BDT_VAL
+    source_index: null
+    source_field_key: BDT_VAL
+    canonical_hint: BDT_VAL
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-patients-bdt_val-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+  - source_header: INIT_DT_RAW
+    source_index: null
+    source_field_key: INIT_DT_RAW
+    canonical_hint: INIT_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-patients-init_dt_raw-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-012
+  - source_header: END_DT_RAW
+    source_index: null
+    source_field_key: END_DT_RAW
+    canonical_hint: END_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-1-patients-end_dt_raw-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-012
+  - source_header: REC_STS
+    source_index: null
+    source_field_key: REC_STS
+    canonical_hint: REC_STS
+    inferred_type: boolean
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-1-patients-rec_sts-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when bundle JSON cannot be parsed or resourceType is not Bundle.
+    - stop_pipeline when expected Patient entries are absent.
+    row_level:
+    - quarantine_data when SRC_ROW, PT_001_ID, or REC_STS is missing.
+    - warn when END_DT_RAW is missing on ingress rows.
+- provider_slug: data_provider_2_bluestone_health
+  provider_name: BlueStone Health
+  source_type: clinical_provider_export
+  source_entity: conditions
+  provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/conditions.yaml
+  filetype: hl7_xml
+  file_extension: xml
+  expected_file_patterns:
+  - data_500k/data_provider_2_bluestone_health/year=2025/conditions/conditions_*.xml
+  upload_partition: year=2025
+  parser_family: hl7_v2_xml_messages
+  source_row_key: LINE_ID
+  canonical_row_key: ROW_ID
+  record_grain: one condition occurrence per XML message
+  field_count: 8
+  fields:
+  - source_header: LINE_ID
+    source_index: null
+    source_field_key: LINE_ID
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-2-conditions-line_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+    - DRIFT-006
+  - source_header: COND_REF
+    source_index: null
+    source_field_key: COND_REF
+    canonical_hint: CND_KEY
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-conditions-cond_ref-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-006
+  - source_header: COND_SKU
+    source_index: null
+    source_field_key: COND_SKU
+    canonical_hint: CND_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-conditions-cond_sku-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-006
+    - DRIFT-014
+  - source_header: CUST_REF
+    source_index: null
+    source_field_key: CUST_REF
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-conditions-cust_ref-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-006
+  - source_header: VISIT_REF
+    source_index: null
+    source_field_key: VISIT_REF
+    canonical_hint: APPT_REF
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-conditions-visit_ref-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-006
+  - source_header: DX_CODE
+    source_index: null
+    source_field_key: DX_CODE
+    canonical_hint: ICD_HINT
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-conditions-dx_code-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-006
+    - DRIFT-014
+  - source_header: COND_NARR
+    source_index: null
+    source_field_key: COND_NARR
+    canonical_hint: CND_DESC
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-conditions-cond_narr-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-006
+    - DRIFT-014
+  - source_header: ROW_STS
+    source_index: null
+    source_field_key: ROW_STS
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-2-conditions-row_sts-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+    - DRIFT-006
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when XML is malformed or root tag is not HL7Messages
+    - stop_pipeline when parser family is unsupported
+    row_level:
+    - quarantine_data when LINE_ID is missing
+    - warn when relationship references are blank
+- provider_slug: data_provider_2_bluestone_health
+  provider_name: BlueStone Health
+  source_type: clinical_provider_export
+  source_entity: encounters
+  provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/encounters.yaml
+  filetype: hl7_xml
+  file_extension: xml
+  expected_file_patterns:
+  - data_500k/data_provider_2_bluestone_health/year=2025/encounters/encounters_*.xml
+  upload_partition: year=2025
+  parser_family: hl7_v2_xml_messages
+  source_row_key: LINE_ID
+  canonical_row_key: ROW_ID
+  record_grain: one encounter per visit XML message
+  field_count: 6
+  fields:
+  - source_header: LINE_ID
+    source_index: null
+    source_field_key: LINE_ID
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-2-encounters-line_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+    - DRIFT-006
+  - source_header: VISIT_ID
+    source_index: null
+    source_field_key: VISIT_ID
+    canonical_hint: APPT_KEY
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-encounters-visit_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-006
+  - source_header: PT_LINK
+    source_index: null
+    source_field_key: PT_LINK
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-encounters-pt_link-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-006
+  - source_header: VISIT_DT
+    source_index: null
+    source_field_key: VISIT_DT
+    canonical_hint: APPT_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-encounters-visit_dt-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-006
+  - source_header: COVERAGE_STATUS
+    source_index: null
+    source_field_key: COVERAGE_STATUS
+    canonical_hint: COVERAGE_STATUS
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-encounters-coverage_status-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-006
+    - DRIFT-012
+  - source_header: ACT_FLAG
+    source_index: null
+    source_field_key: ACT_FLAG
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-2-encounters-act_flag-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+    - DRIFT-006
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when XML is malformed or root tag is not HL7Messages
+    - stop_pipeline when parser family is unsupported
+    row_level:
+    - quarantine_data when LINE_ID is missing
+    - warn when optional PT_LINK is blank in source evidence
+- provider_slug: data_provider_2_bluestone_health
+  provider_name: BlueStone Health
+  source_type: clinical_provider_export
+  source_entity: medications
+  provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/medications.yaml
+  filetype: hl7_xml
+  file_extension: xml
+  expected_file_patterns:
+  - data_500k/data_provider_2_bluestone_health/year=2025/medications/medications_*.xml
+  upload_partition: year=2025
+  parser_family: hl7_v2_xml_messages
+  source_row_key: LINE_ID
+  canonical_row_key: ROW_ID
+  record_grain: one medication order per XML message
+  field_count: 10
+  fields:
+  - source_header: LINE_ID
+    source_index: null
+    source_field_key: LINE_ID
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-2-medications-line_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+    - DRIFT-006
+  - source_header: RX_OCC_ID
+    source_index: null
+    source_field_key: RX_OCC_ID
+    canonical_hint: MED_OCC_KEY
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-medications-rx_occ_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-006
+  - source_header: RX_PROD_CD
+    source_index: null
+    source_field_key: RX_PROD_CD
+    canonical_hint: MED_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-medications-rx_prod_cd-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-006
+    - DRIFT-014
+  - source_header: PID_REF
+    source_index: null
+    source_field_key: PID_REF
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-medications-pid_ref-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-006
+  - source_header: E_REF
+    source_index: null
+    source_field_key: E_REF
+    canonical_hint: APPT_REF
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-medications-e_ref-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-006
+  - source_header: RX_DX_REF
+    source_index: null
+    source_field_key: RX_DX_REF
+    canonical_hint: CND_REF
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-medications-rx_dx_ref-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-006
+  - source_header: DRUG_DESC
+    source_index: null
+    source_field_key: DRUG_DESC
+    canonical_hint: MED_DESC
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-medications-drug_desc-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-006
+    - DRIFT-014
+  - source_header: RX_UNIT_AMT
+    source_index: null
+    source_field_key: RX_UNIT_AMT
+    canonical_hint: MED_UNIT_PRICE
+    inferred_type: decimal
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-medications-rx_unit_amt-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-006
+    - DRIFT-013
+  - source_header: ORDER_TS
+    source_index: null
+    source_field_key: ORDER_TS
+    canonical_hint: ORD_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-medications-order_ts-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-006
+  - source_header: REC_FLAG
+    source_index: null
+    source_field_key: REC_FLAG
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-2-medications-rec_flag-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+    - DRIFT-006
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when XML is malformed or root tag is not HL7Messages
+    - stop_pipeline when parser family is unsupported
+    row_level:
+    - quarantine_data when LINE_ID is missing
+    - warn when relationship references are blank
+- provider_slug: data_provider_2_bluestone_health
+  provider_name: BlueStone Health
+  source_type: clinical_provider_export
+  source_entity: observations
+  provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/observations.yaml
+  filetype: hl7_xml
+  file_extension: xml
+  expected_file_patterns:
+  - data_500k/data_provider_2_bluestone_health/year=2025/observations/observations_*.xml
+  upload_partition: year=2025
+  parser_family: hl7_v2_xml_messages
+  source_row_key: LINE_ID
+  canonical_row_key: ROW_ID
+  record_grain: one observation per XML message
+  field_count: 7
+  fields:
+  - source_header: LINE_ID
+    source_index: null
+    source_field_key: LINE_ID
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-2-observations-line_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+    - DRIFT-006
+  - source_header: MEAS_ID
+    source_index: null
+    source_field_key: MEAS_ID
+    canonical_hint: OBS_KEY
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-observations-meas_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-006
+  - source_header: PARENT_PT
+    source_index: null
+    source_field_key: PARENT_PT
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-observations-parent_pt-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-006
+  - source_header: EN_REF
+    source_index: null
+    source_field_key: EN_REF
+    canonical_hint: APPT_REF
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-observations-en_ref-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-006
+  - source_header: MEAS_DT
+    source_index: null
+    source_field_key: MEAS_DT
+    canonical_hint: OBS_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-observations-meas_dt-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-006
+  - source_header: OBS_JSON
+    source_index: null
+    source_field_key: OBS_JSON
+    canonical_hint: OBS_PAYLOAD
+    inferred_type: json_string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-observations-obs_json-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-005
+    - DRIFT-006
+  - source_header: ACT_FLAG
+    source_index: null
+    source_field_key: ACT_FLAG
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-2-observations-act_flag-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+    - DRIFT-006
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when XML is malformed or root tag is not HL7Messages
+    - stop_pipeline when parser family is unsupported
+    row_level:
+    - quarantine_data when LINE_ID is missing
+    - warn when optional observation payload members are null
+- provider_slug: data_provider_2_bluestone_health
+  provider_name: BlueStone Health
+  source_type: clinical_provider_export
+  source_entity: patients
+  provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/patients.yaml
+  filetype: hl7_xml
+  file_extension: xml
+  expected_file_patterns:
+  - data_500k/data_provider_2_bluestone_health/year=2025/patients/patients_*.xml
+  upload_partition: year=2025
+  parser_family: hl7_v2_xml_messages
+  source_row_key: LINE_ID
+  canonical_row_key: ROW_ID
+  record_grain: one membership transaction event per XML message
+  field_count: 10
+  fields:
+  - source_header: LINE_ID
+    source_index: null
+    source_field_key: LINE_ID
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-2-patients-line_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+    - DRIFT-006
+  - source_header: CUST_ID
+    source_index: null
+    source_field_key: CUST_ID
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-patients-cust_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-006
+  - source_header: MBR_FIRST_NM
+    source_index: null
+    source_field_key: MBR_FIRST_NM
+    canonical_hint: PT_FIRST_NM
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-patients-mbr_first_nm-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-006
+  - source_header: MBR_LAST_NM
+    source_index: null
+    source_field_key: MBR_LAST_NM
+    canonical_hint: PT_LAST_NM
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-patients-mbr_last_nm-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-006
+  - source_header: TAX_ID
+    source_index: null
+    source_field_key: TAX_ID
+    canonical_hint: SSN_VAL
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-patients-tax_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-006
+  - source_header: SEX_CD
+    source_index: null
+    source_field_key: SEX_CD
+    canonical_hint: GDR_CD
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-patients-sex_cd-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-006
+  - source_header: DOB_TXT
+    source_index: null
+    source_field_key: DOB_TXT
+    canonical_hint: BDT_VAL
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-patients-dob_txt-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-006
+  - source_header: ENROLL_DT
+    source_index: null
+    source_field_key: ENROLL_DT
+    canonical_hint: INIT_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-patients-enroll_dt-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-006
+    - DRIFT-012
+  - source_header: TERM_DT
+    source_index: null
+    source_field_key: TERM_DT
+    canonical_hint: END_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-2-patients-term_dt-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-006
+    - DRIFT-012
+  - source_header: STS_CD
+    source_index: null
+    source_field_key: STS_CD
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-2-patients-sts_cd-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+    - DRIFT-006
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when XML is malformed or root tag is not HL7Messages
+    - stop_pipeline when parser family is unsupported
+    row_level:
+    - quarantine_data when LINE_ID is missing
+    - warn when optional membership date fields are blank
+- provider_slug: data_provider_3_northcare_clinics
+  provider_name: NorthCare Clinics
+  source_type: clinical_provider
+  source_entity: conditions
+  provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/conditions.yaml
+  filetype: x12
+  file_extension: txt
+  expected_file_patterns:
+  - data_500k/data_provider_3_northcare_clinics/year=2025/conditions/conditions_*.txt
+  upload_partition: year=2025
+  parser_family: x12_segment_envelope
+  source_row_key: EXPORT_ID
+  canonical_row_key: ROW_ID
+  record_grain: one condition occurrence per X12-like HI segment
+  field_count: 8
+  fields:
+  - source_header: EXPORT_ID
+    source_index: null
+    source_field_key: EXPORT_ID
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-3-conditions-export_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+    - DRIFT-007
+  - source_header: CND_KEY
+    source_index: null
+    source_field_key: CND_KEY
+    canonical_hint: CND_KEY
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-conditions-cnd_key-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-007
+  - source_header: CND_TYPE_ID
+    source_index: null
+    source_field_key: CND_TYPE_ID
+    canonical_hint: CND_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-conditions-cnd_type_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-007
+    - DRIFT-014
+  - source_header: PT_REF
+    source_index: null
+    source_field_key: PT_REF
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-conditions-pt_ref-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-007
+  - source_header: APPT_REF
+    source_index: null
+    source_field_key: APPT_REF
+    canonical_hint: APPT_REF
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-conditions-appt_ref-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-007
+  - source_header: ICD_HINT
+    source_index: null
+    source_field_key: ICD_HINT
+    canonical_hint: ICD_HINT
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-conditions-icd_hint-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-007
+    - DRIFT-014
+  - source_header: CND_LONG_TXT
+    source_index: null
+    source_field_key: CND_LONG_TXT
+    canonical_hint: CND_DESC
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-conditions-cnd_long_txt-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-007
+    - DRIFT-014
+  - source_header: REC_STS
+    source_index: null
+    source_field_key: REC_STS
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-3-conditions-rec_sts-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+    - DRIFT-007
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when X12-like envelope is malformed or missing HDR
+    - stop_pipeline when parser family is unsupported
+    row_level:
+    - quarantine_data when EXPORT_ID is missing
+    - warn when APPT_REF relationship cannot be reconciled later
+- provider_slug: data_provider_3_northcare_clinics
+  provider_name: NorthCare Clinics
+  source_type: clinical_provider
+  source_entity: encounters
+  provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/encounters.yaml
+  filetype: x12
+  file_extension: txt
+  expected_file_patterns:
+  - data_500k/data_provider_3_northcare_clinics/year=2025/encounters/encounters_*.txt
+  upload_partition: year=2025
+  parser_family: x12_segment_envelope
+  source_row_key: EXPORT_ID
+  canonical_row_key: ROW_ID
+  record_grain: one encounter per X12-like CLM segment
+  field_count: 6
+  fields:
+  - source_header: EXPORT_ID
+    source_index: null
+    source_field_key: EXPORT_ID
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-3-encounters-export_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+    - DRIFT-007
+  - source_header: APPT_KEY
+    source_index: null
+    source_field_key: APPT_KEY
+    canonical_hint: APPT_KEY
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-encounters-appt_key-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-007
+  - source_header: PT_REF
+    source_index: null
+    source_field_key: PT_REF
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-encounters-pt_ref-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-007
+  - source_header: APPT_DT_RAW
+    source_index: null
+    source_field_key: APPT_DT_RAW
+    canonical_hint: APPT_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-encounters-appt_dt_raw-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-007
+  - source_header: COVERAGE_STATUS
+    source_index: null
+    source_field_key: COVERAGE_STATUS
+    canonical_hint: COVERAGE_STATUS
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-encounters-coverage_status-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-007
+    - DRIFT-012
+  - source_header: REC_STS
+    source_index: null
+    source_field_key: REC_STS
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-3-encounters-rec_sts-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+    - DRIFT-007
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when X12-like envelope is malformed or missing HDR
+    - stop_pipeline when parser family is unsupported
+    row_level:
+    - quarantine_data when EXPORT_ID is missing
+    - warn when PT_REF does not resolve during later reconciliation
+- provider_slug: data_provider_3_northcare_clinics
+  provider_name: NorthCare Clinics
+  source_type: clinical_provider
+  source_entity: medications
+  provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/medications.yaml
+  filetype: x12
+  file_extension: txt
+  expected_file_patterns:
+  - data_500k/data_provider_3_northcare_clinics/year=2025/medications/medications_*.txt
+  upload_partition: year=2025
+  parser_family: x12_segment_envelope
+  source_row_key: EXPORT_ID
+  canonical_row_key: ROW_ID
+  record_grain: one medication order per X12-like SV1 segment
+  field_count: 10
+  fields:
+  - source_header: EXPORT_ID
+    source_index: null
+    source_field_key: EXPORT_ID
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-3-medications-export_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+    - DRIFT-007
+  - source_header: RX_ROW_KEY
+    source_index: null
+    source_field_key: RX_ROW_KEY
+    canonical_hint: MED_OCC_KEY
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-medications-rx_row_key-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-007
+  - source_header: MED_KEY
+    source_index: null
+    source_field_key: MED_KEY
+    canonical_hint: MED_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-medications-med_key-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-007
+    - DRIFT-014
+  - source_header: PT_REF
+    source_index: null
+    source_field_key: PT_REF
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-medications-pt_ref-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-007
+  - source_header: APPT_REF
+    source_index: null
+    source_field_key: APPT_REF
+    canonical_hint: APPT_REF
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-medications-appt_ref-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-007
+  - source_header: PARENT_CND
+    source_index: null
+    source_field_key: PARENT_CND
+    canonical_hint: CND_REF
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-medications-parent_cnd-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-007
+  - source_header: MED_PRODUCT_NM
+    source_index: null
+    source_field_key: MED_PRODUCT_NM
+    canonical_hint: MED_DESC
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-medications-med_product_nm-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-007
+    - DRIFT-014
+  - source_header: MED_PRICE
+    source_index: null
+    source_field_key: MED_PRICE
+    canonical_hint: MED_UNIT_PRICE
+    inferred_type: decimal
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-medications-med_price-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-007
+    - DRIFT-013
+  - source_header: ORD_DT_RAW
+    source_index: null
+    source_field_key: ORD_DT_RAW
+    canonical_hint: ORD_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-medications-ord_dt_raw-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-007
+  - source_header: REC_STS
+    source_index: null
+    source_field_key: REC_STS
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-3-medications-rec_sts-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+    - DRIFT-007
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when X12-like envelope is malformed or missing HDR
+    - stop_pipeline when parser family is unsupported
+    row_level:
+    - quarantine_data when EXPORT_ID is missing
+    - warn when PARENT_CND relationship cannot be reconciled later
+- provider_slug: data_provider_3_northcare_clinics
+  provider_name: NorthCare Clinics
+  source_type: clinical_provider
+  source_entity: observations
+  provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/observations.yaml
+  filetype: x12
+  file_extension: txt
+  expected_file_patterns:
+  - data_500k/data_provider_3_northcare_clinics/year=2025/observations/observations_*.txt
+  upload_partition: year=2025
+  parser_family: x12_segment_envelope
+  source_row_key: EXPORT_ID
+  canonical_row_key: ROW_ID
+  record_grain: one observation per X12-like REF segment
+  field_count: 7
+  fields:
+  - source_header: EXPORT_ID
+    source_index: null
+    source_field_key: EXPORT_ID
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-3-observations-export_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+    - DRIFT-007
+  - source_header: OBS_KEY
+    source_index: null
+    source_field_key: OBS_KEY
+    canonical_hint: OBS_KEY
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-observations-obs_key-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-007
+  - source_header: PT_REF
+    source_index: null
+    source_field_key: PT_REF
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-observations-pt_ref-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-007
+  - source_header: APPT_REF
+    source_index: null
+    source_field_key: APPT_REF
+    canonical_hint: APPT_REF
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-observations-appt_ref-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-007
+  - source_header: OBS_DT_RAW
+    source_index: null
+    source_field_key: OBS_DT_RAW
+    canonical_hint: OBS_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-observations-obs_dt_raw-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-007
+  - source_header: OBS_PAYLOAD
+    source_index: null
+    source_field_key: OBS_PAYLOAD
+    canonical_hint: OBS_PAYLOAD
+    inferred_type: json_string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-observations-obs_payload-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-005
+    - DRIFT-007
+  - source_header: REC_STS
+    source_index: null
+    source_field_key: REC_STS
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-3-observations-rec_sts-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+    - DRIFT-007
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when X12-like envelope is malformed or missing HDR
+    - stop_pipeline when parser family is unsupported
+    row_level:
+    - quarantine_data when EXPORT_ID is missing
+    - warn when OBS_PAYLOAD is blank or cannot be interpreted by later approved validators
+- provider_slug: data_provider_3_northcare_clinics
+  provider_name: NorthCare Clinics
+  source_type: clinical_provider
+  source_entity: patients
+  provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/patients.yaml
+  filetype: x12
+  file_extension: txt
+  expected_file_patterns:
+  - data_500k/data_provider_3_northcare_clinics/year=2025/patients/patients_*.txt
+  upload_partition: year=2025
+  parser_family: x12_segment_envelope
+  source_row_key: EXPORT_ID
+  canonical_row_key: ROW_ID
+  record_grain: one membership transaction event per X12-like DMG segment
+  field_count: 10
+  fields:
+  - source_header: EXPORT_ID
+    source_index: null
+    source_field_key: EXPORT_ID
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-3-patients-export_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+    - DRIFT-007
+  - source_header: PT_001_ID
+    source_index: null
+    source_field_key: PT_001_ID
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-patients-pt_001_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-007
+  - source_header: PT_GIVEN_NAME
+    source_index: null
+    source_field_key: PT_GIVEN_NAME
+    canonical_hint: PT_FIRST_NM
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-patients-pt_given_name-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-007
+  - source_header: PT_FAMILY_NAME
+    source_index: null
+    source_field_key: PT_FAMILY_NAME
+    canonical_hint: PT_LAST_NM
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-patients-pt_family_name-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-007
+  - source_header: SSN_NUM
+    source_index: null
+    source_field_key: SSN_NUM
+    canonical_hint: SSN_VAL
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-patients-ssn_num-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-007
+  - source_header: GDR_CD
+    source_index: null
+    source_field_key: GDR_CD
+    canonical_hint: GDR_CD
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-patients-gdr_cd-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-007
+  - source_header: BDT_VAL
+    source_index: null
+    source_field_key: BDT_VAL
+    canonical_hint: BDT_VAL
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-patients-bdt_val-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-007
+  - source_header: REG_START_RAW
+    source_index: null
+    source_field_key: REG_START_RAW
+    canonical_hint: INIT_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-patients-reg_start_raw-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-007
+    - DRIFT-012
+  - source_header: REG_END_RAW
+    source_index: null
+    source_field_key: REG_END_RAW
+    canonical_hint: END_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-3-patients-reg_end_raw-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-007
+    - DRIFT-012
+  - source_header: REC_STS
+    source_index: null
+    source_field_key: REC_STS
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-3-patients-rec_sts-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+    - DRIFT-007
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when X12-like envelope is malformed or missing HDR
+    - stop_pipeline when parser family is unsupported
+    row_level:
+    - quarantine_data when EXPORT_ID is missing
+    - warn when optional membership date fields are blank
+- provider_slug: data_provider_4_valleybridge_medical
+  provider_name: ValleyBridge Medical
+  source_type: clinical_provider
+  source_entity: conditions
+  provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/conditions.yaml
+  filetype: fhir_stu3
+  file_extension: json
+  expected_file_patterns:
+  - data_500k/data_provider_4_valleybridge_medical/year=2025/conditions/conditions_*.json
+  upload_partition: year=2025
+  parser_family: fhir_stu3_bundle_with_comments
+  source_row_key: DW_LOAD_SEQ
+  canonical_row_key: ROW_ID
+  record_grain: one condition occurrence per FHIR STU3 Condition resource
+  field_count: 8
+  fields:
+  - source_header: DW_LOAD_SEQ
+    source_index: null
+    source_field_key: DW_LOAD_SEQ
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-4-conditions-dw_load_seq-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+    - DRIFT-008
+  - source_header: CREF_ID
+    source_index: null
+    source_field_key: CREF_ID
+    canonical_hint: CND_KEY
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-conditions-cref_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-008
+  - source_header: DX_CAT_CD
+    source_index: null
+    source_field_key: DX_CAT_CD
+    canonical_hint: CND_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-conditions-dx_cat_cd-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-008
+    - DRIFT-014
+  - source_header: PID_REF
+    source_index: null
+    source_field_key: PID_REF
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-conditions-pid_ref-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-008
+  - source_header: E_REF
+    source_index: null
+    source_field_key: E_REF
+    canonical_hint: APPT_REF
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-conditions-e_ref-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-008
+  - source_header: DX_HINT
+    source_index: null
+    source_field_key: DX_HINT
+    canonical_hint: ICD_HINT
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-conditions-dx_hint-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-008
+    - DRIFT-014
+  - source_header: DX_STORY
+    source_index: null
+    source_field_key: DX_STORY
+    canonical_hint: CND_DESC
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-conditions-dx_story-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-008
+    - DRIFT-014
+  - source_header: STS_CD
+    source_index: null
+    source_field_key: STS_CD
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-4-conditions-sts_cd-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+    - DRIFT-008
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when JSON is malformed or missing Bundle entries
+    - stop_pipeline when parser family is unsupported
+    row_level:
+    - quarantine_data when DW_LOAD_SEQ is missing
+    - warn when E_REF relationship cannot be reconciled later
+- provider_slug: data_provider_4_valleybridge_medical
+  provider_name: ValleyBridge Medical
+  source_type: clinical_provider
+  source_entity: encounters
+  provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/encounters.yaml
+  filetype: fhir_stu3
+  file_extension: json
+  expected_file_patterns:
+  - data_500k/data_provider_4_valleybridge_medical/year=2025/encounters/encounters_*.json
+  upload_partition: year=2025
+  parser_family: fhir_stu3_bundle_with_comments
+  source_row_key: DW_LOAD_SEQ
+  canonical_row_key: ROW_ID
+  record_grain: one encounter per FHIR STU3 Encounter resource
+  field_count: 6
+  fields:
+  - source_header: DW_LOAD_SEQ
+    source_index: null
+    source_field_key: DW_LOAD_SEQ
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-4-encounters-dw_load_seq-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+    - DRIFT-008
+  - source_header: CNTCT_ID
+    source_index: null
+    source_field_key: CNTCT_ID
+    canonical_hint: APPT_KEY
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-encounters-cntct_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-008
+  - source_header: CLI_ID
+    source_index: null
+    source_field_key: CLI_ID
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-encounters-cli_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-008
+  - source_header: EVT_DTTM
+    source_index: null
+    source_field_key: EVT_DTTM
+    canonical_hint: APPT_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-encounters-evt_dttm-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-008
+  - source_header: COVERAGE_STATUS
+    source_index: null
+    source_field_key: COVERAGE_STATUS
+    canonical_hint: COVERAGE_STATUS
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-encounters-coverage_status-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-008
+    - DRIFT-012
+  - source_header: ROW_STS
+    source_index: null
+    source_field_key: ROW_STS
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-4-encounters-row_sts-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+    - DRIFT-008
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when JSON is malformed or missing Bundle entries
+    - stop_pipeline when parser family is unsupported
+    row_level:
+    - quarantine_data when DW_LOAD_SEQ is missing
+    - warn when CLI_ID does not resolve during later reconciliation
+- provider_slug: data_provider_4_valleybridge_medical
+  provider_name: ValleyBridge Medical
+  source_type: clinical_provider
+  source_entity: medications
+  provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/medications.yaml
+  filetype: fhir_stu3
+  file_extension: json
+  expected_file_patterns:
+  - data_500k/data_provider_4_valleybridge_medical/year=2025/medications/medications_*.json
+  upload_partition: year=2025
+  parser_family: fhir_stu3_bundle_with_comments
+  source_row_key: DW_LOAD_SEQ
+  canonical_row_key: ROW_ID
+  record_grain: one medication order per FHIR STU3 MedicationOrder resource
+  field_count: 10
+  fields:
+  - source_header: DW_LOAD_SEQ
+    source_index: null
+    source_field_key: DW_LOAD_SEQ
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-4-medications-dw_load_seq-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+    - DRIFT-008
+  - source_header: M_OCC_SEQ
+    source_index: null
+    source_field_key: M_OCC_SEQ
+    canonical_hint: MED_OCC_KEY
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-medications-m_occ_seq-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-008
+  - source_header: M_KEY
+    source_index: null
+    source_field_key: M_KEY
+    canonical_hint: MED_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-medications-m_key-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-008
+    - DRIFT-014
+  - source_header: PARENT_PT
+    source_index: null
+    source_field_key: PARENT_PT
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-medications-parent_pt-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-008
+  - source_header: EN_REF
+    source_index: null
+    source_field_key: EN_REF
+    canonical_hint: APPT_REF
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-medications-en_ref-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-008
+  - source_header: DX_LINK_ID
+    source_index: null
+    source_field_key: DX_LINK_ID
+    canonical_hint: CND_REF
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-medications-dx_link_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-008
+  - source_header: MED_LBL
+    source_index: null
+    source_field_key: MED_LBL
+    canonical_hint: MED_DESC
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-medications-med_lbl-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-008
+    - DRIFT-014
+  - source_header: LINE_PRICE
+    source_index: null
+    source_field_key: LINE_PRICE
+    canonical_hint: MED_UNIT_PRICE
+    inferred_type: decimal
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-medications-line_price-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-008
+    - DRIFT-013
+  - source_header: MED_DT
+    source_index: null
+    source_field_key: MED_DT
+    canonical_hint: ORD_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-medications-med_dt-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-008
+  - source_header: ACT_FLAG
+    source_index: null
+    source_field_key: ACT_FLAG
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-4-medications-act_flag-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+    - DRIFT-008
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when JSON is malformed or missing Bundle entries
+    - stop_pipeline when parser family is unsupported
+    row_level:
+    - quarantine_data when DW_LOAD_SEQ is missing
+    - warn when DX_LINK_ID relationship cannot be reconciled later
+- provider_slug: data_provider_4_valleybridge_medical
+  provider_name: ValleyBridge Medical
+  source_type: clinical_provider
+  source_entity: observations
+  provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/observations.yaml
+  filetype: fhir_stu3
+  file_extension: json
+  expected_file_patterns:
+  - data_500k/data_provider_4_valleybridge_medical/year=2025/observations/observations_*.json
+  upload_partition: year=2025
+  parser_family: fhir_stu3_bundle_with_comments
+  source_row_key: DW_LOAD_SEQ
+  canonical_row_key: ROW_ID
+  record_grain: one observation per FHIR STU3 Observation resource
+  field_count: 7
+  fields:
+  - source_header: DW_LOAD_SEQ
+    source_index: null
+    source_field_key: DW_LOAD_SEQ
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-4-observations-dw_load_seq-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+    - DRIFT-008
+  - source_header: OBV_ID
+    source_index: null
+    source_field_key: OBV_ID
+    canonical_hint: OBS_KEY
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-observations-obv_id-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-008
+  - source_header: PT_LINK
+    source_index: null
+    source_field_key: PT_LINK
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-observations-pt_link-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-008
+  - source_header: VISIT_REF
+    source_index: null
+    source_field_key: VISIT_REF
+    canonical_hint: APPT_REF
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-observations-visit_ref-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-008
+  - source_header: TS_OBS
+    source_index: null
+    source_field_key: TS_OBS
+    canonical_hint: OBS_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-observations-ts_obs-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-008
+  - source_header: PL_DATA
+    source_index: null
+    source_field_key: PL_DATA
+    canonical_hint: OBS_PAYLOAD
+    inferred_type: json_string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-observations-pl_data-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-005
+    - DRIFT-008
+  - source_header: REC_FLAG
+    source_index: null
+    source_field_key: REC_FLAG
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-4-observations-rec_flag-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+    - DRIFT-008
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when JSON is malformed or missing Bundle entries
+    - stop_pipeline when parser family is unsupported
+    row_level:
+    - quarantine_data when DW_LOAD_SEQ is missing
+    - warn when PL_DATA is blank or cannot be interpreted by later approved validators
+- provider_slug: data_provider_4_valleybridge_medical
+  provider_name: ValleyBridge Medical
+  source_type: clinical_provider
+  source_entity: patients
+  provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/patients.yaml
+  filetype: fhir_stu3
+  file_extension: json
+  expected_file_patterns:
+  - data_500k/data_provider_4_valleybridge_medical/year=2025/patients/patients_*.json
+  upload_partition: year=2025
+  parser_family: fhir_stu3_bundle_with_comments
+  source_row_key: DW_LOAD_SEQ
+  canonical_row_key: ROW_ID
+  record_grain: one membership transaction event per FHIR STU3 Patient resource
+  field_count: 10
+  fields:
+  - source_header: DW_LOAD_SEQ
+    source_index: null
+    source_field_key: DW_LOAD_SEQ
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-4-patients-dw_load_seq-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+    - DRIFT-008
+  - source_header: PTKEY
+    source_index: null
+    source_field_key: PTKEY
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-patients-ptkey-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-008
+  - source_header: NAME_FIRST
+    source_index: null
+    source_field_key: NAME_FIRST
+    canonical_hint: PT_FIRST_NM
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-patients-name_first-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-008
+  - source_header: NAME_LAST
+    source_index: null
+    source_field_key: NAME_LAST
+    canonical_hint: PT_LAST_NM
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-patients-name_last-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-008
+  - source_header: PATIENT_SSN
+    source_index: null
+    source_field_key: PATIENT_SSN
+    canonical_hint: SSN_VAL
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-patients-patient_ssn-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-008
+  - source_header: SX_FLAG
+    source_index: null
+    source_field_key: SX_FLAG
+    canonical_hint: GDR_CD
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-patients-sx_flag-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-008
+  - source_header: DT_BORN
+    source_index: null
+    source_field_key: DT_BORN
+    canonical_hint: BDT_VAL
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-patients-dt_born-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-008
+  - source_header: COV_START
+    source_index: null
+    source_field_key: COV_START
+    canonical_hint: INIT_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-patients-cov_start-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-008
+    - DRIFT-012
+  - source_header: COV_END
+    source_index: null
+    source_field_key: COV_END
+    canonical_hint: END_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-4-patients-cov_end-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-008
+    - DRIFT-012
+  - source_header: REC_FLAG
+    source_index: null
+    source_field_key: REC_FLAG
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-4-patients-rec_flag-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+    - DRIFT-008
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when JSON is malformed or missing Bundle entries
+    - stop_pipeline when parser family is unsupported
+    row_level:
+    - quarantine_data when DW_LOAD_SEQ is missing
+    - warn when optional membership date fields are blank
+- provider_slug: data_provider_5_pacific_shield_insurance
+  provider_name: Pacific Shield Insurance
+  source_type: claims_export
+  source_entity: conditions
+  provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/conditions.yaml
+  filetype: csv
+  file_extension: csv
+  expected_file_patterns:
+  - data_500k/data_provider_5_pacific_shield_insurance/year=2025/conditions/conditions_*.csv
+  upload_partition: year=2025
+  parser_family: csv_claims_export
+  source_row_key: CLM_SEQ
+  canonical_row_key: ROW_ID
+  record_grain: one condition occurrence CSV row
+  field_count: 8
+  fields:
+  - source_header: CLM_SEQ
+    source_index: 0
+    source_field_key: CLM_SEQ[0]
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-5-conditions-clm_seq_0-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+    - DRIFT-009
+    - DRIFT-011
+  - source_header: DX_LINE_ID
+    source_index: 1
+    source_field_key: DX_LINE_ID[1]
+    canonical_hint: CND_KEY
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-conditions-dx_line_id_1-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-009
+    - DRIFT-011
+  - source_header: DX_CD
+    source_index: 2
+    source_field_key: DX_CD[2]
+    canonical_hint: CND_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-conditions-dx_cd_2-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-009
+    - DRIFT-010
+    - DRIFT-011
+    - DRIFT-014
+  - source_header: MEMBER_ID
+    source_index: 3
+    source_field_key: MEMBER_ID[3]
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-conditions-member_id_3-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-009
+    - DRIFT-011
+  - source_header: ENCOUNTER_ID
+    source_index: 4
+    source_field_key: ENCOUNTER_ID[4]
+    canonical_hint: APPT_REF
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-conditions-encounter_id_4-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-009
+    - DRIFT-011
+  - source_header: DX_CD
+    source_index: 5
+    source_field_key: DX_CD[5]
+    canonical_hint: ICD_HINT
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-conditions-dx_cd_5-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-009
+    - DRIFT-010
+    - DRIFT-011
+    - DRIFT-014
+  - source_header: DX_DESC
+    source_index: 6
+    source_field_key: DX_DESC[6]
+    canonical_hint: CND_DESC
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-conditions-dx_desc_6-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-009
+    - DRIFT-011
+    - DRIFT-014
+  - source_header: LINE_STS
+    source_index: 7
+    source_field_key: LINE_STS[7]
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-5-conditions-line_sts_7-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+    - DRIFT-009
+    - DRIFT-011
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when CSV rows do not match the declared entity column count
+    - stop_pipeline when parser family is unsupported
+    row_level:
+    - quarantine_data when CLM_SEQ is missing
+    - warn when duplicate DX_CD values diverge and need semantic review
+- provider_slug: data_provider_5_pacific_shield_insurance
+  provider_name: Pacific Shield Insurance
+  source_type: claims_export
+  source_entity: encounters
+  provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/encounters.yaml
+  filetype: csv
+  file_extension: csv
+  expected_file_patterns:
+  - data_500k/data_provider_5_pacific_shield_insurance/year=2025/encounters/encounters_*.csv
+  upload_partition: year=2025
+  parser_family: csv_claims_export
+  source_row_key: CLM_SEQ
+  canonical_row_key: ROW_ID
+  record_grain: one encounter CSV row with coverage status
+  field_count: 6
+  fields:
+  - source_header: CLM_SEQ
+    source_index: 0
+    source_field_key: CLM_SEQ[0]
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-5-encounters-clm_seq_0-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+    - DRIFT-009
+    - DRIFT-011
+  - source_header: ENCOUNTER_ID
+    source_index: 1
+    source_field_key: ENCOUNTER_ID[1]
+    canonical_hint: APPT_KEY
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-encounters-encounter_id_1-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-009
+    - DRIFT-011
+  - source_header: MEMBER_ID
+    source_index: 2
+    source_field_key: MEMBER_ID[2]
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-encounters-member_id_2-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-009
+    - DRIFT-011
+  - source_header: SVC_DT
+    source_index: 3
+    source_field_key: SVC_DT[3]
+    canonical_hint: APPT_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-encounters-svc_dt_3-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-009
+    - DRIFT-011
+  - source_header: COVERAGE_STATUS
+    source_index: 4
+    source_field_key: COVERAGE_STATUS[4]
+    canonical_hint: COVERAGE_STATUS
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-encounters-coverage_status_4-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-009
+    - DRIFT-011
+    - DRIFT-012
+  - source_header: CLM_STS
+    source_index: 5
+    source_field_key: CLM_STS[5]
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-5-encounters-clm_sts_5-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+    - DRIFT-009
+    - DRIFT-011
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when CSV rows do not match the declared entity column count
+    - stop_pipeline when parser family is unsupported
+    row_level:
+    - quarantine_data when CLM_SEQ is missing
+    - warn when MEMBER_ID does not reconcile to patient membership inputs
+- provider_slug: data_provider_5_pacific_shield_insurance
+  provider_name: Pacific Shield Insurance
+  source_type: claims_export
+  source_entity: medications
+  provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/medications.yaml
+  filetype: csv
+  file_extension: csv
+  expected_file_patterns:
+  - data_500k/data_provider_5_pacific_shield_insurance/year=2025/medications/medications_*.csv
+  upload_partition: year=2025
+  parser_family: csv_claims_export
+  source_row_key: CLM_SEQ
+  canonical_row_key: ROW_ID
+  record_grain: one medication order CSV row
+  field_count: 10
+  fields:
+  - source_header: CLM_SEQ
+    source_index: 0
+    source_field_key: CLM_SEQ[0]
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-5-medications-clm_seq_0-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+    - DRIFT-009
+    - DRIFT-011
+  - source_header: RX_CLM_ID
+    source_index: 1
+    source_field_key: RX_CLM_ID[1]
+    canonical_hint: MED_OCC_KEY
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-medications-rx_clm_id_1-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-009
+    - DRIFT-011
+  - source_header: DRUG_CD
+    source_index: 2
+    source_field_key: DRUG_CD[2]
+    canonical_hint: MED_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-medications-drug_cd_2-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-009
+    - DRIFT-011
+    - DRIFT-014
+  - source_header: MEMBER_ID
+    source_index: 3
+    source_field_key: MEMBER_ID[3]
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-medications-member_id_3-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-009
+    - DRIFT-011
+  - source_header: ENCOUNTER_ID
+    source_index: 4
+    source_field_key: ENCOUNTER_ID[4]
+    canonical_hint: APPT_REF
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-medications-encounter_id_4-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-009
+    - DRIFT-011
+  - source_header: DX_LINE_REF
+    source_index: 5
+    source_field_key: DX_LINE_REF[5]
+    canonical_hint: CND_REF
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-medications-dx_line_ref_5-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-009
+    - DRIFT-011
+  - source_header: DRUG_NM
+    source_index: 6
+    source_field_key: DRUG_NM[6]
+    canonical_hint: MED_DESC
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-medications-drug_nm_6-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-009
+    - DRIFT-011
+    - DRIFT-014
+  - source_header: PAID_AMT
+    source_index: 7
+    source_field_key: PAID_AMT[7]
+    canonical_hint: MED_UNIT_PRICE
+    inferred_type: decimal
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-medications-paid_amt_7-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-009
+    - DRIFT-011
+    - DRIFT-013
+  - source_header: FILL_DT
+    source_index: 8
+    source_field_key: FILL_DT[8]
+    canonical_hint: ORD_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-medications-fill_dt_8-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-009
+    - DRIFT-011
+  - source_header: CLM_STS
+    source_index: 9
+    source_field_key: CLM_STS[9]
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-5-medications-clm_sts_9-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+    - DRIFT-009
+    - DRIFT-011
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when CSV rows do not match the declared entity column count
+    - stop_pipeline when parser family is unsupported
+    row_level:
+    - quarantine_data when CLM_SEQ is missing
+    - warn when medication relationship references do not reconcile in local validation
+- provider_slug: data_provider_5_pacific_shield_insurance
+  provider_name: Pacific Shield Insurance
+  source_type: claims_export
+  source_entity: observations
+  provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/observations.yaml
+  filetype: csv
+  file_extension: csv
+  expected_file_patterns:
+  - data_500k/data_provider_5_pacific_shield_insurance/year=2025/observations/observations_*.csv
+  upload_partition: year=2025
+  parser_family: csv_claims_export
+  source_row_key: CLM_SEQ
+  canonical_row_key: ROW_ID
+  record_grain: one observation CSV row with source vitals payload
+  field_count: 7
+  fields:
+  - source_header: CLM_SEQ
+    source_index: 0
+    source_field_key: CLM_SEQ[0]
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-5-observations-clm_seq_0-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+    - DRIFT-009
+    - DRIFT-011
+  - source_header: OBS_CLM_ID
+    source_index: 1
+    source_field_key: OBS_CLM_ID[1]
+    canonical_hint: OBS_KEY
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-observations-obs_clm_id_1-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-009
+    - DRIFT-011
+  - source_header: MEMBER_ID
+    source_index: 2
+    source_field_key: MEMBER_ID[2]
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-observations-member_id_2-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-009
+    - DRIFT-011
+  - source_header: ENCOUNTER_ID
+    source_index: 3
+    source_field_key: ENCOUNTER_ID[3]
+    canonical_hint: APPT_REF
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-observations-encounter_id_3-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-009
+    - DRIFT-011
+  - source_header: SVC_DT
+    source_index: 4
+    source_field_key: SVC_DT[4]
+    canonical_hint: OBS_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-observations-svc_dt_4-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-009
+    - DRIFT-011
+  - source_header: VITALS_JSON
+    source_index: 5
+    source_field_key: VITALS_JSON[5]
+    canonical_hint: OBS_PAYLOAD
+    inferred_type: json_string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-observations-vitals_json_5-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-005
+    - DRIFT-009
+    - DRIFT-011
+  - source_header: CLM_STS
+    source_index: 6
+    source_field_key: CLM_STS[6]
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-5-observations-clm_sts_6-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+    - DRIFT-009
+    - DRIFT-011
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when CSV rows do not match the declared entity column count
+    - stop_pipeline when parser family is unsupported
+    row_level:
+    - quarantine_data when CLM_SEQ is missing
+    - warn when VITALS_JSON is blank or malformed until canonical payload rules are approved
+- provider_slug: data_provider_5_pacific_shield_insurance
+  provider_name: Pacific Shield Insurance
+  source_type: claims_export
+  source_entity: patients
+  provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/patients.yaml
+  filetype: csv
+  file_extension: csv
+  expected_file_patterns:
+  - data_500k/data_provider_5_pacific_shield_insurance/year=2025/patients/patients_*.csv
+  upload_partition: year=2025
+  parser_family: csv_claims_export
+  source_row_key: CLM_SEQ
+  canonical_row_key: ROW_ID
+  record_grain: one transactional membership input CSV row
+  field_count: 10
+  fields:
+  - source_header: CLM_SEQ
+    source_index: 0
+    source_field_key: CLM_SEQ[0]
+    canonical_hint: ROW_ID
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-5-patients-clm_seq_0-01
+    linked_runbook_decision_ids:
+    - DRIFT-001
+    - DRIFT-009
+  - source_header: MEMBER_ID
+    source_index: 1
+    source_field_key: MEMBER_ID[1]
+    canonical_hint: PT_001_ID
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-patients-member_id_1-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-004
+    - DRIFT-009
+  - source_header: MBR_FIRST_NAME
+    source_index: 2
+    source_field_key: MBR_FIRST_NAME[2]
+    canonical_hint: PT_FIRST_NM
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-patients-mbr_first_name_2-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-009
+  - source_header: MBR_LAST_NAME
+    source_index: 3
+    source_field_key: MBR_LAST_NAME[3]
+    canonical_hint: PT_LAST_NM
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-patients-mbr_last_name_3-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-009
+  - source_header: MBR_SSN
+    source_index: 4
+    source_field_key: MBR_SSN[4]
+    canonical_hint: SSN_VAL
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-patients-mbr_ssn_4-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-009
+  - source_header: MBR_SEX
+    source_index: 5
+    source_field_key: MBR_SEX[5]
+    canonical_hint: GDR_CD
+    inferred_type: string
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-patients-mbr_sex_5-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-009
+  - source_header: MBR_DOB
+    source_index: 6
+    source_field_key: MBR_DOB[6]
+    canonical_hint: BDT_VAL
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-patients-mbr_dob_6-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-009
+  - source_header: ELIG_START_DT
+    source_index: 7
+    source_field_key: ELIG_START_DT[7]
+    canonical_hint: INIT_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-patients-elig_start_dt_7-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-009
+    - DRIFT-012
+  - source_header: ELIG_END_DT
+    source_index: 8
+    source_field_key: ELIG_END_DT[8]
+    canonical_hint: END_DT_RAW
+    inferred_type: date
+    pii_signal: true
+    required_for_bronze: true
+    field_decision_id: BQFD-5-patients-elig_end_dt_8-01
+    linked_runbook_decision_ids:
+    - DRIFT-003
+    - DRIFT-009
+    - DRIFT-012
+  - source_header: MBR_STS
+    source_index: 9
+    source_field_key: MBR_STS[9]
+    canonical_hint: REC_STS
+    inferred_type: string
+    pii_signal: false
+    required_for_bronze: true
+    field_decision_id: BQFD-5-patients-mbr_sts_9-01
+    linked_runbook_decision_ids:
+    - DRIFT-002
+    - DRIFT-009
+  quarantine_rules:
+    file_level:
+    - stop_pipeline when CSV rows do not match the declared entity column count
+    - stop_pipeline when parser family is unsupported
+    row_level:
+    - quarantine_data when CLM_SEQ is missing
+    - warn when eligibility start or end date is blank according to transaction type
+runbook_decisions_applied:
+- DRIFT-001
+- DRIFT-002
+- DRIFT-003
+- DRIFT-004
+- DRIFT-005
+- DRIFT-006
+- DRIFT-007
+- DRIFT-008
+- DRIFT-009
+- DRIFT-010
+- DRIFT-011
+- DRIFT-012
+- DRIFT-013
+- DRIFT-014
+evidence_paths:
+- metadata/provider_specs
+- metadata/model_specs/impact/business_question_profiles.yaml
+- reports/hitl/canonical_drift_decision_runbook.md
+- reports/drift
+- reports/privacy
+- reports/qa
+readiness:
+  model_ready: true
+  blocked_reason: ''
+  allowed_next_action: silver_contract_validation
