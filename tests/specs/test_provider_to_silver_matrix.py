@@ -37,6 +37,15 @@ def matrix() -> dict:
     return load_yaml(MATRIX_PATH)
 
 
+def silver_columns_by_key() -> dict[tuple[str, str], dict]:
+    columns = {}
+    for path in SILVER_ROOT.glob("*.yaml"):
+        silver = load_yaml(path)
+        for column in silver["columns"]:
+            columns[(silver["entity"], column["name"])] = column
+    return columns
+
+
 def runbook_text() -> str:
     return (
         REPO_ROOT / "reports" / "hitl" / "canonical_drift_decision_runbook.md"
@@ -73,6 +82,8 @@ def test_matrix_rows_reference_applied_field_decisions_and_runbook() -> None:
         assert row["silver_entity"]
         assert row["silver_column"]
         assert row["target_type"]
+        assert row["required"] is False
+        assert row["nullable"] is True
         assert row["mapping_confidence"] == "approved"
         assert row["plan_02_allowance"] == "allowed"
         assert row["approval_status"] == "applied"
@@ -142,3 +153,13 @@ def test_every_silver_column_mapping_is_present_in_matrix() -> None:
                     column["name"],
                 )
                 assert key in matrix_keys, key
+
+
+def test_matrix_required_nullable_flags_match_silver_ingestion_contract() -> None:
+    columns = silver_columns_by_key()
+
+    for row in matrix()["mappings"]:
+        column = columns[(row["silver_entity"], row["silver_column"])]
+        assert row["target_type"] == column["type"], row
+        assert row["required"] == column["required"] is False, row
+        assert row["nullable"] == column["nullable"] is True, row

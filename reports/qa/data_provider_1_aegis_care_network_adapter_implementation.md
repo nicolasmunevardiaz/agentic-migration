@@ -24,7 +24,7 @@ status: `local_validation_passed`
 - Unit data tests: parser compatibility, malformed JSON rejection, missing row-key rejection, and wrong resource type rejection.
 - Integration tests: handler emits Bronze and provider-filtered Silver rows from fixture files.
 - Local sample integration tests: handler runs against `data_500k/data_provider_1_aegis_care_network/year=2025/<entity>/<entity>_001.json` when the ignored local dataset is present.
-- Data quality tests: invalid required decimal quarantines `cost_records.cost_amount`.
+- Data quality tests: invalid ingestion decimal warns and leaves `cost_records.cost_amount` nullable.
 - Schema tests: Aegis canonical mappings reference existing provider fields.
 - Regression tests: direct identifier provider fields are not promoted as Silver column names.
 - QA evidence tests: malformed optional observation payload emits warnings without raw sensitive values.
@@ -40,9 +40,9 @@ status: `local_validation_passed`
 
 | Command | Result |
 | --- | --- |
-| `uv run --no-sync pytest tests/specs` | passed, 34 tests |
-| `uv run --no-sync pytest tests/adapters` | passed, 78 tests |
-| `uv run --no-sync pytest` | passed, 126 tests |
+| `uv run --no-sync pytest tests/specs` | passed, 37 tests |
+| `uv run --no-sync pytest tests/adapters` | passed, 93 tests |
+| `uv run --no-sync pytest` | passed, 144 tests |
 | `uv run --no-sync ruff check` | passed |
 
 ## Risks And Boundaries

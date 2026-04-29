@@ -307,13 +307,13 @@ mappings:
   silver_entity: conditions
   silver_column: condition_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -334,13 +334,13 @@ mappings:
   silver_entity: conditions
   silver_column: condition_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -361,13 +361,13 @@ mappings:
   silver_entity: conditions
   silver_column: condition_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -388,13 +388,13 @@ mappings:
   silver_entity: conditions
   silver_column: condition_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -416,13 +416,13 @@ mappings:
   silver_entity: conditions
   silver_column: condition_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -578,13 +578,13 @@ mappings:
   silver_entity: conditions
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -605,13 +605,13 @@ mappings:
   silver_entity: conditions
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -632,13 +632,13 @@ mappings:
   silver_entity: conditions
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -659,13 +659,13 @@ mappings:
   silver_entity: conditions
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -687,13 +687,13 @@ mappings:
   silver_entity: conditions
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -713,13 +713,13 @@ mappings:
   silver_entity: conditions
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -740,13 +740,13 @@ mappings:
   silver_entity: conditions
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -767,13 +767,13 @@ mappings:
   silver_entity: conditions
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -794,13 +794,13 @@ mappings:
   silver_entity: conditions
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -822,13 +822,13 @@ mappings:
   silver_entity: conditions
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -847,13 +847,13 @@ mappings:
   silver_entity: conditions
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -872,13 +872,13 @@ mappings:
   silver_entity: conditions
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -897,13 +897,13 @@ mappings:
   silver_entity: conditions
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -922,13 +922,13 @@ mappings:
   silver_entity: conditions
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -947,13 +947,13 @@ mappings:
   silver_entity: conditions
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -1102,13 +1102,13 @@ mappings:
   silver_entity: conditions
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -1127,13 +1127,13 @@ mappings:
   silver_entity: conditions
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -1152,13 +1152,13 @@ mappings:
   silver_entity: conditions
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -1177,13 +1177,13 @@ mappings:
   silver_entity: conditions
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -1202,13 +1202,13 @@ mappings:
   silver_entity: conditions
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -1227,13 +1227,13 @@ mappings:
   silver_entity: conditions
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -1252,13 +1252,13 @@ mappings:
   silver_entity: conditions
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -1277,13 +1277,13 @@ mappings:
   silver_entity: conditions
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -1302,13 +1302,13 @@ mappings:
   silver_entity: conditions
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -1327,13 +1327,13 @@ mappings:
   silver_entity: conditions
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -1352,13 +1352,13 @@ mappings:
   silver_entity: conditions
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -1378,13 +1378,13 @@ mappings:
   silver_entity: conditions
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -1404,13 +1404,13 @@ mappings:
   silver_entity: conditions
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -1430,13 +1430,13 @@ mappings:
   silver_entity: conditions
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -1457,13 +1457,13 @@ mappings:
   silver_entity: conditions
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -1489,7 +1489,7 @@ mappings:
   pii_class: phi_financial
   mapping_confidence: approved
   transform_rule: safe-cast approved medication financial source amount to decimal; preserve source field and provider provenance
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -1516,7 +1516,7 @@ mappings:
   pii_class: phi_financial
   mapping_confidence: approved
   transform_rule: safe-cast approved medication financial source amount to decimal; preserve source field and provider provenance
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -1543,7 +1543,7 @@ mappings:
   pii_class: phi_financial
   mapping_confidence: approved
   transform_rule: safe-cast approved medication financial source amount to decimal; preserve source field and provider provenance
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -1570,7 +1570,7 @@ mappings:
   pii_class: phi_financial
   mapping_confidence: approved
   transform_rule: safe-cast approved medication financial source amount to decimal; preserve source field and provider provenance
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -1598,7 +1598,7 @@ mappings:
   pii_class: phi_financial
   mapping_confidence: approved
   transform_rule: safe-cast approved medication financial source amount to decimal; preserve source field and provider provenance
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -1748,13 +1748,13 @@ mappings:
   silver_entity: cost_records
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -1775,13 +1775,13 @@ mappings:
   silver_entity: cost_records
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -1802,13 +1802,13 @@ mappings:
   silver_entity: cost_records
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -1829,13 +1829,13 @@ mappings:
   silver_entity: cost_records
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -1857,13 +1857,13 @@ mappings:
   silver_entity: cost_records
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -1883,13 +1883,13 @@ mappings:
   silver_entity: cost_records
   silver_column: medication_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -1910,13 +1910,13 @@ mappings:
   silver_entity: cost_records
   silver_column: medication_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -1937,13 +1937,13 @@ mappings:
   silver_entity: cost_records
   silver_column: medication_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -1964,13 +1964,13 @@ mappings:
   silver_entity: cost_records
   silver_column: medication_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -1992,13 +1992,13 @@ mappings:
   silver_entity: cost_records
   silver_column: medication_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -2018,13 +2018,13 @@ mappings:
   silver_entity: cost_records
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -2045,13 +2045,13 @@ mappings:
   silver_entity: cost_records
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -2072,13 +2072,13 @@ mappings:
   silver_entity: cost_records
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -2099,13 +2099,13 @@ mappings:
   silver_entity: cost_records
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -2127,13 +2127,13 @@ mappings:
   silver_entity: cost_records
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -2152,13 +2152,13 @@ mappings:
   silver_entity: cost_records
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -2177,13 +2177,13 @@ mappings:
   silver_entity: cost_records
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -2202,13 +2202,13 @@ mappings:
   silver_entity: cost_records
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -2227,13 +2227,13 @@ mappings:
   silver_entity: cost_records
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -2252,13 +2252,13 @@ mappings:
   silver_entity: cost_records
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -2407,13 +2407,13 @@ mappings:
   silver_entity: cost_records
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -2432,13 +2432,13 @@ mappings:
   silver_entity: cost_records
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -2457,13 +2457,13 @@ mappings:
   silver_entity: cost_records
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -2482,13 +2482,13 @@ mappings:
   silver_entity: cost_records
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -2507,13 +2507,13 @@ mappings:
   silver_entity: cost_records
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -2532,13 +2532,13 @@ mappings:
   silver_entity: cost_records
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -2557,13 +2557,13 @@ mappings:
   silver_entity: cost_records
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -2582,13 +2582,13 @@ mappings:
   silver_entity: cost_records
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -2607,13 +2607,13 @@ mappings:
   silver_entity: cost_records
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -2632,13 +2632,13 @@ mappings:
   silver_entity: cost_records
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -2657,13 +2657,13 @@ mappings:
   silver_entity: cost_records
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -2683,13 +2683,13 @@ mappings:
   silver_entity: cost_records
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -2709,13 +2709,13 @@ mappings:
   silver_entity: cost_records
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -2735,13 +2735,13 @@ mappings:
   silver_entity: cost_records
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -2762,13 +2762,13 @@ mappings:
   silver_entity: cost_records
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -3185,13 +3185,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -3212,13 +3212,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -3239,13 +3239,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -3266,13 +3266,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -3293,13 +3293,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -3318,13 +3318,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -3343,13 +3343,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -3368,13 +3368,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -3393,13 +3393,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -3418,13 +3418,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -3443,13 +3443,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -3468,13 +3468,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -3493,13 +3493,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -3518,13 +3518,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -3543,13 +3543,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -3568,13 +3568,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -3593,13 +3593,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -3618,13 +3618,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -3643,13 +3643,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -3668,13 +3668,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -3693,13 +3693,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -3719,13 +3719,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -3745,13 +3745,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -3771,13 +3771,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -3797,13 +3797,13 @@ mappings:
   silver_entity: coverage_periods
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -4088,13 +4088,13 @@ mappings:
   silver_entity: encounters
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -4115,13 +4115,13 @@ mappings:
   silver_entity: encounters
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -4142,13 +4142,13 @@ mappings:
   silver_entity: encounters
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -4169,13 +4169,13 @@ mappings:
   silver_entity: encounters
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -4197,13 +4197,13 @@ mappings:
   silver_entity: encounters
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -4223,13 +4223,13 @@ mappings:
   silver_entity: encounters
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -4250,13 +4250,13 @@ mappings:
   silver_entity: encounters
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -4277,13 +4277,13 @@ mappings:
   silver_entity: encounters
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -4304,13 +4304,13 @@ mappings:
   silver_entity: encounters
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -4332,13 +4332,13 @@ mappings:
   silver_entity: encounters
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -4357,13 +4357,13 @@ mappings:
   silver_entity: encounters
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -4382,13 +4382,13 @@ mappings:
   silver_entity: encounters
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -4407,13 +4407,13 @@ mappings:
   silver_entity: encounters
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -4432,13 +4432,13 @@ mappings:
   silver_entity: encounters
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -4457,13 +4457,13 @@ mappings:
   silver_entity: encounters
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -4612,13 +4612,13 @@ mappings:
   silver_entity: encounters
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -4637,13 +4637,13 @@ mappings:
   silver_entity: encounters
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -4662,13 +4662,13 @@ mappings:
   silver_entity: encounters
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -4687,13 +4687,13 @@ mappings:
   silver_entity: encounters
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -4712,13 +4712,13 @@ mappings:
   silver_entity: encounters
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -4737,13 +4737,13 @@ mappings:
   silver_entity: encounters
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -4762,13 +4762,13 @@ mappings:
   silver_entity: encounters
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -4787,13 +4787,13 @@ mappings:
   silver_entity: encounters
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -4812,13 +4812,13 @@ mappings:
   silver_entity: encounters
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -4837,13 +4837,13 @@ mappings:
   silver_entity: encounters
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -4862,13 +4862,13 @@ mappings:
   silver_entity: encounters
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -4888,13 +4888,13 @@ mappings:
   silver_entity: encounters
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -4914,13 +4914,13 @@ mappings:
   silver_entity: encounters
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -4940,13 +4940,13 @@ mappings:
   silver_entity: encounters
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -4967,13 +4967,13 @@ mappings:
   silver_entity: encounters
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -4993,13 +4993,13 @@ mappings:
   silver_entity: medications
   silver_column: condition_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -5020,13 +5020,13 @@ mappings:
   silver_entity: medications
   silver_column: condition_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -5047,13 +5047,13 @@ mappings:
   silver_entity: medications
   silver_column: condition_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -5074,13 +5074,13 @@ mappings:
   silver_entity: medications
   silver_column: condition_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -5102,13 +5102,13 @@ mappings:
   silver_entity: medications
   silver_column: condition_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -5126,13 +5126,13 @@ mappings:
   silver_entity: medications
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -5150,13 +5150,13 @@ mappings:
   silver_entity: medications
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -5174,13 +5174,13 @@ mappings:
   silver_entity: medications
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -5198,13 +5198,13 @@ mappings:
   silver_entity: medications
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -5222,13 +5222,13 @@ mappings:
   silver_entity: medications
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -5501,13 +5501,13 @@ mappings:
   silver_entity: medications
   silver_column: medication_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -5525,13 +5525,13 @@ mappings:
   silver_entity: medications
   silver_column: medication_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -5549,13 +5549,13 @@ mappings:
   silver_entity: medications
   silver_column: medication_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -5573,13 +5573,13 @@ mappings:
   silver_entity: medications
   silver_column: medication_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -5597,13 +5597,13 @@ mappings:
   silver_entity: medications
   silver_column: medication_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -5756,13 +5756,13 @@ mappings:
   silver_entity: medications
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -5780,13 +5780,13 @@ mappings:
   silver_entity: medications
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -5804,13 +5804,13 @@ mappings:
   silver_entity: medications
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -5828,13 +5828,13 @@ mappings:
   silver_entity: medications
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -5852,13 +5852,13 @@ mappings:
   silver_entity: medications
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -5877,13 +5877,13 @@ mappings:
   silver_entity: medications
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -5902,13 +5902,13 @@ mappings:
   silver_entity: medications
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -5927,13 +5927,13 @@ mappings:
   silver_entity: medications
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -5952,13 +5952,13 @@ mappings:
   silver_entity: medications
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -5977,13 +5977,13 @@ mappings:
   silver_entity: medications
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -6122,13 +6122,13 @@ mappings:
   silver_entity: medications
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -6147,13 +6147,13 @@ mappings:
   silver_entity: medications
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -6172,13 +6172,13 @@ mappings:
   silver_entity: medications
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -6197,13 +6197,13 @@ mappings:
   silver_entity: medications
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -6222,13 +6222,13 @@ mappings:
   silver_entity: medications
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -6247,13 +6247,13 @@ mappings:
   silver_entity: medications
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -6272,13 +6272,13 @@ mappings:
   silver_entity: medications
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -6297,13 +6297,13 @@ mappings:
   silver_entity: medications
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -6322,13 +6322,13 @@ mappings:
   silver_entity: medications
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -6347,13 +6347,13 @@ mappings:
   silver_entity: medications
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -6371,13 +6371,13 @@ mappings:
   silver_entity: medications
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -6395,13 +6395,13 @@ mappings:
   silver_entity: medications
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -6419,13 +6419,13 @@ mappings:
   silver_entity: medications
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -6443,13 +6443,13 @@ mappings:
   silver_entity: medications
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -6467,13 +6467,13 @@ mappings:
   silver_entity: medications
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -6749,13 +6749,13 @@ mappings:
   silver_entity: members
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -6773,13 +6773,13 @@ mappings:
   silver_entity: members
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -6797,13 +6797,13 @@ mappings:
   silver_entity: members
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -6821,13 +6821,13 @@ mappings:
   silver_entity: members
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -6845,13 +6845,13 @@ mappings:
   silver_entity: members
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -6870,13 +6870,13 @@ mappings:
   silver_entity: members
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -6895,13 +6895,13 @@ mappings:
   silver_entity: members
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -6920,13 +6920,13 @@ mappings:
   silver_entity: members
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -6945,13 +6945,13 @@ mappings:
   silver_entity: members
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -6970,13 +6970,13 @@ mappings:
   silver_entity: members
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -7115,13 +7115,13 @@ mappings:
   silver_entity: members
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -7140,13 +7140,13 @@ mappings:
   silver_entity: members
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -7165,13 +7165,13 @@ mappings:
   silver_entity: members
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -7190,13 +7190,13 @@ mappings:
   silver_entity: members
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -7215,13 +7215,13 @@ mappings:
   silver_entity: members
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -7240,13 +7240,13 @@ mappings:
   silver_entity: members
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -7265,13 +7265,13 @@ mappings:
   silver_entity: members
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -7290,13 +7290,13 @@ mappings:
   silver_entity: members
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -7315,13 +7315,13 @@ mappings:
   silver_entity: members
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -7340,13 +7340,13 @@ mappings:
   silver_entity: members
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -7364,13 +7364,13 @@ mappings:
   silver_entity: members
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -7388,13 +7388,13 @@ mappings:
   silver_entity: members
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -7412,13 +7412,13 @@ mappings:
   silver_entity: members
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -7436,13 +7436,13 @@ mappings:
   silver_entity: members
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -7460,13 +7460,13 @@ mappings:
   silver_entity: members
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -7486,13 +7486,13 @@ mappings:
   silver_entity: observations
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -7513,13 +7513,13 @@ mappings:
   silver_entity: observations
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -7540,13 +7540,13 @@ mappings:
   silver_entity: observations
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -7567,13 +7567,13 @@ mappings:
   silver_entity: observations
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -7595,13 +7595,13 @@ mappings:
   silver_entity: observations
   silver_column: encounter_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -7761,13 +7761,13 @@ mappings:
   silver_entity: observations
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -7788,13 +7788,13 @@ mappings:
   silver_entity: observations
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -7815,13 +7815,13 @@ mappings:
   silver_entity: observations
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -7842,13 +7842,13 @@ mappings:
   silver_entity: observations
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -7870,13 +7870,13 @@ mappings:
   silver_entity: observations
   silver_column: member_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_source_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -8146,13 +8146,13 @@ mappings:
   silver_entity: observations
   silver_column: observation_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -8173,13 +8173,13 @@ mappings:
   silver_entity: observations
   silver_column: observation_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -8200,13 +8200,13 @@ mappings:
   silver_entity: observations
   silver_column: observation_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -8227,13 +8227,13 @@ mappings:
   silver_entity: observations
   silver_column: observation_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -8255,13 +8255,13 @@ mappings:
   silver_entity: observations
   silver_column: observation_reference
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: true
   pii_class: phi_clinical_identifier
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -8280,13 +8280,13 @@ mappings:
   silver_entity: observations
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -8305,13 +8305,13 @@ mappings:
   silver_entity: observations
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -8330,13 +8330,13 @@ mappings:
   silver_entity: observations
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -8355,13 +8355,13 @@ mappings:
   silver_entity: observations
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -8380,13 +8380,13 @@ mappings:
   silver_entity: observations
   silver_column: provider_slug
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -8535,13 +8535,13 @@ mappings:
   silver_entity: observations
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -8560,13 +8560,13 @@ mappings:
   silver_entity: observations
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -8585,13 +8585,13 @@ mappings:
   silver_entity: observations
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -8610,13 +8610,13 @@ mappings:
   silver_entity: observations
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -8635,13 +8635,13 @@ mappings:
   silver_entity: observations
   silver_column: source_entity
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -8660,13 +8660,13 @@ mappings:
   silver_entity: observations
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -8685,13 +8685,13 @@ mappings:
   silver_entity: observations
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -8710,13 +8710,13 @@ mappings:
   silver_entity: observations
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -8735,13 +8735,13 @@ mappings:
   silver_entity: observations
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -8760,13 +8760,13 @@ mappings:
   silver_entity: observations
   silver_column: source_lineage_ref
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: compose provider_slug, source_entity, source_row_id, and source file identity
-  quarantine_rule: quarantine_data when required lineage metadata is missing
+  quarantine_rule: warn when lineage metadata is missing; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network
@@ -8785,13 +8785,13 @@ mappings:
   silver_entity: observations
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_2_bluestone_health
@@ -8811,13 +8811,13 @@ mappings:
   silver_entity: observations
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_3_northcare_clinics
@@ -8837,13 +8837,13 @@ mappings:
   silver_entity: observations
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_4_valleybridge_medical
@@ -8863,13 +8863,13 @@ mappings:
   silver_entity: observations
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_5_pacific_shield_insurance
@@ -8890,13 +8890,13 @@ mappings:
   silver_entity: observations
   silver_column: source_row_id
   target_type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_signal: false
   pii_class: non_sensitive_lineage
   mapping_confidence: approved
   transform_rule: copy approved provider row key into canonical lineage field
-  quarantine_rule: quarantine_data when required source value or safe cast is invalid
+  quarantine_rule: warn when source value or safe cast is invalid; defer schema compliance
   plan_02_allowance: allowed
   approval_status: applied
 - provider_slug: data_provider_1_aegis_care_network

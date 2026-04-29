@@ -7,7 +7,7 @@ Approval date: `2026-04-29`
 
 ## Readiness
 
-Plan 02 readiness is clear. The business question profile is approved, all 205 field decisions are applied, and DRIFT-001 through DRIFT-014 are applied with `Blocks Plan 02 = no`.
+Plan 02 readiness is clear. The business question profile is approved, all 205 field decisions are applied, and DRIFT-001 through DRIFT-015 are applied with `Blocks Plan 02 = no`.
 
 ## Coverage
 
@@ -28,6 +28,7 @@ Plan 02 readiness is clear. The business question profile is approved, all 205 f
 - Pacific Shield duplicate `DX_CD`: duplicate positions are preserved with position-aware lineage and separate mappings.
 - Sparse source coverage: Pacific Shield claims-backed clinical coverage is accepted with provider coverage visible in the matrix.
 - Parser drift: BlueStone XML, NorthCare segment envelopes, ValleyBridge STU3 quirks, and Pacific Shield CSV claims behavior are approved by runbook decisions.
+- Ingestion nullability: Bronze/Silver ingestion contracts do not enforce non-null schema compliance; missing or invalid values remain nullable and are surfaced through QA for later certification.
 
 ## Generated Artifacts
 

@@ -99,13 +99,16 @@ def test_bronze_contract_covers_all_provider_specs() -> None:
     }
     assert contract_paths == set(provider_specs)
 
+    for column in bronze["required_lineage_columns"]:
+        assert column["required"] is False
+
     for contract in bronze["source_contracts"]:
         assert contract["source_row_key"]
         assert contract["canonical_row_key"] == "ROW_ID"
         assert contract["parser_family"]
         assert contract["expected_file_patterns"]
         assert contract["fields"]
-        assert all(field["required_for_bronze"] for field in contract["fields"])
+        assert not any(field["required_for_bronze"] for field in contract["fields"])
         for field in contract["fields"]:
             assert field["field_decision_id"]
             assert field["linked_runbook_decision_ids"]
@@ -141,12 +144,10 @@ def test_silver_specs_have_required_shape_and_lineage() -> None:
             assert column["pii_class"]
             assert column["transform_rule"]
             assert column["source_mappings"], f"{entity}.{name}"
-            if name in REQUIRED_LINEAGE_COLUMNS:
-                assert column["lineage_required"] is True
-                assert column["required"] is True
-                assert column["nullable"] is False
-            if column["required"]:
-                assert column["quarantine_if_invalid"] is True
+            assert column["required"] is False
+            assert column["nullable"] is True
+            assert column["lineage_required"] is False
+            assert column["quarantine_if_invalid"] is False
 
 
 def test_silver_source_mappings_reference_provider_specs() -> None:

@@ -19,12 +19,12 @@ provider_coverage:
 columns:
 - name: provider_slug
   type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_class: non_sensitive_lineage
-  lineage_required: true
+  lineage_required: false
   transform_rule: copy provider.provider_slug from source contract
-  quarantine_if_invalid: true
+  quarantine_if_invalid: false
   needs_human_review: false
   review_reason: Approved lineage metadata by DRIFT-001.
   source_mappings:
@@ -60,12 +60,12 @@ columns:
     field_decision_id: DRIFT-001-lineage-metadata
 - name: source_entity
   type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_class: non_sensitive_lineage
-  lineage_required: true
+  lineage_required: false
   transform_rule: copy source.entity from source contract
-  quarantine_if_invalid: true
+  quarantine_if_invalid: false
   needs_human_review: false
   review_reason: Approved lineage metadata by DRIFT-001.
   source_mappings:
@@ -101,12 +101,12 @@ columns:
     field_decision_id: DRIFT-001-lineage-metadata
 - name: source_row_id
   type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_class: non_sensitive_lineage
-  lineage_required: true
+  lineage_required: false
   transform_rule: normalize provider source row key to ROW_ID with provider-scoped lineage
-  quarantine_if_invalid: true
+  quarantine_if_invalid: false
   needs_human_review: false
   review_reason: Approved lineage metadata by DRIFT-001.
   source_mappings:
@@ -142,12 +142,12 @@ columns:
     field_decision_id: BQFD-5-encounters-clm_seq_0-01
 - name: source_lineage_ref
   type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_class: non_sensitive_lineage
-  lineage_required: true
+  lineage_required: false
   transform_rule: hash or compose provider_slug, source_entity, source row key, and source file identity
-  quarantine_if_invalid: true
+  quarantine_if_invalid: false
   needs_human_review: false
   review_reason: Approved lineage metadata by DRIFT-001.
   source_mappings:
@@ -183,10 +183,10 @@ columns:
     field_decision_id: DRIFT-001-lineage-metadata
 - name: encounter_reference
   type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_class: phi_source_identifier
-  lineage_required: true
+  lineage_required: false
   source_mappings:
   - provider_slug: data_provider_1_aegis_care_network
     source_entity: encounters
@@ -219,15 +219,15 @@ columns:
     provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/encounters.yaml
     field_decision_id: BQFD-5-encounters-encounter_id_1-01
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_if_invalid: true
+  quarantine_if_invalid: false
   needs_human_review: false
   review_reason: Approved for Plan 02 canonical normalization by linked field decisions and drift runbook.
 - name: member_reference
   type: string
-  nullable: false
-  required: true
+  nullable: true
+  required: false
   pii_class: phi_source_identifier
-  lineage_required: true
+  lineage_required: false
   source_mappings:
   - provider_slug: data_provider_1_aegis_care_network
     source_entity: encounters
@@ -260,7 +260,7 @@ columns:
     provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/encounters.yaml
     field_decision_id: BQFD-5-encounters-member_id_2-01
   transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
-  quarantine_if_invalid: true
+  quarantine_if_invalid: false
   needs_human_review: false
   review_reason: Approved for Plan 02 canonical normalization by linked field decisions and drift runbook.
 - name: encounter_datetime
@@ -405,7 +405,7 @@ qa_expectations:
   - Validate encounters YAML shape and required model metadata.
   - Validate every source mapping references an existing provider spec and source field.
   data_quality_tests:
-  - Quarantine required lineage fields when missing.
+  - Warn on missing lineage fields and defer schema compliance checks.
   - Warn on invalid optional dates, payloads, or casts while preserving raw lineage.
   reconciliation_tests:
   - Reconcile provider coverage against provider_to_silver_matrix.yaml.

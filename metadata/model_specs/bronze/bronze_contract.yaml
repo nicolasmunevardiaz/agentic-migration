@@ -12,37 +12,37 @@ source_preservation_policy:
 required_lineage_columns:
 - name: provider_slug
   type: string
-  required: true
+  required: false
 - name: provider_name
   type: string
-  required: true
+  required: false
 - name: source_entity
   type: string
-  required: true
+  required: false
 - name: source_row_key_header
   type: string
-  required: true
+  required: false
 - name: source_row_key_value
   type: string
-  required: true
+  required: false
 - name: source_file_pattern
   type: string
-  required: true
+  required: false
 - name: upload_partition
   type: string
-  required: true
+  required: false
 - name: parser_family
   type: string
-  required: true
+  required: false
 - name: schema_version
   type: string
-  required: true
+  required: false
 - name: load_timestamp
   type: datetime
-  required: true
+  required: false
 - name: quarantine_status
   type: string
-  required: true
+  required: false
 source_contracts:
 - provider_slug: data_provider_1_aegis_care_network
   provider_name: Aegis Care Network
@@ -66,7 +66,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-conditions-src_row-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -76,7 +76,7 @@ source_contracts:
     canonical_hint: CND_KEY
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-conditions-cnd_key-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -87,7 +87,7 @@ source_contracts:
     canonical_hint: CND_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-conditions-cnd_src_id-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -98,7 +98,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-conditions-pt_001_id-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -109,7 +109,7 @@ source_contracts:
     canonical_hint: APPT_REF
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-conditions-appt_ref-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -120,7 +120,7 @@ source_contracts:
     canonical_hint: ICD_HINT
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-conditions-icd_hint-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -131,7 +131,7 @@ source_contracts:
     canonical_hint: CND_DESC
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-conditions-dx_descr-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -142,7 +142,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-conditions-rec_sts-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -175,7 +175,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-encounters-src_row-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -185,7 +185,7 @@ source_contracts:
     canonical_hint: APPT_KEY
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-encounters-appt_key-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -196,7 +196,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-encounters-pt_001_id-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -207,7 +207,7 @@ source_contracts:
     canonical_hint: APPT_DT_RAW
     inferred_type: datetime
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-encounters-appt_dt_raw-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -217,7 +217,7 @@ source_contracts:
     canonical_hint: COVERAGE_STATUS
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-encounters-coverage_status-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -228,7 +228,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-encounters-rec_sts-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -261,7 +261,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-medications-src_row-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -271,7 +271,7 @@ source_contracts:
     canonical_hint: MED_OCC_KEY
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-medications-rx_occ_key-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -282,7 +282,7 @@ source_contracts:
     canonical_hint: MED_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-medications-med_key-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -293,7 +293,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-medications-pt_001_id-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -304,7 +304,7 @@ source_contracts:
     canonical_hint: APPT_REF
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-medications-appt_ref-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -315,7 +315,7 @@ source_contracts:
     canonical_hint: CND_REF
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-medications-link_cnd-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -326,7 +326,7 @@ source_contracts:
     canonical_hint: MED_DESC
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-medications-med_nm_txt-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -337,7 +337,7 @@ source_contracts:
     canonical_hint: MED_UNIT_PRICE
     inferred_type: decimal
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-medications-unit_cost-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -348,7 +348,7 @@ source_contracts:
     canonical_hint: ORD_DT_RAW
     inferred_type: datetime
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-medications-ord_dt_raw-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -358,7 +358,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-medications-rec_sts-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -391,7 +391,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-observations-src_row-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -401,7 +401,7 @@ source_contracts:
     canonical_hint: OBS_KEY
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-observations-obs_key-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -412,7 +412,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-observations-pt_001_id-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -423,7 +423,7 @@ source_contracts:
     canonical_hint: APPT_REF
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-observations-appt_ref-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -434,7 +434,7 @@ source_contracts:
     canonical_hint: OBS_DT_RAW
     inferred_type: datetime
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-observations-obs_dt_raw-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -444,7 +444,7 @@ source_contracts:
     canonical_hint: OBS_PAYLOAD
     inferred_type: json_string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-observations-obs_payload-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -455,7 +455,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-observations-rec_sts-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -488,7 +488,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-patients-src_row-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -498,7 +498,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-patients-pt_001_id-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -509,7 +509,7 @@ source_contracts:
     canonical_hint: PT_FIRST_NM
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-patients-first_name-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -519,7 +519,7 @@ source_contracts:
     canonical_hint: PT_LAST_NM
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-patients-last_name-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -529,7 +529,7 @@ source_contracts:
     canonical_hint: SSN_VAL
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-patients-ssn-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -539,7 +539,7 @@ source_contracts:
     canonical_hint: GDR_CD
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-patients-gdr_cd-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -549,7 +549,7 @@ source_contracts:
     canonical_hint: BDT_VAL
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-patients-bdt_val-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -559,7 +559,7 @@ source_contracts:
     canonical_hint: INIT_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-patients-init_dt_raw-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -570,7 +570,7 @@ source_contracts:
     canonical_hint: END_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-patients-end_dt_raw-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -581,7 +581,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: boolean
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-1-patients-rec_sts-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -614,7 +614,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-conditions-line_id-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -625,7 +625,7 @@ source_contracts:
     canonical_hint: CND_KEY
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-conditions-cond_ref-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -637,7 +637,7 @@ source_contracts:
     canonical_hint: CND_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-conditions-cond_sku-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -649,7 +649,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-conditions-cust_ref-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -661,7 +661,7 @@ source_contracts:
     canonical_hint: APPT_REF
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-conditions-visit_ref-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -673,7 +673,7 @@ source_contracts:
     canonical_hint: ICD_HINT
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-conditions-dx_code-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -685,7 +685,7 @@ source_contracts:
     canonical_hint: CND_DESC
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-conditions-cond_narr-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -697,7 +697,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-conditions-row_sts-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -731,7 +731,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-encounters-line_id-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -742,7 +742,7 @@ source_contracts:
     canonical_hint: APPT_KEY
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-encounters-visit_id-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -754,7 +754,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-encounters-pt_link-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -766,7 +766,7 @@ source_contracts:
     canonical_hint: APPT_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-encounters-visit_dt-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -777,7 +777,7 @@ source_contracts:
     canonical_hint: COVERAGE_STATUS
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-encounters-coverage_status-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -789,7 +789,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-encounters-act_flag-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -823,7 +823,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-medications-line_id-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -834,7 +834,7 @@ source_contracts:
     canonical_hint: MED_OCC_KEY
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-medications-rx_occ_id-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -846,7 +846,7 @@ source_contracts:
     canonical_hint: MED_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-medications-rx_prod_cd-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -858,7 +858,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-medications-pid_ref-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -870,7 +870,7 @@ source_contracts:
     canonical_hint: APPT_REF
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-medications-e_ref-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -882,7 +882,7 @@ source_contracts:
     canonical_hint: CND_REF
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-medications-rx_dx_ref-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -894,7 +894,7 @@ source_contracts:
     canonical_hint: MED_DESC
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-medications-drug_desc-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -906,7 +906,7 @@ source_contracts:
     canonical_hint: MED_UNIT_PRICE
     inferred_type: decimal
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-medications-rx_unit_amt-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -918,7 +918,7 @@ source_contracts:
     canonical_hint: ORD_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-medications-order_ts-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -929,7 +929,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-medications-rec_flag-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -963,7 +963,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-observations-line_id-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -974,7 +974,7 @@ source_contracts:
     canonical_hint: OBS_KEY
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-observations-meas_id-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -986,7 +986,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-observations-parent_pt-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -998,7 +998,7 @@ source_contracts:
     canonical_hint: APPT_REF
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-observations-en_ref-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1010,7 +1010,7 @@ source_contracts:
     canonical_hint: OBS_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-observations-meas_dt-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1021,7 +1021,7 @@ source_contracts:
     canonical_hint: OBS_PAYLOAD
     inferred_type: json_string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-observations-obs_json-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1033,7 +1033,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-observations-act_flag-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -1067,7 +1067,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-patients-line_id-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -1078,7 +1078,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-patients-cust_id-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1090,7 +1090,7 @@ source_contracts:
     canonical_hint: PT_FIRST_NM
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-patients-mbr_first_nm-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1101,7 +1101,7 @@ source_contracts:
     canonical_hint: PT_LAST_NM
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-patients-mbr_last_nm-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1112,7 +1112,7 @@ source_contracts:
     canonical_hint: SSN_VAL
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-patients-tax_id-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1123,7 +1123,7 @@ source_contracts:
     canonical_hint: GDR_CD
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-patients-sex_cd-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1134,7 +1134,7 @@ source_contracts:
     canonical_hint: BDT_VAL
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-patients-dob_txt-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1145,7 +1145,7 @@ source_contracts:
     canonical_hint: INIT_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-patients-enroll_dt-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1157,7 +1157,7 @@ source_contracts:
     canonical_hint: END_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-patients-term_dt-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1169,7 +1169,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-2-patients-sts_cd-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -1203,7 +1203,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-conditions-export_id-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -1214,7 +1214,7 @@ source_contracts:
     canonical_hint: CND_KEY
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-conditions-cnd_key-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1226,7 +1226,7 @@ source_contracts:
     canonical_hint: CND_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-conditions-cnd_type_id-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1238,7 +1238,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-conditions-pt_ref-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1250,7 +1250,7 @@ source_contracts:
     canonical_hint: APPT_REF
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-conditions-appt_ref-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1262,7 +1262,7 @@ source_contracts:
     canonical_hint: ICD_HINT
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-conditions-icd_hint-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1274,7 +1274,7 @@ source_contracts:
     canonical_hint: CND_DESC
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-conditions-cnd_long_txt-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1286,7 +1286,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-conditions-rec_sts-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -1320,7 +1320,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-encounters-export_id-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -1331,7 +1331,7 @@ source_contracts:
     canonical_hint: APPT_KEY
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-encounters-appt_key-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1343,7 +1343,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-encounters-pt_ref-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1355,7 +1355,7 @@ source_contracts:
     canonical_hint: APPT_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-encounters-appt_dt_raw-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1366,7 +1366,7 @@ source_contracts:
     canonical_hint: COVERAGE_STATUS
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-encounters-coverage_status-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1378,7 +1378,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-encounters-rec_sts-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -1412,7 +1412,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-medications-export_id-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -1423,7 +1423,7 @@ source_contracts:
     canonical_hint: MED_OCC_KEY
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-medications-rx_row_key-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1435,7 +1435,7 @@ source_contracts:
     canonical_hint: MED_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-medications-med_key-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1447,7 +1447,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-medications-pt_ref-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1459,7 +1459,7 @@ source_contracts:
     canonical_hint: APPT_REF
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-medications-appt_ref-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1471,7 +1471,7 @@ source_contracts:
     canonical_hint: CND_REF
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-medications-parent_cnd-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1483,7 +1483,7 @@ source_contracts:
     canonical_hint: MED_DESC
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-medications-med_product_nm-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1495,7 +1495,7 @@ source_contracts:
     canonical_hint: MED_UNIT_PRICE
     inferred_type: decimal
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-medications-med_price-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1507,7 +1507,7 @@ source_contracts:
     canonical_hint: ORD_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-medications-ord_dt_raw-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1518,7 +1518,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-medications-rec_sts-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -1552,7 +1552,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-observations-export_id-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -1563,7 +1563,7 @@ source_contracts:
     canonical_hint: OBS_KEY
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-observations-obs_key-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1575,7 +1575,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-observations-pt_ref-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1587,7 +1587,7 @@ source_contracts:
     canonical_hint: APPT_REF
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-observations-appt_ref-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1599,7 +1599,7 @@ source_contracts:
     canonical_hint: OBS_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-observations-obs_dt_raw-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1610,7 +1610,7 @@ source_contracts:
     canonical_hint: OBS_PAYLOAD
     inferred_type: json_string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-observations-obs_payload-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1622,7 +1622,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-observations-rec_sts-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -1656,7 +1656,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-patients-export_id-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -1667,7 +1667,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-patients-pt_001_id-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1679,7 +1679,7 @@ source_contracts:
     canonical_hint: PT_FIRST_NM
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-patients-pt_given_name-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1690,7 +1690,7 @@ source_contracts:
     canonical_hint: PT_LAST_NM
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-patients-pt_family_name-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1701,7 +1701,7 @@ source_contracts:
     canonical_hint: SSN_VAL
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-patients-ssn_num-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1712,7 +1712,7 @@ source_contracts:
     canonical_hint: GDR_CD
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-patients-gdr_cd-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1723,7 +1723,7 @@ source_contracts:
     canonical_hint: BDT_VAL
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-patients-bdt_val-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1734,7 +1734,7 @@ source_contracts:
     canonical_hint: INIT_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-patients-reg_start_raw-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1746,7 +1746,7 @@ source_contracts:
     canonical_hint: END_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-patients-reg_end_raw-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1758,7 +1758,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-3-patients-rec_sts-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -1792,7 +1792,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-conditions-dw_load_seq-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -1803,7 +1803,7 @@ source_contracts:
     canonical_hint: CND_KEY
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-conditions-cref_id-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1815,7 +1815,7 @@ source_contracts:
     canonical_hint: CND_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-conditions-dx_cat_cd-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1827,7 +1827,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-conditions-pid_ref-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1839,7 +1839,7 @@ source_contracts:
     canonical_hint: APPT_REF
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-conditions-e_ref-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1851,7 +1851,7 @@ source_contracts:
     canonical_hint: ICD_HINT
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-conditions-dx_hint-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1863,7 +1863,7 @@ source_contracts:
     canonical_hint: CND_DESC
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-conditions-dx_story-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1875,7 +1875,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-conditions-sts_cd-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -1909,7 +1909,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-encounters-dw_load_seq-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -1920,7 +1920,7 @@ source_contracts:
     canonical_hint: APPT_KEY
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-encounters-cntct_id-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1932,7 +1932,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-encounters-cli_id-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1944,7 +1944,7 @@ source_contracts:
     canonical_hint: APPT_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-encounters-evt_dttm-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1955,7 +1955,7 @@ source_contracts:
     canonical_hint: COVERAGE_STATUS
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-encounters-coverage_status-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -1967,7 +1967,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-encounters-row_sts-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -2001,7 +2001,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-medications-dw_load_seq-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -2012,7 +2012,7 @@ source_contracts:
     canonical_hint: MED_OCC_KEY
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-medications-m_occ_seq-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2024,7 +2024,7 @@ source_contracts:
     canonical_hint: MED_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-medications-m_key-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2036,7 +2036,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-medications-parent_pt-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2048,7 +2048,7 @@ source_contracts:
     canonical_hint: APPT_REF
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-medications-en_ref-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2060,7 +2060,7 @@ source_contracts:
     canonical_hint: CND_REF
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-medications-dx_link_id-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2072,7 +2072,7 @@ source_contracts:
     canonical_hint: MED_DESC
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-medications-med_lbl-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2084,7 +2084,7 @@ source_contracts:
     canonical_hint: MED_UNIT_PRICE
     inferred_type: decimal
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-medications-line_price-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2096,7 +2096,7 @@ source_contracts:
     canonical_hint: ORD_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-medications-med_dt-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2107,7 +2107,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-medications-act_flag-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -2141,7 +2141,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-observations-dw_load_seq-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -2152,7 +2152,7 @@ source_contracts:
     canonical_hint: OBS_KEY
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-observations-obv_id-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2164,7 +2164,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-observations-pt_link-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2176,7 +2176,7 @@ source_contracts:
     canonical_hint: APPT_REF
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-observations-visit_ref-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2188,7 +2188,7 @@ source_contracts:
     canonical_hint: OBS_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-observations-ts_obs-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2199,7 +2199,7 @@ source_contracts:
     canonical_hint: OBS_PAYLOAD
     inferred_type: json_string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-observations-pl_data-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2211,7 +2211,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-observations-rec_flag-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -2245,7 +2245,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-patients-dw_load_seq-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -2256,7 +2256,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-patients-ptkey-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2268,7 +2268,7 @@ source_contracts:
     canonical_hint: PT_FIRST_NM
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-patients-name_first-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2279,7 +2279,7 @@ source_contracts:
     canonical_hint: PT_LAST_NM
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-patients-name_last-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2290,7 +2290,7 @@ source_contracts:
     canonical_hint: SSN_VAL
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-patients-patient_ssn-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2301,7 +2301,7 @@ source_contracts:
     canonical_hint: GDR_CD
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-patients-sx_flag-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2312,7 +2312,7 @@ source_contracts:
     canonical_hint: BDT_VAL
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-patients-dt_born-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2323,7 +2323,7 @@ source_contracts:
     canonical_hint: INIT_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-patients-cov_start-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2335,7 +2335,7 @@ source_contracts:
     canonical_hint: END_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-patients-cov_end-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2347,7 +2347,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-4-patients-rec_flag-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -2381,7 +2381,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-conditions-clm_seq_0-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -2393,7 +2393,7 @@ source_contracts:
     canonical_hint: CND_KEY
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-conditions-dx_line_id_1-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2406,7 +2406,7 @@ source_contracts:
     canonical_hint: CND_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-conditions-dx_cd_2-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2420,7 +2420,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-conditions-member_id_3-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2433,7 +2433,7 @@ source_contracts:
     canonical_hint: APPT_REF
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-conditions-encounter_id_4-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2446,7 +2446,7 @@ source_contracts:
     canonical_hint: ICD_HINT
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-conditions-dx_cd_5-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2460,7 +2460,7 @@ source_contracts:
     canonical_hint: CND_DESC
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-conditions-dx_desc_6-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2473,7 +2473,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-conditions-line_sts_7-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -2508,7 +2508,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-encounters-clm_seq_0-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -2520,7 +2520,7 @@ source_contracts:
     canonical_hint: APPT_KEY
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-encounters-encounter_id_1-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2533,7 +2533,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-encounters-member_id_2-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2546,7 +2546,7 @@ source_contracts:
     canonical_hint: APPT_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-encounters-svc_dt_3-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2558,7 +2558,7 @@ source_contracts:
     canonical_hint: COVERAGE_STATUS
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-encounters-coverage_status_4-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2571,7 +2571,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-encounters-clm_sts_5-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -2606,7 +2606,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-medications-clm_seq_0-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -2618,7 +2618,7 @@ source_contracts:
     canonical_hint: MED_OCC_KEY
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-medications-rx_clm_id_1-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2631,7 +2631,7 @@ source_contracts:
     canonical_hint: MED_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-medications-drug_cd_2-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2644,7 +2644,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-medications-member_id_3-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2657,7 +2657,7 @@ source_contracts:
     canonical_hint: APPT_REF
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-medications-encounter_id_4-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2670,7 +2670,7 @@ source_contracts:
     canonical_hint: CND_REF
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-medications-dx_line_ref_5-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2683,7 +2683,7 @@ source_contracts:
     canonical_hint: MED_DESC
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-medications-drug_nm_6-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2696,7 +2696,7 @@ source_contracts:
     canonical_hint: MED_UNIT_PRICE
     inferred_type: decimal
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-medications-paid_amt_7-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2709,7 +2709,7 @@ source_contracts:
     canonical_hint: ORD_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-medications-fill_dt_8-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2721,7 +2721,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-medications-clm_sts_9-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -2756,7 +2756,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-observations-clm_seq_0-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -2768,7 +2768,7 @@ source_contracts:
     canonical_hint: OBS_KEY
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-observations-obs_clm_id_1-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2781,7 +2781,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-observations-member_id_2-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2794,7 +2794,7 @@ source_contracts:
     canonical_hint: APPT_REF
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-observations-encounter_id_3-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2807,7 +2807,7 @@ source_contracts:
     canonical_hint: OBS_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-observations-svc_dt_4-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2819,7 +2819,7 @@ source_contracts:
     canonical_hint: OBS_PAYLOAD
     inferred_type: json_string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-observations-vitals_json_5-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2832,7 +2832,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-observations-clm_sts_6-01
     linked_runbook_decision_ids:
     - DRIFT-002
@@ -2867,7 +2867,7 @@ source_contracts:
     canonical_hint: ROW_ID
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-patients-clm_seq_0-01
     linked_runbook_decision_ids:
     - DRIFT-001
@@ -2878,7 +2878,7 @@ source_contracts:
     canonical_hint: PT_001_ID
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-patients-member_id_1-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2890,7 +2890,7 @@ source_contracts:
     canonical_hint: PT_FIRST_NM
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-patients-mbr_first_name_2-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2901,7 +2901,7 @@ source_contracts:
     canonical_hint: PT_LAST_NM
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-patients-mbr_last_name_3-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2912,7 +2912,7 @@ source_contracts:
     canonical_hint: SSN_VAL
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-patients-mbr_ssn_4-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2923,7 +2923,7 @@ source_contracts:
     canonical_hint: GDR_CD
     inferred_type: string
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-patients-mbr_sex_5-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2934,7 +2934,7 @@ source_contracts:
     canonical_hint: BDT_VAL
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-patients-mbr_dob_6-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2945,7 +2945,7 @@ source_contracts:
     canonical_hint: INIT_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-patients-elig_start_dt_7-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2957,7 +2957,7 @@ source_contracts:
     canonical_hint: END_DT_RAW
     inferred_type: date
     pii_signal: true
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-patients-elig_end_dt_8-01
     linked_runbook_decision_ids:
     - DRIFT-003
@@ -2969,7 +2969,7 @@ source_contracts:
     canonical_hint: REC_STS
     inferred_type: string
     pii_signal: false
-    required_for_bronze: true
+    required_for_bronze: false
     field_decision_id: BQFD-5-patients-mbr_sts_9-01
     linked_runbook_decision_ids:
     - DRIFT-002
