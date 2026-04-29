@@ -1,10 +1,14 @@
 spec_version: "0.1"
 contract_name: "local_runtime_interface_contract"
-status: "contract_defined_not_executed"
+status: "local_runtime_contract_validated"
 source_of_truth:
   - "metadata/provider_specs"
   - "metadata/model_specs"
   - "metadata/runtime_specs/local"
+runtime_profile: "local_dev"
+certification_state:
+  local_validation_state: "local_validated"
+  databricks_validation_state: "not_databricks_certified"
 flow:
   - "provider_parser"
   - "bronze_writer"
@@ -47,6 +51,39 @@ interfaces:
     input_contract: "runtime_profile_and_interface_contract"
     output_contract: "runtime_execution_plan"
     required_trace_fields: ["profile_name", "runtime_name", "execution_mode", "dependency_approval_status"]
+runtime_neutral_outputs:
+  bronze_writer:
+    allowed_local_path_prefix: "artifacts/"
+    forbidden_targets: ["unity_catalog", "databricks_workspace", "cloud_storage", "production_data"]
+  silver_writer:
+    allowed_local_path_prefix: "artifacts/"
+    forbidden_targets: ["unity_catalog", "databricks_workspace", "cloud_storage", "production_data"]
+  quarantine_writer:
+    allowed_local_path_prefix: "artifacts/"
+    required_decisions: ["stop_pipeline", "quarantine_data", "warn"]
+  qa_evidence_writer:
+    allowed_report_prefix: "reports/qa/"
+    required_state_label: "local_validated"
+  lineage_emitter:
+    allowed_evidence_shape: "local_lineage_evidence_shape"
+    forbidden_claims: ["unity_catalog_lineage", "databricks_event_logs", "marquez_runtime_validated"]
+dependency_evidence:
+  python_packages:
+    - name: "pyspark"
+      approved_use: "local_import_only"
+      installed_version: "4.1.1"
+    - name: "delta-spark"
+      approved_use: "local_import_only"
+      installed_version: "4.2.0"
+    - name: "openlineage-python"
+      approved_use: "local_import_only"
+      installed_version: "1.46.0"
+  blocked_runtime_services:
+    - "spark_declarative_pipeline_execution"
+    - "delta_table_writes"
+    - "openlineage_transport_emission"
+    - "marquez_container_services"
+    - "databricks_connect_or_jobs"
 local_certification_rules:
   - "Adapters must consume contracts instead of hardcoding provider or runtime assumptions."
   - "Local runtime output paths must stay under artifacts/."
