@@ -31,8 +31,9 @@ REQUIRED_PROFILE_KEYS = {
     "provider_language",
     "required_sources",
     "minimum_canonical_concepts",
-    "candidate_solution_options",
+    "approved_resolution",
     "hitl_decisions_required",
+    "hitl_decisions_applied",
     "downstream_gold_candidate",
     "data_quality_checks",
     "required_tests",
@@ -48,7 +49,7 @@ REQUIRED_FIELD_DECISION_KEYS = {
     "sensitivity",
     "drift_or_blocker",
     "evidence",
-    "options",
+    "resolved_decision",
     "hitl_decision_request",
     "selected_option",
     "validation",
@@ -63,20 +64,7 @@ ALLOWED_CONCEPTS = {
     "cost_record",
     "source_lineage",
 }
-ALLOWED_RESPONSES = {
-    "approve_recommended_option",
-    "approve_alternative_option",
-    "defer_with_human_approval",
-    "reject_all_options",
-    "request_more_evidence",
-}
-ALLOWED_ALLOWANCES = {"allowed", "allowed_bronze_only", "blocked"}
-ALLOWED_DECISION_STATUSES = {
-    "applied",
-    "rejected",
-    "deferred_with_human_approval",
-    "pending_human_decision",
-}
+ALLOWED_DECISION_STATUSES = {"applied"}
 
 
 def load_profile() -> dict:
@@ -114,13 +102,13 @@ def test_business_question_profile_yaml_shape_and_scope() -> None:
     assert profile["plan_id"] == "01_2_business_question_profiling_plan"
     assert profile["source_business_request"] == "business-request.md"
     assert profile["scope"]["provider_scope"] == "all"
-    assert "gold_deferred_candidate" in profile["scope"]["allowed_layers"]
-    assert "enterprise_identity_resolution" in profile["scope"]["forbidden_without_hitl"]
+    assert "gold_candidate_input" in profile["scope"]["allowed_layers"]
+    assert profile["scope"]["forbidden_without_hitl"] == []
     assert len(profile["business_question_profiles"]) == 16
     assert len(profile["field_decisions"]) == expected_provider_field_count()
 
 
-def test_question_profiles_have_evidence_and_deferred_gold_candidates() -> None:
+def test_question_profiles_have_evidence_and_applied_normalization() -> None:
     profile = load_profile()
     question_ids = {entry["question_id"] for entry in profile["business_question_profiles"]}
 
@@ -128,17 +116,16 @@ def test_question_profiles_have_evidence_and_deferred_gold_candidates() -> None:
 
     for entry in profile["business_question_profiles"]:
         assert set(entry) >= REQUIRED_PROFILE_KEYS
-        assert entry["risk_level"] in {"low", "medium", "high", "hitl_blocked"}
+        assert entry["risk_level"] in {"low", "medium", "high"}
         assert set(entry["minimum_canonical_concepts"]) <= ALLOWED_CONCEPTS
-        assert entry["downstream_gold_candidate"]["status"] == "deferred"
-        assert entry["allowed_next_action"] == "profile_only"
-        assert entry["candidate_solution_options"]
-
-        for option in entry["candidate_solution_options"]:
-            assert option["risk"] in {"low", "medium", "high"}
-            assert option["impact"]
-            assert "required_approval" in option
-            assert "recommendation" in option
+        assert entry["downstream_gold_candidate"]["status"] == "approved_for_downstream_design"
+        assert entry["allowed_next_action"] == "plan_02_allowed"
+        assert entry["candidate_solution_options"] == []
+        assert entry["hitl_decisions_required"] == []
+        assert entry["approved_resolution"]["status"] == "applied"
+        assert entry["approved_resolution"]["approved_by"]
+        assert entry["approved_resolution"]["approval_date"]
+        assert entry["approved_resolution"]["decision"]
 
         for source in entry["required_sources"]:
             assert source["provider_slug"].startswith("data_provider_")
@@ -157,7 +144,7 @@ def test_question_profiles_have_evidence_and_deferred_gold_candidates() -> None:
                 assert_existing_relative_path(evidence_path)
 
 
-def test_field_decisions_have_hitl_options_and_plan_02_allowance() -> None:
+def test_field_decisions_are_applied_and_allow_plan_02() -> None:
     profile = load_profile()
     decision_ids = set()
 
@@ -171,41 +158,40 @@ def test_field_decisions_have_hitl_options_and_plan_02_allowance() -> None:
         assert_existing_relative_path(decision["source"]["provider_spec_path"])
         assert decision["business_dependency"]["question_ids"]
         assert decision["canonical_candidate"]["minimum_concept"] in ALLOWED_CONCEPTS
-        assert decision["canonical_candidate"]["gold_usage"] == "deferred"
+        assert decision["canonical_candidate"]["gold_usage"] == "approved_business_input"
+        assert (
+            decision["canonical_candidate"]["silver_handling"]
+            == "normalize_to_canonical_concept"
+        )
+        assert decision["canonical_candidate"]["normalization_contract"]
         assert decision["drift_or_blocker"]["category"]
-        assert decision["selected_option"]["plan_02_allowance"] in ALLOWED_ALLOWANCES
-
-        options = decision["options"]
-        assert len(options) >= 2
-        for option in options:
-            assert option["risk"] in {"low", "medium", "high"}
-            assert option["impact"]
-            assert option["required_approval"]
-            assert option["plan_02_allowance_if_selected"] in ALLOWED_ALLOWANCES
-            assert "rollback_notes" in option
-            assert "tests_required" in option
+        assert decision["drift_or_blocker"]["blocks_plan_02"] is False
+        assert decision["selected_option"]["plan_02_allowance"] == "allowed"
+        assert "options" not in decision
+        assert decision["resolved_decision"]["status"] == "applied"
+        assert decision["resolved_decision"]["decision"]
+        assert decision["resolved_decision"]["plan_02_allowance"] == "allowed"
 
         hitl = decision["hitl_decision_request"]
-        assert hitl["recommended_option_id"] in {option["option_id"] for option in options}
-        assert set(hitl["allowed_responses"]) == ALLOWED_RESPONSES
-        assert set(hitl["plan_02_consequence_by_response"]) == ALLOWED_RESPONSES
+        assert hitl["required"] is False
+        assert hitl["status"] == "approved"
+        assert hitl["approved_by"]
+        assert hitl["approved_decision"]
+        assert hitl["human_response"]["response"] == "approved_normalization"
         assert hitl["minimum_evidence_reviewed"]
 
 
-def test_pending_or_blocked_field_decisions_link_to_runbook() -> None:
+def test_applied_field_decisions_link_to_runbook() -> None:
     profile = load_profile()
 
     for decision in profile["field_decisions"]:
         linked_ids = decision["drift_or_blocker"]["linked_runbook_decision_ids"]
-        if decision["status"] == "pending_human_decision" or decision["selected_option"][
-            "plan_02_allowance"
-        ] != "allowed":
-            assert linked_ids, decision["decision_id"]
-            assert all(linked_id.startswith("DRIFT-") for linked_id in linked_ids)
-            assert decision["hitl_decision_request"]["required"] is True
+        assert linked_ids, decision["decision_id"]
+        assert all(linked_id.startswith("DRIFT-") for linked_id in linked_ids)
+        assert decision["status"] == "applied"
         if decision["canonical_candidate"]["canonical_name_hint"] == "ROW_ID":
             assert "DRIFT-001" in linked_ids
-            assert decision["selected_option"]["plan_02_allowance"] == "allowed"
+        assert decision["selected_option"]["plan_02_allowance"] == "allowed"
 
 
 def test_profile_evidence_paths_are_existing_repo_paths() -> None:
@@ -231,3 +217,22 @@ def test_profile_has_no_absolute_paths_or_unapproved_post_silver_outputs() -> No
     assert not any("metadata/deployment_specs/databricks/" in text for text in strings)
     assert not any("dashboard" in text.lower() for text in strings)
     assert profile["pii_phi_policy"]["reports_logs_fixtures"] == "no_raw_sensitive_values"
+
+
+def test_profile_contains_no_pending_options_or_deferrals() -> None:
+    profile_text = PROFILE_PATH.read_text(encoding="utf-8")
+
+    forbidden_fragments = [
+        "pending_human_decision",
+        "deferred",
+        "defer",
+        "option_id: A",
+        "option_id: B",
+        "option_id: C",
+        "approve_recommended_option",
+        "approve_alternative_option",
+        "request_more_evidence",
+    ]
+
+    for fragment in forbidden_fragments:
+        assert fragment not in profile_text
