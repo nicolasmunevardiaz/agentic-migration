@@ -27,6 +27,14 @@ Provider profiling may run in parallel only if each agent owns one provider, one
 | Local runtime certification | Sequential, all approved adapters/contracts | Prompt 4 |
 | Databricks rollout planning | Sequential, all approved artifacts | Prompt 5 |
 
+## Idempotency And Status Quo Audit
+
+Every prompt must start by auditing the current repository state before generating or changing artifacts. The agent must identify existing specs, code, handlers, tests, fixtures, QA evidence, privacy evidence, HITL decisions, logs, PR/governance reports, and ignored local runtime artifacts that already satisfy the active plan. Existing valid artifacts must be reused and validated, not overwritten, renamed, purged, or regenerated from scratch.
+
+If a prompt is re-run after its work is already complete, the expected behavior is audit-only or incremental: rerun the relevant `uv` validations, refresh generated local runtime evidence when appropriate, append new trace entries only when new work is performed, and report that no implementation changes are required. The agent should create a branch or PR only when it makes versionable changes or when governance explicitly says PR creation is required for refreshed evidence. If a gap is found, the agent must patch only the missing or stale pieces and preserve existing user or prior-agent changes.
+
+For Plan 03 adapter prompts, status quo audit must check whether the provider already has `src/adapters/`, `src/handlers/`, `tests/adapters/`, `tests/specs/`, fixtures, QA reports, privacy reports, and trace logs. It must also run the unfiltered reusable local data audit when `data_500k` exists: `uv run --no-sync python -m src.handlers.data_500k_adapter_audit`. Provider-filtered audit runs are troubleshooting only and do not replace all-target integration evidence.
+
 ## Prompt 1A: Aegis Provider Profiling
 
 Explanation: This prompt narrows the context to one provider and one source contract generation task, preventing cross-provider leakage. It loads only the active plan, mandatory guardrail skills, filesystem rules, provider dictionary, and spec template.
@@ -202,9 +210,11 @@ Use these skills: adapter-contract-reviewer, adapter-code-generator, spec-test-g
 
 Treat `metadata/model_specs/**` as the primary canonical metadata for Bronze/Silver behavior. Read `metadata/model_specs/bronze/bronze_contract.yaml`, `metadata/model_specs/silver/*.yaml`, and `metadata/model_specs/mappings/provider_to_silver_matrix.yaml` before generating adapter behavior; filter canonical mappings to the active provider. Use Aegis provider specs only to interpret source dialect, parser profile, row keys, and source fields. Do not derive Silver columns directly from provider specs when canonical model specs disagree or are missing; invoke hitl-escalation-controller and stop.
 
+Before implementing, perform a status quo audit for the active provider. Check whether Aegis adapter code, handler, fixtures, tests, QA evidence, privacy evidence, governance evidence, and trace logs already exist and satisfy Plan 03. If they do, do not overwrite or regenerate them; rerun validation, refresh generated local runtime evidence only when needed, append trace only for new work, and report no implementation changes required. If gaps exist, patch only the missing or stale pieces.
+
 Implement only the Aegis adapter scope. Put adapter code under src/adapters/, shared logic under src/common/, handlers under src/handlers/, tests under tests/adapters/ and tests/specs/, and fixtures under tests/fixtures/. Append trace entries to logs/adapter_implementation/data_provider_1_aegis_care_network.md.
 
-Run uv-based tests and linting. Do not install dependencies without HITL approval and privacy-governance review. If failures repeat, semantics are unclear, or tests require weakening, invoke hitl-escalation-controller and stop.
+Run uv-based tests, linting, and the unfiltered local data audit when `data_500k` is present: `uv run --no-sync python -m src.handlers.data_500k_adapter_audit`. Do not install dependencies without HITL approval and privacy-governance review. If failures repeat, semantics are unclear, or tests require weakening, invoke hitl-escalation-controller and stop.
 
 When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "adapter: aegis - implement provider adapter". Include plan id, provider, skills, changed files, tests, evidence, risks, HITL, Databricks impact, and rollback notes.
 ```
@@ -224,9 +234,11 @@ Use these skills: adapter-contract-reviewer, adapter-code-generator, spec-test-g
 
 Treat `metadata/model_specs/**` as the primary canonical metadata for Bronze/Silver behavior. Read `metadata/model_specs/bronze/bronze_contract.yaml`, `metadata/model_specs/silver/*.yaml`, and `metadata/model_specs/mappings/provider_to_silver_matrix.yaml` before generating adapter behavior; filter canonical mappings to the active provider. Use BlueStone provider specs only to interpret source dialect, parser profile, row keys, and source fields. Do not derive Silver columns directly from provider specs when canonical model specs disagree or are missing; invoke hitl-escalation-controller and stop.
 
+Before implementing, perform a status quo audit for the active provider. Check whether BlueStone adapter code, handler, fixtures, tests, QA evidence, privacy evidence, governance evidence, and trace logs already exist and satisfy Plan 03. If they do, do not overwrite or regenerate them; rerun validation, refresh generated local runtime evidence only when needed, append trace only for new work, and report no implementation changes required. If gaps exist, patch only the missing or stale pieces.
+
 Implement only the BlueStone adapter scope. Put adapter code under src/adapters/, shared logic under src/common/, handlers under src/handlers/, tests under tests/adapters/ and tests/specs/, and fixtures under tests/fixtures/. Append trace entries to logs/adapter_implementation/data_provider_2_bluestone_health.md.
 
-Run uv-based tests and linting. Do not install dependencies without HITL approval and privacy-governance review. If failures repeat, semantics are unclear, or tests require weakening, invoke hitl-escalation-controller and stop.
+Run uv-based tests, linting, and the unfiltered local data audit when `data_500k` is present: `uv run --no-sync python -m src.handlers.data_500k_adapter_audit`. Do not install dependencies without HITL approval and privacy-governance review. If failures repeat, semantics are unclear, or tests require weakening, invoke hitl-escalation-controller and stop.
 
 When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "adapter: bluestone - implement provider adapter". Include plan id, provider, skills, changed files, tests, evidence, risks, HITL, Databricks impact, and rollback notes.
 ```
@@ -246,9 +258,11 @@ Use these skills: adapter-contract-reviewer, adapter-code-generator, spec-test-g
 
 Treat `metadata/model_specs/**` as the primary canonical metadata for Bronze/Silver behavior. Read `metadata/model_specs/bronze/bronze_contract.yaml`, `metadata/model_specs/silver/*.yaml`, and `metadata/model_specs/mappings/provider_to_silver_matrix.yaml` before generating adapter behavior; filter canonical mappings to the active provider. Use NorthCare provider specs only to interpret source dialect, parser profile, row keys, and source fields. Do not derive Silver columns directly from provider specs when canonical model specs disagree or are missing; invoke hitl-escalation-controller and stop.
 
+Before implementing, perform a status quo audit for the active provider. Check whether NorthCare adapter code, handler, fixtures, tests, QA evidence, privacy evidence, governance evidence, and trace logs already exist and satisfy Plan 03. If they do, do not overwrite or regenerate them; rerun validation, refresh generated local runtime evidence only when needed, append trace only for new work, and report no implementation changes required. If gaps exist, patch only the missing or stale pieces.
+
 Implement only the NorthCare adapter scope. Put adapter code under src/adapters/, shared logic under src/common/, handlers under src/handlers/, tests under tests/adapters/ and tests/specs/, and fixtures under tests/fixtures/. Append trace entries to logs/adapter_implementation/data_provider_3_northcare_clinics.md.
 
-Run uv-based tests and linting. Do not install dependencies without HITL approval and privacy-governance review. If failures repeat, semantics are unclear, or tests require weakening, invoke hitl-escalation-controller and stop.
+Run uv-based tests, linting, and the unfiltered local data audit when `data_500k` is present: `uv run --no-sync python -m src.handlers.data_500k_adapter_audit`. Do not install dependencies without HITL approval and privacy-governance review. If failures repeat, semantics are unclear, or tests require weakening, invoke hitl-escalation-controller and stop.
 
 When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "adapter: northcare - implement provider adapter". Include plan id, provider, skills, changed files, tests, evidence, risks, HITL, Databricks impact, and rollback notes.
 ```
@@ -268,9 +282,11 @@ Use these skills: adapter-contract-reviewer, adapter-code-generator, spec-test-g
 
 Treat `metadata/model_specs/**` as the primary canonical metadata for Bronze/Silver behavior. Read `metadata/model_specs/bronze/bronze_contract.yaml`, `metadata/model_specs/silver/*.yaml`, and `metadata/model_specs/mappings/provider_to_silver_matrix.yaml` before generating adapter behavior; filter canonical mappings to the active provider. Use ValleyBridge provider specs only to interpret source dialect, parser profile, row keys, and source fields. Do not derive Silver columns directly from provider specs when canonical model specs disagree or are missing; invoke hitl-escalation-controller and stop.
 
+Before implementing, perform a status quo audit for the active provider. Check whether ValleyBridge adapter code, handler, fixtures, tests, QA evidence, privacy evidence, governance evidence, and trace logs already exist and satisfy Plan 03. If they do, do not overwrite or regenerate them; rerun validation, refresh generated local runtime evidence only when needed, append trace only for new work, and report no implementation changes required. If gaps exist, patch only the missing or stale pieces.
+
 Implement only the ValleyBridge adapter scope. Put adapter code under src/adapters/, shared logic under src/common/, handlers under src/handlers/, tests under tests/adapters/ and tests/specs/, and fixtures under tests/fixtures/. Append trace entries to logs/adapter_implementation/data_provider_4_valleybridge_medical.md.
 
-Run uv-based tests and linting. Do not install dependencies without HITL approval and privacy-governance review. If failures repeat, semantics are unclear, or tests require weakening, invoke hitl-escalation-controller and stop.
+Run uv-based tests, linting, and the unfiltered local data audit when `data_500k` is present: `uv run --no-sync python -m src.handlers.data_500k_adapter_audit`. Do not install dependencies without HITL approval and privacy-governance review. If failures repeat, semantics are unclear, or tests require weakening, invoke hitl-escalation-controller and stop.
 
 When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "adapter: valleybridge - implement provider adapter". Include plan id, provider, skills, changed files, tests, evidence, risks, HITL, Databricks impact, and rollback notes.
 ```
@@ -290,9 +306,11 @@ Use these skills: adapter-contract-reviewer, adapter-code-generator, spec-test-g
 
 Treat `metadata/model_specs/**` as the primary canonical metadata for Bronze/Silver behavior. Read `metadata/model_specs/bronze/bronze_contract.yaml`, `metadata/model_specs/silver/*.yaml`, and `metadata/model_specs/mappings/provider_to_silver_matrix.yaml` before generating adapter behavior; filter canonical mappings to the active provider. Use Pacific Shield provider specs only to interpret source dialect, parser profile, row keys, and source fields. Do not derive Silver columns directly from provider specs when canonical model specs disagree or are missing; invoke hitl-escalation-controller and stop.
 
+Before implementing, perform a status quo audit for the active provider. Check whether Pacific Shield adapter code, handler, fixtures, tests, QA evidence, privacy evidence, governance evidence, and trace logs already exist and satisfy Plan 03. If they do, do not overwrite or regenerate them; rerun validation, refresh generated local runtime evidence only when needed, append trace only for new work, and report no implementation changes required. If gaps exist, patch only the missing or stale pieces.
+
 Implement only the Pacific Shield adapter scope. Put adapter code under src/adapters/, shared logic under src/common/, handlers under src/handlers/, tests under tests/adapters/ and tests/specs/, and fixtures under tests/fixtures/. Append trace entries to logs/adapter_implementation/data_provider_5_pacific_shield_insurance.md.
 
-Run uv-based tests and linting. Do not install dependencies without HITL approval and privacy-governance review. If failures repeat, semantics are unclear, or tests require weakening, invoke hitl-escalation-controller and stop.
+Run uv-based tests, linting, and the unfiltered local data audit when `data_500k` is present: `uv run --no-sync python -m src.handlers.data_500k_adapter_audit`. Do not install dependencies without HITL approval and privacy-governance review. If failures repeat, semantics are unclear, or tests require weakening, invoke hitl-escalation-controller and stop.
 
 When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "adapter: pacific-shield - implement provider adapter". Include plan id, provider, skills, changed files, tests, evidence, risks, HITL, Databricks impact, and rollback notes.
 ```
@@ -306,7 +324,7 @@ Prerequisites: Provider, canonical, and adapter PRs are approved or merged. Huma
 ```text
 You are Codex executing Local Runtime And Contract Certification across all approved providers.
 
-Use docs/04_local_runtime_and_contract_certification_plan.md as the active plan. Read docs/technical_prd_agentops_operating_spec.md, docs/agentops_filesystem_conventions.md, docs/agentops_skill_strategy.md, metadata/provider_specs/**, metadata/model_specs/**, src/adapters/**, tests/**, reports/hitl/**, reports/privacy/**, and reports/qa/**.
+Use docs/04_local_runtime_and_contract_certification_plan.md as the active plan. Read docs/technical_prd_agentops_operating_spec.md, docs/agentops_filesystem_conventions.md, docs/agentops_skill_strategy.md, metadata/provider_specs/**, metadata/model_specs/**, src/adapters/**, src/handlers/**, tests/**, reports/hitl/**, reports/privacy/**, reports/qa/**, and artifacts/qa/** when local runtime evidence exists.
 
 Use these skills: local-runtime-harness-planner, adapter-contract-reviewer, qa-evidence-reviewer, privacy-governance-reviewer, spec-test-generator, hitl-escalation-controller, and repo-governance-auditor before PR creation.
 
@@ -314,7 +332,7 @@ Work as a local runtime architect. Define runtime-neutral interfaces for provide
 
 Do not install dependencies, start Docker services, run Databricks jobs, apply Terraform, deploy bundles, create cloud resources, use production data, or claim Databricks parity. Spark Declarative Pipelines, Delta Lake OSS, OpenLineage, and Marquez are candidate local validation capabilities only until HITL approval exists.
 
-Run local validation with uv. If dependency approvals, adapter evidence, lineage evidence, local profile scope, or runtime interface evidence is missing, invoke hitl-escalation-controller and stop. Do not weaken local runtime checks.
+Run local validation with uv. When local `data_500k` exists, refresh reusable adapter audit evidence with `uv run --no-sync python -m src.handlers.data_500k_adapter_audit --plan-id 04_local_runtime_and_contract_certification_plan` before certifying runtime behavior. If dependency approvals, adapter evidence, lineage evidence, local profile scope, or runtime interface evidence is missing, invoke hitl-escalation-controller and stop. Do not weaken local runtime checks.
 
 When local runtime QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "ci: local-runtime - add certification contract". Include plan id, provider=all, skills, changed files, tests, evidence, risks, HITL, Databricks impact, and rollback notes.
 ```
