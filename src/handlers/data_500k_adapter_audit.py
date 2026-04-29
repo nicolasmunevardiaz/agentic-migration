@@ -13,6 +13,7 @@ from src.common.adapter_runtime import AdapterRunResult, compute_file_checksum, 
 from src.handlers.aegis_adapter import run_aegis_adapter_for_file
 from src.handlers.bluestone_adapter import run_bluestone_adapter_for_file
 from src.handlers.northcare_adapter import run_northcare_adapter_for_file
+from src.handlers.pacific_shield_adapter import run_pacific_shield_adapter_for_file
 from src.handlers.valleybridge_adapter import run_valleybridge_adapter_for_file
 
 DEFAULT_PLAN_ID = "03_adapter_implementation_and_ci_plan"
@@ -61,6 +62,18 @@ def build_provider_targets(repo_root: Path) -> dict[str, ProviderAuditTarget]:
             provider_spec_root=provider_spec_root / "data_provider_4_valleybridge_medical",
             data_root=repo_root / "data_500k/data_provider_4_valleybridge_medical/year=2025",
             evidence_path="reports/qa/data_provider_4_valleybridge_medical_adapter_implementation.md",
+        ),
+        "data_provider_5_pacific_shield_insurance": ProviderAuditTarget(
+            provider_slug="data_provider_5_pacific_shield_insurance",
+            runner=run_pacific_shield_adapter_for_file,
+            provider_spec_root=provider_spec_root
+            / "data_provider_5_pacific_shield_insurance",
+            data_root=repo_root
+            / "data_500k/data_provider_5_pacific_shield_insurance/year=2025",
+            evidence_path=(
+                "reports/qa/"
+                "data_provider_5_pacific_shield_insurance_adapter_implementation.md"
+            ),
         ),
     }
 

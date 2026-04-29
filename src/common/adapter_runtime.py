@@ -30,6 +30,7 @@ class CanonicalColumnMapping:
     silver_column: str
     source_entity: str
     source_header: str
+    source_index: int | None
     target_type: str
     required: bool
     nullable: bool
@@ -50,6 +51,7 @@ class SourceRecord:
     upload_partition: str
     schema_version: str
     values_by_header: dict[str, Any]
+    values_by_position: dict[int, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -188,6 +190,7 @@ def load_provider_canonical_mappings(
                         silver_column=column["name"],
                         source_entity=source_entity,
                         source_header=source_mapping["source_header"],
+                        source_index=source_mapping.get("source_index"),
                         target_type=column["type"],
                         required=column["required"],
                         nullable=column["nullable"],
@@ -218,7 +221,28 @@ def build_source_record(
         upload_partition=provider_spec["provider"]["upload_partition"],
         schema_version=str(provider_spec.get("spec_version", DEFAULT_SCHEMA_VERSION)),
         values_by_header=parsed_record.values_by_header,
+        values_by_position=build_values_by_position(
+            parsed_record.values_by_header,
+            provider_spec["parser_profile"]["parser_options"].get("expected_headers", []),
+        ),
     )
+
+
+def build_values_by_position(
+    values_by_header: dict[str, Any],
+    expected_headers: list[str],
+) -> dict[int, Any]:
+    values_by_position: dict[int, Any] = {}
+    duplicate_offsets: dict[str, int] = {}
+    for index, header in enumerate(expected_headers):
+        raw_value = values_by_header.get(header)
+        if isinstance(raw_value, list):
+            offset = duplicate_offsets.get(header, 0)
+            values_by_position[index] = raw_value[offset] if offset < len(raw_value) else None
+            duplicate_offsets[header] = offset + 1
+        else:
+            values_by_position[index] = raw_value
+    return values_by_position
 
 
 def build_bronze_record(
@@ -341,6 +365,9 @@ def resolve_raw_value(
 
     if mapping.silver_column == "source_row_id":
         return source_record.source_row_key_value
+
+    if mapping.source_index is not None and source_record.values_by_position:
+        return source_record.values_by_position.get(mapping.source_index)
 
     return source_record.values_by_header.get(mapping.source_header)
 
