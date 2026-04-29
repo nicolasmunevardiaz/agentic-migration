@@ -10,6 +10,10 @@ This repository uses one shared filesystem contract for all AgentOps plans and C
 .agent/
   skills/
   spec_templates/
+    business_question_profile.template.yaml
+    provider_entity_profile.template.yaml
+    silver_entity_model.template.yaml
+    databricks_deployment_profile.template.yaml
 data_500k/
 docs/
 metadata/

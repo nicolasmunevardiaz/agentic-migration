@@ -1,0 +1,153 @@
+spec_version: 0.1
+artifact: business_question_profiles
+plan_id: "01_2_business_question_profiling_plan"
+source_business_request: "business-request.md"
+status: "draft"
+scope:
+  provider_scope: "all"
+  allowed_layers:
+    - bronze_source_preservation
+    - silver_normalized_operational
+    - gold_deferred_candidate
+  forbidden_without_hitl:
+    - enterprise_identity_resolution
+    - payer_attribution
+    - clinical_interpretation
+    - financial_benchmark_interpretation
+    - therapeutic_association
+    - irreversible_masking_or_redaction
+pii_phi_policy:
+  development_masking: "no_irreversible_masking"
+  reports_logs_fixtures: "no_raw_sensitive_values"
+  end_user_exposure: "role_based_masking_tokenization_or_policy_views_required"
+  contract_requirement: "mark_sensitive_fields_from_provider_business_and_model_specs"
+business_question_profiles:
+  - question_id: ""
+    business_question: ""
+    decision_supported: ""
+    intended_audience: ""
+    business_domain_group: ""
+    risk_level: "low" # low | medium | high | hitl_blocked
+    grain: ""
+    required_provider_groups:
+      - "" # provider | payer | both
+    provider_language:
+      - provider_slug: ""
+        provider_name: ""
+        source_standard_or_dialect: ""
+        evidence_summary: ""
+        evidence_paths: []
+    required_sources:
+      - provider_slug: ""
+        source_entity: ""
+        source_fields: []
+        usage: "required" # required | optional | reconciliation_only
+    minimum_canonical_concepts:
+      - "" # member_reference | coverage_period | encounter_event | condition_record | medication_record | observation_record_raw | cost_record | source_lineage
+    candidate_solution_options:
+      - option_id: ""
+        option: ""
+        risk: "low" # low | medium | high
+        impact: ""
+        required_approval: ""
+        recommendation: false
+    hitl_decisions_required: []
+    downstream_gold_candidate:
+      name: ""
+      status: "deferred"
+      reason: ""
+    data_quality_checks: []
+    required_tests: []
+    allowed_next_action: "profile_only" # profile_only | plan_02_allowed | plan_02_blocked
+field_decisions:
+  - decision_id: ""
+    status: "pending_human_decision" # applied | rejected | deferred_with_human_approval | pending_human_decision
+    provider:
+      provider_slug: ""
+      provider_name: ""
+      source_standard_or_dialect: ""
+    source:
+      entity: ""
+      field: ""
+      field_path: ""
+      provider_language_meaning: ""
+      source_grain: ""
+      provider_spec_path: ""
+    business_dependency:
+      question_ids: []
+      usage: "required" # required | optional | reconciliation_only
+      decision_supported: ""
+    canonical_candidate:
+      minimum_concept: ""
+      bronze_handling: "preserve_source_value_with_lineage"
+      silver_handling: "blocked_pending_decision"
+      gold_usage: "deferred"
+      canonical_name_hint: ""
+    sensitivity:
+      pii_signal: false
+      phi_signal: false
+      access_expectation: ""
+      raw_value_policy: "do_not_include_raw_values_in_reports_logs_or_fixtures"
+    drift_or_blocker:
+      category: "" # identity | relationship | status | parser_contract | privacy | clinical | financial | payload | source_lineage | coverage | code_semantics
+      summary: ""
+      blocks_plan_02: true
+      linked_runbook_decision_ids: []
+    evidence:
+      provider_spec_paths: []
+      drift_report_paths: []
+      privacy_report_paths: []
+      hitl_report_paths: []
+      qa_report_paths: []
+      parser_test_paths: []
+    options:
+      - option_id: "A"
+        description: ""
+        risk: "low" # low | medium | high
+        impact: ""
+        required_approval: ""
+        tests_required: []
+        rollback_notes: ""
+        recommendation: false
+        plan_02_allowance_if_selected: "allowed_bronze_only" # allowed | allowed_bronze_only | blocked
+      - option_id: "B"
+        description: ""
+        risk: "medium"
+        impact: ""
+        required_approval: ""
+        tests_required: []
+        rollback_notes: ""
+        recommendation: false
+        plan_02_allowance_if_selected: "blocked"
+    hitl_decision_request:
+      required: true
+      question_for_human: ""
+      recommended_option_id: ""
+      allowed_responses:
+        - approve_recommended_option
+        - approve_alternative_option
+        - defer_with_human_approval
+        - reject_all_options
+        - request_more_evidence
+      plan_02_consequence_by_response:
+        approve_recommended_option: ""
+        approve_alternative_option: ""
+        defer_with_human_approval: ""
+        reject_all_options: ""
+        request_more_evidence: ""
+      minimum_evidence_reviewed: []
+      human_response:
+        response: "pending_human_decision"
+        approved_option_id: ""
+        owner: ""
+        date: ""
+        notes: ""
+    selected_option:
+      option_id: ""
+      status: "pending_human_decision"
+      plan_02_allowance: "blocked" # allowed | allowed_bronze_only | blocked
+      implementation_notes: ""
+    validation:
+      required_tests: []
+      acceptance_criteria: []
+      validation_evidence: []

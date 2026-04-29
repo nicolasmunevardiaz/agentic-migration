@@ -16,11 +16,12 @@ Allowed `gh` usage is limited to `gh auth status`, `gh pr create`, `gh pr view`,
 
 ## Execution Order
 
-Provider profiling may run in parallel only if each agent owns one provider, one branch, one provider log, and one provider spec subtree. Canonical modeling starts only after provider profiling PRs are approved or explicitly accepted as blocked and the canonical drift decision runbook has no unresolved blocking decisions. Adapter implementation may run per provider after canonical contracts are approved. Local runtime certification runs after adapter implementation and before Databricks rollout. Databricks rollout is last and requires HITL approval.
+Provider profiling may run in parallel only if each agent owns one provider, one branch, one provider log, and one provider spec subtree. Business question profiling runs after provider profiling and before canonical modeling; it must convert the business request into question profiles, provider/entity/field decisions, HITL-ready option sets, and Plan 02 allowances. Canonical modeling starts only after provider profiling PRs are approved or explicitly accepted as blocked, business question profiling is complete or explicitly blocked with HITL records, and the canonical drift decision runbook has no unresolved blocking decisions. Adapter implementation may run per provider after canonical contracts are approved. Local runtime certification runs after adapter implementation and before Databricks rollout. Databricks rollout is last and requires HITL approval.
 
 | Stage | Execution | Prompt |
 |---|---|---|
 | Provider profiling | Parallel or sequential by provider | Prompts 1A-1E |
+| Business question profiling and field-decision gate | Sequential, all providers | Prompt 1.2 |
 | Drift decision resolution and canonical model | Sequential, all providers | Prompt 2 |
 | Adapter implementation and CI | Parallel or sequential by provider | Prompts 3A-3E |
 | Local runtime certification | Sequential, all approved adapters/contracts | Prompt 4 |
@@ -136,20 +137,46 @@ Run relevant validation with uv. If dependencies are missing, stop and request H
 When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "spec: pacific-shield - add provider profiles". The PR body must include plan id, provider, skills used, files changed, tests run, evidence paths, risks, HITL decisions, Databricks impact, and rollback notes.
 ```
 
+## Prompt 1.2: Business Question Profiling And Reverse Engineering
+
+Explanation: This prompt runs after provider profiling and before canonical modeling. It reads the business request together with all provider specs and reports, then creates structured business-question profiles and a provider/entity/field decision matrix so Plan 02 can model Silver from business intent, provider evidence, and risk-ranked options instead of guessing. Important blockers or modeling decisions should be resolved, explicitly deferred with human approval, or escalated here before Prompt 2 starts.
+
+Prerequisites: Provider profiling PRs are merged, approved, or explicitly blocked with HITL records. `business-request.md` exists. Human has approved local `uv` use and any missing dev dependencies.
+
+```text
+You are Codex executing Business Question Profiling And Reverse Engineering across all approved providers.
+
+Use docs/01_2_business_question_profiling_plan.md as the active plan. Read business-request.md, docs/technical_prd_agentops_operating_spec.md, docs/agentops_filesystem_conventions.md, docs/agentops_skill_strategy.md, .agent/spec_templates/business_question_profile.template.yaml, metadata/provider_specs/**, reports/drift/**, reports/privacy/**, reports/hitl/**, reports/qa/**, and reports/hitl/canonical_drift_decision_runbook.md.
+
+Use these skills: business-question-profiler, privacy-governance-reviewer, hitl-escalation-controller, spec-test-generator, and repo-governance-auditor before PR creation.
+
+Work as a cross-provider business reverse-engineering reviewer. For each provider, first understand the provider's own language and source dialect. Then map each question in business-request.md to decision purpose, grain, provider evidence, minimum canonical concepts, candidate solution options, risk/impact, HITL decisions, deferred Gold candidates, and tests required. For every business-critical source field, create a provider/entity/field decision record with options, risk/impact, recommended option, HITL request, and Plan 02 allowance.
+
+Resolve or reduce blockers at the business-question layer before Plan 02: connect each high-risk or HITL-blocked field decision to the canonical drift decision runbook, mark evidence-backed decisions as applied only when supported by provider specs/reports/tests, mark semantic decisions as pending_human_decision or deferred_with_human_approval, and emit a precise HITL escalation when a required field decision would block Plan 02.
+
+Generate metadata/model_specs/impact/business_question_profiles.yaml with both business_question_profiles and field_decisions. Every field_decisions item must include provider, source entity, source field, drift/blocker category, linked runbook decision ids when applicable, option set, hitl_decision_request, selected_option, and plan_02_allowance. Do not generate Bronze/Silver specs, Gold tables, dashboards, KPIs, identity resolution, clinical interpretation, financial interpretation, adapter code, or Databricks rollout.
+
+Append concise trace entries to logs/canonical_model/canonical_review.md using plan=01_2_business_question_profiling_plan and provider=all.
+
+Run profile/spec validation with uv when tests exist. If dependencies are missing, stop and request HITL approval before installing with uv. If repeated failures, missing evidence, ambiguous semantics, unresolved required field decisions, or scope drift occur, invoke hitl-escalation-controller and stop.
+
+When local QA passes, run repo-governance-auditor. If it returns allowed_next_action: create_pr, use safe gh CLI to create a PR against main with title "spec: business-profiling - add question profiles". The PR body must include plan id, provider=all, skills used, files changed, tests run, evidence paths, candidate options, risk/impact summary, HITL decisions, downstream Plan 02 impact, Databricks impact, and rollback notes.
+```
+
 ## Prompt 2: Drift Decisions, Canonical Model, And Contracts
 
-Explanation: This prompt intentionally widens context after provider profiling because drift decisions and canonical modeling require cross-provider comparison. It resolves or explicitly defers blocking drift decisions before any Bronze/Silver contracts are generated, then creates canonical model specs only if the runbook gate is clear. It still blocks adapter code and Databricks execution.
+Explanation: This prompt intentionally widens context after provider profiling and business-question profiling because drift decisions and canonical modeling require cross-provider comparison. It resolves or explicitly defers blocking drift decisions before any Bronze/Silver contracts are generated, then creates canonical model specs only if the runbook gate is clear. It still blocks adapter code, Gold analytics, and Databricks execution.
 
-Prerequisites: Provider profiling PRs are merged, approved, or explicitly blocked with HITL records. Human has approved local `uv` use, safe `gh` PR creation after governance audit, and any missing dev dependencies. `reports/hitl/canonical_drift_decision_runbook.md` exists and is ready to be updated as the plan 02 gate.
+Prerequisites: Provider profiling PRs are merged, approved, or explicitly blocked with HITL records. Business-question profiling is complete at `metadata/model_specs/impact/business_question_profiles.yaml` or explicitly blocked with HITL records. The profile artifact includes both `business_question_profiles` and `field_decisions`, and every required field decision has `plan_02_allowance` set to `allowed` or `allowed_bronze_only`, or has a linked HITL blocker that prevents Prompt 2 from generating model specs. Human has approved local `uv` use, safe `gh` PR creation after governance audit, and any missing dev dependencies. `reports/hitl/canonical_drift_decision_runbook.md` exists and is ready to be updated as the plan 02 gate.
 
 ```text
 You are Codex executing Canonical Model And Contracts across all approved providers.
 
-Use docs/02_canonical_model_and_contracts_plan.md as the active plan. Read docs/technical_prd_agentops_operating_spec.md, docs/agentops_filesystem_conventions.md, docs/agentops_skill_strategy.md, .agent/spec_templates/silver_entity_model.template.yaml, metadata/provider_specs/**, reports/drift/**, reports/privacy/**, reports/hitl/**, reports/qa/**, and reports/hitl/canonical_drift_decision_runbook.md.
+Use docs/02_canonical_model_and_contracts_plan.md as the active plan. Read business-request.md, metadata/model_specs/impact/business_question_profiles.yaml, docs/technical_prd_agentops_operating_spec.md, docs/agentops_filesystem_conventions.md, docs/agentops_skill_strategy.md, .agent/spec_templates/business_question_profile.template.yaml, .agent/spec_templates/silver_entity_model.template.yaml, metadata/provider_specs/**, reports/drift/**, reports/privacy/**, reports/hitl/**, reports/qa/**, and reports/hitl/canonical_drift_decision_runbook.md.
 
-Use these skills: drift-decision-resolver, canonical-model-planner, privacy-governance-reviewer, spec-test-generator, hitl-escalation-controller, and repo-governance-auditor before PR creation.
+Use these skills: business-question-profiler, drift-decision-resolver, canonical-model-planner, privacy-governance-reviewer, spec-test-generator, hitl-escalation-controller, and repo-governance-auditor before PR creation.
 
-Work as a generalist canonical reviewer. Read all approved provider specs and all reports together. First update reports/hitl/canonical_drift_decision_runbook.md with every drift decision that blocks or informs canonical modeling. If any entry with Blocks Plan 02 = yes remains pending_human_decision, stop and invoke hitl-escalation-controller with a specific human question. Do not generate Bronze/Silver model specs until blocking drift decisions are applied, rejected, or deferred_with_human_approval.
+Work as a generalist canonical reviewer. Read all approved provider specs, business question profiles, and all reports together. First verify that Plan 01.2 profiles provide provider evidence, minimum canonical concepts, candidate solution options, field-level decisions, HITL requests, and risk/impact for the business request. Then update reports/hitl/canonical_drift_decision_runbook.md with every drift decision that blocks or informs canonical modeling. If any entry with Blocks Plan 02 = yes remains pending_human_decision, or if any required field decision has Plan 02 allowance blocked without approved deferral, stop and invoke hitl-escalation-controller with a specific human question. Do not generate Bronze/Silver model specs until blocking drift decisions are applied, rejected, or deferred_with_human_approval.
 
 After the drift decision runbook gate is clear, use canonical-model-planner to generate metadata/model_specs/bronze/bronze_contract.yaml, metadata/model_specs/silver/<entity>.yaml, metadata/model_specs/mappings/provider_to_silver_matrix.yaml, and metadata/model_specs/impact/modeling_risk_report.md. Do not perform new provider discovery, adapter implementation, Databricks rollout, Gold modeling, KPI definition, identity resolution, or clinical interpretation without HITL.
 

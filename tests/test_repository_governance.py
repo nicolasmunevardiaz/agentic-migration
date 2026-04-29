@@ -165,6 +165,29 @@ def test_agentic_rollout_invokes_drift_decision_gate() -> None:
     assert "Do not generate Bronze/Silver model specs" in rollout
 
 
+def test_business_question_profile_contract_is_registered() -> None:
+    plan = (REPO_ROOT / "docs" / "01_2_business_question_profiling_plan.md").read_text(
+        encoding="utf-8"
+    )
+    template = (
+        REPO_ROOT / ".agent" / "spec_templates" / "business_question_profile.template.yaml"
+    ).read_text(encoding="utf-8")
+    skill = (
+        REPO_ROOT / ".agent" / "skills" / "business-question-profiler" / "SKILL.md"
+    ).read_text(encoding="utf-8")
+    canonical_plan = (
+        REPO_ROOT / "docs" / "02_canonical_model_and_contracts_plan.md"
+    ).read_text(encoding="utf-8")
+
+    assert "business_question_profiles" in template
+    assert "field_decisions" in template
+    assert "hitl_decision_request" in template
+    assert "plan_02_allowance" in template
+    assert "field-level decision" in plan
+    assert "field decision" in skill
+    assert "Plan 02 allowance" in canonical_plan
+
+
 def test_local_runtime_stage_is_registered() -> None:
     rollout = (REPO_ROOT / "docs" / "agentic_rollout.md").read_text(encoding="utf-8")
     strategy = (REPO_ROOT / "docs" / "agentops_skill_strategy.md").read_text(
