@@ -2,6 +2,8 @@ from pathlib import Path
 
 import yaml
 
+from src.handlers.local_postgres_workbench_deploy import render_deploy_sql
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 RUNTIME_ROOT = REPO_ROOT / "metadata" / "runtime_specs" / "local"
 
@@ -140,3 +142,64 @@ def test_local_runtime_reports_separate_local_and_databricks_certification() -> 
     assert "validation_state: `local_validated`" in qa_report
     assert "databricks_state: `not_databricks_certified`" in qa_report
     assert "python_dependencies_approved_for_local_import_only" in privacy_report
+
+
+def test_local_postgres_workbench_spec_declares_expected_schemas_and_tables() -> None:
+    spec = load_runtime_yaml("local_postgres_workbench.yaml")
+
+    assert spec["artifact"] == "local_postgres_workbench"
+    assert spec["database"]["engine"] == "postgresql"
+    assert spec["database"]["default_database"] == "agentic_migration_local"
+    assert {schema["name"] for schema in spec["schemas"]} == {
+        "staging",
+        "scratch",
+        "review",
+        "evidence",
+    }
+    assert spec["silver_review_tables"]["enabled"] is True
+    assert set(spec["silver_review_tables"]["generated_table_names"]) == {
+        "review.silver_conditions",
+        "review.silver_cost_records",
+        "review.silver_coverage_periods",
+        "review.silver_encounters",
+        "review.silver_medications",
+        "review.silver_members",
+        "review.silver_observations",
+    }
+    manual_tables = {
+        f"{table['schema']}.{table['name']}"
+        for table in spec["manual_tables"]
+    }
+    assert manual_tables >= {
+        "staging.load_manifest",
+        "scratch.normalization_probe_runs",
+        "evidence.local_deploy_runs",
+        "evidence.qa_artifact_refs",
+        "review.hitl_decisions",
+        "review.drift_status_values",
+        "review.drift_gender_values",
+        "review.drift_coverage_values",
+        "review.drift_nullability",
+        "review.drift_unmapped_or_sparse_fields",
+    }
+
+
+def test_local_postgres_workbench_rendered_sql_is_idempotent_and_safe() -> None:
+    sql = render_deploy_sql(
+        RUNTIME_ROOT / "local_postgres_workbench.yaml",
+        REPO_ROOT,
+    )
+    upper_sql = sql.upper()
+
+    assert "CREATE SCHEMA IF NOT EXISTS" in sql
+    assert "CREATE TABLE IF NOT EXISTS" in sql
+    assert "ADD COLUMN IF NOT EXISTS" in sql
+    assert "CREATE INDEX IF NOT EXISTS" in sql
+    assert "review" in sql
+    assert "scratch" in sql
+    assert "normalization_probe_runs" in sql
+    assert "silver_members" in sql
+    assert "hitl_decisions" in sql
+    assert "DROP " not in upper_sql
+    assert "TRUNCATE " not in upper_sql
+    assert "DELETE " not in upper_sql

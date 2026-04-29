@@ -1,0 +1,22 @@
+spec_version: 0.1
+artifact: local_postgres_state_snapshot
+iteration_id: V0_1
+status: planned_not_captured
+database: agentic_migration_local
+required_feedback:
+- schemas
+- tables
+- columns
+- data_types
+- constraints
+- indexes
+- row_counts
+- null_rates
+- domain_value_summaries
+- failed_casts
+- duplicate_keys
+- orphan_relationships
+- empty_table_checks
+- checksums_or_fingerprints
+privacy_rule: Do not store raw PHI or PII values in this snapshot.
+next_capture_trigger: Capture after each deploy, load, dbt run, rollback, or HITL edit.

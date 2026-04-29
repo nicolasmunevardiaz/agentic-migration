@@ -23,6 +23,8 @@ metadata/
     silver/
     mappings/
     impact/
+    evolution/
+      V0_N/
   deployment_specs/
     databricks/
   runtime_specs/
@@ -51,7 +53,9 @@ artifacts/
 
 ## Ownership
 
-`metadata/` contains versioned declarative contracts. Provider specs, model specs, mapping matrices, local runtime specs, and deployment specs should be committed when they are reviewable. `reports/` contains versioned human-readable evidence such as drift summaries, HITL queues, QA summaries, privacy reviews, dependency reviews, and risk reports. `logs/` contains concise append-only technical trace logs. `src/` contains implementation code only after the relevant specs and approvals exist. `tests/` contains deterministic Python tests and fixtures. `artifacts/` is for local or CI runtime outputs and is ignored by Git except for `.gitkeep`.
+`metadata/` contains versioned declarative contracts. Provider specs, model specs, mapping matrices, model evolution snapshots, local runtime specs, and deployment specs should be committed when they are reviewable. `reports/` contains versioned human-readable evidence such as drift summaries, HITL queues, QA summaries, privacy reviews, dependency reviews, and risk reports. `logs/` contains concise append-only technical trace logs. `src/` contains implementation code only after the relevant specs and approvals exist. `tests/` contains deterministic Python tests and fixtures. `artifacts/` is for local or CI runtime outputs and is ignored by Git except for `.gitkeep`.
+
+Model evolution snapshots live under `metadata/model_specs/evolution/V0_N/`. Each material Plan 04.5 modeling iteration must create a complete snapshot with a header file, business-question registry version, and full deployable DDL. Agents must not scatter model registry files into runtime specs, reports, local database exports, or private folders.
 
 ## Trace Logs
 

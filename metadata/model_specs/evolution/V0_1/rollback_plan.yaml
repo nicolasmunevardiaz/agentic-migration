@@ -1,0 +1,17 @@
+spec_version: 0.1
+artifact: rollback_plan
+iteration_id: V0_1
+status: initial_snapshot_no_previous_target
+rollback_strategy: redeploy_previous_complete_snapshot
+previous_snapshot: none
+required_steps_for_future_snapshots:
+- select the last approved V0_N snapshot
+- review its postgres_schema.sql and iteration_packet.yaml
+- run dry-run against the local PostgreSQL database
+- apply only after HITL approval
+- rerun Plan 04.5 validation commands
+- verify business-question SQL outputs did not regress
+blocked_actions:
+- hand-editing PostgreSQL as durable rollback history
+- weakening tests to preserve a broken iteration
+- using production data

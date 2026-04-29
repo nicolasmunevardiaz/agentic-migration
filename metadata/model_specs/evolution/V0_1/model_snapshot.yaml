@@ -1,0 +1,120 @@
+spec_version: 0.1
+artifact: model_evolution_snapshot
+snapshot_id: V0_1
+plan_id: 04_5_local_data_workbench_and_drift_resolution_plan
+status: draft_ready_for_iteration
+created_at: "2026-04-29"
+purpose: >
+  First local PostgreSQL workbench image for Bronze/Silver contract loading,
+  drift review, HITL decisions, and regression-protected normalization.
+modeling_scope:
+  max_layer_count: 4
+  layers:
+  - bronze_source_preservation
+  - staging_local_load_control
+  - review_silver_and_drift_workbench
+  - evidence_and_model_registry
+  forbidden_until_later_plan:
+  - production_serving_model
+  - databricks_parity_claim
+  local_gold_policy: allowed_after_silver_normalization_and_hitl_approval
+  gold_design_rule: derive local Gold candidates from resolved business questions, not provider dialects
+source_contracts:
+  bronze_contract: metadata/model_specs/bronze/bronze_contract.yaml
+  silver_contracts:
+  - metadata/model_specs/silver/conditions.yaml
+  - metadata/model_specs/silver/cost_records.yaml
+  - metadata/model_specs/silver/coverage_periods.yaml
+  - metadata/model_specs/silver/encounters.yaml
+  - metadata/model_specs/silver/medications.yaml
+  - metadata/model_specs/silver/members.yaml
+  - metadata/model_specs/silver/observations.yaml
+  provider_to_silver_matrix: metadata/model_specs/mappings/provider_to_silver_matrix.yaml
+  business_question_profiles: metadata/model_specs/impact/business_question_profiles.yaml
+business_question_registry:
+  version_id: BQ_V0_1
+  profile_path: metadata/model_specs/impact/business_question_profiles.yaml
+  profile_sha256: e9e2f2e338936c40743f3029ebd1155d14b5bd64a2851ac1c659e8357a8e3a83
+  question_count: 16
+  field_decision_count: 205
+  completion_status: plan_02_allowed_not_plan_04_5_complete
+  versioning_rule: create a new BQ_V0_N entry whenever business_question_profiles.yaml changes
+  acceptance_rule: Plan 04.5 completes only when every business question has tested local SQL outputs or an explicit HITL-approved deferral.
+runtime_contracts:
+  local_postgres_workbench: metadata/runtime_specs/local/local_postgres_workbench.yaml
+  local_runtime_profile: metadata/runtime_specs/local/local_runtime_profile.yaml
+deployment_artifacts:
+  postgres_full_ddl: metadata/model_specs/evolution/V0_1/postgres_schema.sql
+  deploy_handler: src/handlers/local_postgres_workbench_deploy.py
+  deploy_runbook: docs/local_postgres_workbench_deploy.md
+iteration_packet_contract:
+  status: planned_required_before_next_material_iteration
+  packet_path: metadata/model_specs/evolution/V0_1/iteration_packet.yaml
+  business_question_registry_path: metadata/model_specs/evolution/V0_1/business_question_registry.yaml
+  db_state_snapshot_path: metadata/model_specs/evolution/V0_1/db_state_snapshot.yaml
+  dbt_artifacts_manifest_path: metadata/model_specs/evolution/V0_1/dbt_artifacts_manifest.yaml
+  lineage_summary_path: metadata/model_specs/evolution/V0_1/lineage_summary.yaml
+  qa_gate_summary_path: metadata/model_specs/evolution/V0_1/qa_gate_summary.yaml
+  rollback_plan_path: metadata/model_specs/evolution/V0_1/rollback_plan.yaml
+  required_next_actions:
+  - capture PostgreSQL state after each deploy, load, dbt run, rollback, or HITL edit
+  - capture dbt artifacts by path and checksum after each material dbt run
+  - capture OpenLineage or Marquez evidence only after HITL approval
+  - record business-question progress before advancing to the next iteration
+ci_cd_contract:
+  deploy_style: full_snapshot_redeploy
+  compatibility_policy: no_backward_compatibility_required_for_plan_04_5
+  change_control:
+  - create a new V0_N snapshot for material model changes
+  - update declarative metadata before implementation code
+  - regenerate full PostgreSQL DDL from the snapshot source contracts
+  - run unit, integration, regression, and e2e local validations
+  - append trace evidence before PR
+rollback:
+  strategy: redeploy_previous_complete_snapshot
+  current_previous_snapshot: none
+  required_steps:
+  - select the last approved V0_N snapshot
+  - review its postgres_full_ddl path
+  - run dry-run against the target local database
+  - apply only after HITL approval
+  - rerun all Plan 04.5 validation commands
+quality_gates:
+  unit:
+  - uv run --no-sync pytest tests/specs/test_model_specs.py
+  - uv run --no-sync pytest tests/specs/test_local_runtime_specs.py
+  integration:
+  - uv run --no-sync pytest tests/specs
+  - uv run --no-sync pytest tests/adapters
+  regression:
+  - uv run --no-sync pytest
+  - uv run --no-sync ruff check
+  e2e_local:
+  - uv run --no-sync python -m src.handlers.local_postgres_workbench_deploy --database agentic_migration_local --dry-run
+  - uv run --no-sync python -m src.handlers.local_postgres_workbench_deploy --database agentic_migration_local --apply --verify
+normalization_iteration_rules:
+  business_question_profiles_are_living_contracts: true
+  field_review_scope: every field, every column, every entity, every provider
+  patch_policy: no_manual_database_patches
+  accepted_change_unit: declarative_model_snapshot_plus_tests
+  hitl_decision_table: review.hitl_decisions
+  drift_tables:
+  - review.drift_status_values
+  - review.drift_gender_values
+  - review.drift_coverage_values
+  - review.drift_nullability
+  - review.drift_unmapped_or_sparse_fields
+  terminal_sql_requirement:
+    required: true
+    description: Each resolved business question must have versioned SQL that answers it against the local PostgreSQL model or a HITL-approved deferral.
+  dbt_usage:
+    required_for_material_normalization: true
+    role: local orchestration, tests, documentation, and repeatable SQL model execution
+guardrails:
+  all_execution_local: true
+  no_production_data: true
+  no_databricks_jobs: true
+  no_terraform: true
+  no_bundle_deploy: true
+  no_docker_desktop: true
+  no_gold_schema_without_resolved_business_questions: true

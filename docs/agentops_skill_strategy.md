@@ -32,6 +32,7 @@ Skill names should describe the operating responsibility, not the data layer. Us
 | `adapter-contract-reviewer` | Validates adapter design, parser selection, mapping confidence, Bronze contract, Silver contract, lineage, and quarantine | Provider YAML specs, model YAML specs, adapter plan, topology document | Adapter readiness report |
 | `adapter-code-generator` | Generates parser/adapter implementation, fixtures, and local tests from approved provider and model specs | Provider YAML specs, model YAML specs, mapping matrix, adapter readiness report | Parser/adapter code, fixtures, implementation tests, generation report |
 | `local-runtime-harness-planner` | Defines the cloud-agnostic local runtime profile, runtime adapter interface, QA evidence contract, lineage evidence shape, and dependency approval gates before Databricks rollout | Provider specs, model specs, adapter artifacts, QA evidence, privacy findings, HITL approvals | `metadata/runtime_specs/local/*.yaml`, local runtime certification report, dependency review, runtime validation tests |
+| `local-postgres-dbt-modeling-orchestrator` | Operates Plan 04.5 local PostgreSQL and dbt Core model iterations as idempotent CI/CD-style deployments with full model snapshots, rollback, HITL drift write-back, and robust local tests | Bronze contract, Silver specs, provider specs, provider-to-Silver matrix, business-question profiles, local runtime specs, PostgreSQL deploy runbook, local test evidence | `metadata/model_specs/evolution/V0_N/*`, PostgreSQL DDL snapshots, dbt readiness artifacts when approved, local deploy/test evidence, trace entries |
 | `qa-evidence-reviewer` | Validates QA families, evidence contract, decisions, rerun behavior, and feedback loop completeness | QA plan, test outputs, evidence files | QA feedback report |
 | `spec-test-generator` | Generates Python validators and tests for declarative specs before Databricks execution | PRD test strategy, spec templates, provider/model/deployment specs | `tests/specs/*.py`, validators, spec test report |
 | `privacy-governance-reviewer` | Reviews PII/PHI classification, evidence redaction, secrets, dependency safety, permissions, Unity Catalog governance, and approval requirements | Provider specs, model specs, QA evidence, dependency manifests, deployment specs, PR risk report | Privacy/governance/dependency review report |
@@ -57,6 +58,12 @@ Adapter code must target runtime-neutral interfaces before Databricks rollout. T
 
 Local certification is not Databricks parity. It must not claim to validate Unity Catalog permissions, Lakeflow managed orchestration, Auto CDC behavior, serverless behavior, production performance, cloud IAM, or exact Databricks event logs. Its job is to make the agentic loop fast, cheap, portable, and contract-driven before Databricks certification.
 
+## Local Model Evolution Contract
+
+Plan 04.5 uses `local-postgres-dbt-modeling-orchestrator` after Plan 04 local runtime certification. Its center of gravity is PostgreSQL plus terminal-run QA, with dbt Core used as the preferred local orchestration and test tool after its project layout and profile are approved. The metadata contracts remain primary: dbt must not become an alternate source of truth.
+
+Every material model iteration must create a full snapshot under `metadata/model_specs/evolution/V0_N/`, including a header file, business-question registry version, and versioned PostgreSQL DDL. Plan 04.5 does not maintain backward compatibility by default; rollback means redeploying the previous approved complete snapshot. The skill must update `business_question_profiles.yaml` whenever normalization changes business meaning, version that update as `BQ_V0_N`, and use review/HITL tables rather than private notes for drift decisions. Plan 04.5 is complete only when every business question has tested local SQL output or an explicit HITL-approved deferral.
+
 ## Declarative Spec Validation
 
 GitHub CI should validate specs before Databricks execution. Python validators should parse every YAML, check required sections, enforce provider/entity coverage, verify that source mappings reference real provider specs, validate that Silver columns have types and lineage, detect duplicate canonical mappings, detect missing PII flags, reject absolute paths, and ensure deployment specs only reference approved model specs.
@@ -77,7 +84,7 @@ The prompts in `agentic_migration_prompts/` are plan-like work orders. They shou
 
 ## Creation Sequence
 
-Create and harden the skills in this order: first `provider-spec-generator`, then `business-question-profiler`, then `drift-decision-resolver`, then `canonical-model-planner`, then `adapter-contract-reviewer`, then `spec-test-generator`, then `privacy-governance-reviewer`, then `adapter-code-generator`, then `qa-evidence-reviewer`, then `local-runtime-harness-planner`, then `databricks-rollout-planner`. This reflects the dependency chain: declarative source specs and drift reports capture source truth; business questions clarify minimum canonical concepts, risk/impact options, and deferred Gold candidates; drift decisions close or defer semantic blockers; resolved decisions drive canonical model specs; model specs drive adapter review; validators and privacy controls protect the contracts; approved contracts drive generated code; generated code drives QA; QA and approved contracts drive local runtime certification; local certification drives Databricks/Unity Catalog validation.
+Create and harden the skills in this order: first `provider-spec-generator`, then `business-question-profiler`, then `drift-decision-resolver`, then `canonical-model-planner`, then `adapter-contract-reviewer`, then `spec-test-generator`, then `privacy-governance-reviewer`, then `adapter-code-generator`, then `qa-evidence-reviewer`, then `local-runtime-harness-planner`, then `local-postgres-dbt-modeling-orchestrator`, then `databricks-rollout-planner`. This reflects the dependency chain: declarative source specs and drift reports capture source truth; business questions clarify minimum canonical concepts, risk/impact options, and deferred Gold candidates; drift decisions close or defer semantic blockers; resolved decisions drive canonical model specs; model specs drive adapter review; validators and privacy controls protect the contracts; approved contracts drive generated code; generated code drives QA; QA and approved contracts drive local runtime certification; local runtime certification drives local PostgreSQL/dbt model iteration; local model evidence later drives Databricks/Unity Catalog validation.
 
 ## Initial Folder Shape
 
@@ -99,6 +106,8 @@ Create and harden the skills in this order: first `provider-spec-generator`, the
     qa-evidence-reviewer/
       SKILL.md
     local-runtime-harness-planner/
+      SKILL.md
+    local-postgres-dbt-modeling-orchestrator/
       SKILL.md
     spec-test-generator/
       SKILL.md

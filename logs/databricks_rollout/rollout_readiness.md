@@ -1,0 +1,1 @@
+2026-04-29T17:31:03-05:00 | plan=05_databricks_validation_and_rollout_plan | provider=all | skill=databricks-rollout-planner | event=validated | artifact=docs/05_databricks_validation_and_rollout_plan.md | note=Clarified Databricks as target binding while preserving cloud-agnostic CI/CD, declarative Spark, and Terraform readiness.

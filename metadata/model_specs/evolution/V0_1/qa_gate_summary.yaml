@@ -1,0 +1,19 @@
+spec_version: 0.1
+artifact: qa_gate_summary
+iteration_id: V0_1
+status: planned_partial
+required_gate_families:
+- schema
+- unit
+- integration
+- regression
+- e2e_local
+- dbt
+- sql_answer
+- data_quality
+- reconciliation
+- rollback
+current_evidence:
+- uv run --no-sync pytest tests/specs
+- uv run --no-sync ruff check
+advancement_rule: Every material iteration must record pass/fail counts, evidence paths, and blockers before advancing.

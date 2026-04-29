@@ -1,0 +1,17 @@
+spec_version: 0.1
+artifact: lineage_summary
+iteration_id: V0_1
+status: planned_not_emitted
+lineage_backend_status:
+  openlineage: pending_hitl_approval_for_emission
+  marquez: pending_hitl_approval_for_local_service
+required_feedback_when_approved:
+- dbt_ref_graph
+- dbt_source_graph
+- openlineage_event_paths
+- input_datasets
+- output_datasets
+- run_ids
+- job_names
+- sql_or_source_code_facets
+authority_rule: Lineage observers explain execution; metadata contracts remain the modeling authority.

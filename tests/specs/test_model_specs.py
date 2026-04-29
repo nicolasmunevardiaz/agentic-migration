@@ -1,3 +1,4 @@
+import hashlib
 from pathlib import Path
 
 import yaml
@@ -6,6 +7,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 MODEL_ROOT = REPO_ROOT / "metadata" / "model_specs"
 BRONZE_PATH = MODEL_ROOT / "bronze" / "bronze_contract.yaml"
 SILVER_ROOT = MODEL_ROOT / "silver"
+EVOLUTION_ROOT = MODEL_ROOT / "evolution"
 PROVIDER_ROOT = REPO_ROOT / "metadata" / "provider_specs"
 
 EXPECTED_SILVER_ENTITIES = {
@@ -183,3 +185,157 @@ def test_model_specs_do_not_introduce_forbidden_scope_or_sensitive_examples() ->
         "enterprise identity resolution is performed" in text.lower()
         for text in strings
     )
+
+
+def test_model_evolution_snapshots_are_complete_and_local_only() -> None:
+    snapshots = sorted(path for path in EVOLUTION_ROOT.glob("V0_*") if path.is_dir())
+
+    assert [path.name for path in snapshots] == ["V0_1"]
+
+    for snapshot_dir in snapshots:
+        snapshot = load_yaml(snapshot_dir / "model_snapshot.yaml")
+        ddl_path = REPO_ROOT / snapshot["deployment_artifacts"]["postgres_full_ddl"]
+        ddl = ddl_path.read_text(encoding="utf-8")
+        ddl_upper = ddl.upper()
+
+        assert snapshot["artifact"] == "model_evolution_snapshot"
+        assert snapshot["snapshot_id"] == snapshot_dir.name
+        assert snapshot["plan_id"] == "04_5_local_data_workbench_and_drift_resolution_plan"
+        assert snapshot["modeling_scope"]["max_layer_count"] <= 4
+        assert snapshot["ci_cd_contract"]["deploy_style"] == "full_snapshot_redeploy"
+        assert snapshot["ci_cd_contract"]["compatibility_policy"] == (
+            "no_backward_compatibility_required_for_plan_04_5"
+        )
+        assert snapshot["rollback"]["strategy"] == "redeploy_previous_complete_snapshot"
+        assert (
+            snapshot["normalization_iteration_rules"][
+                "business_question_profiles_are_living_contracts"
+            ]
+            is True
+        )
+        assert snapshot["normalization_iteration_rules"]["patch_policy"] == (
+            "no_manual_database_patches"
+        )
+        assert snapshot["guardrails"]["all_execution_local"] is True
+        assert (
+            snapshot["guardrails"]["no_gold_schema_without_resolved_business_questions"]
+            is True
+        )
+        assert snapshot["iteration_packet_contract"]["status"] == (
+            "planned_required_before_next_material_iteration"
+        )
+
+        bq_registry = snapshot["business_question_registry"]
+        bq_path = REPO_ROOT / bq_registry["profile_path"]
+        bq_profile = load_yaml(bq_path)
+        bq_checksum = hashlib.sha256(bq_path.read_bytes()).hexdigest()
+
+        assert bq_registry["version_id"] == "BQ_V0_1"
+        assert bq_registry["profile_sha256"] == bq_checksum
+        assert bq_registry["question_count"] == len(
+            bq_profile["business_question_profiles"]
+        )
+        assert bq_registry["field_decision_count"] == len(bq_profile["field_decisions"])
+        assert (
+            bq_registry["completion_status"]
+            == "plan_02_allowed_not_plan_04_5_complete"
+        )
+        assert "tested local SQL outputs" in bq_registry["acceptance_rule"]
+
+        declared_paths = [
+            snapshot["source_contracts"]["bronze_contract"],
+            snapshot["source_contracts"]["provider_to_silver_matrix"],
+            snapshot["source_contracts"]["business_question_profiles"],
+            snapshot["business_question_registry"]["profile_path"],
+            snapshot["runtime_contracts"]["local_postgres_workbench"],
+            snapshot["runtime_contracts"]["local_runtime_profile"],
+            snapshot["deployment_artifacts"]["postgres_full_ddl"],
+            snapshot["deployment_artifacts"]["deploy_handler"],
+            snapshot["deployment_artifacts"]["deploy_runbook"],
+            snapshot["iteration_packet_contract"]["packet_path"],
+            snapshot["iteration_packet_contract"]["business_question_registry_path"],
+            snapshot["iteration_packet_contract"]["db_state_snapshot_path"],
+            snapshot["iteration_packet_contract"]["dbt_artifacts_manifest_path"],
+            snapshot["iteration_packet_contract"]["lineage_summary_path"],
+            snapshot["iteration_packet_contract"]["qa_gate_summary_path"],
+            snapshot["iteration_packet_contract"]["rollback_plan_path"],
+            *snapshot["source_contracts"]["silver_contracts"],
+        ]
+        for declared_path in declared_paths:
+            assert not Path(declared_path).is_absolute()
+            assert (REPO_ROOT / declared_path).exists(), declared_path
+
+        assert "CREATE SCHEMA IF NOT EXISTS" in ddl
+        assert '"staging"' in ddl
+        assert '"scratch"' in ddl
+        assert '"review"' in ddl
+        assert '"evidence"' in ddl
+        assert '"scratch"."normalization_probe_runs"' in ddl
+        assert '"review"."silver_members"' in ddl
+        assert '"review"."hitl_decisions"' in ddl
+        assert "DROP " not in ddl_upper
+        assert "TRUNCATE " not in ddl_upper
+        assert "DELETE " not in ddl_upper
+
+
+def test_model_evolution_iteration_packet_maps_required_feedback() -> None:
+    snapshot_dir = EVOLUTION_ROOT / "V0_1"
+    packet = load_yaml(snapshot_dir / "iteration_packet.yaml")
+    bq_registry = load_yaml(snapshot_dir / "business_question_registry.yaml")
+    db_state = load_yaml(snapshot_dir / "db_state_snapshot.yaml")
+    dbt_manifest = load_yaml(snapshot_dir / "dbt_artifacts_manifest.yaml")
+    lineage = load_yaml(snapshot_dir / "lineage_summary.yaml")
+    qa_gate = load_yaml(snapshot_dir / "qa_gate_summary.yaml")
+    rollback = load_yaml(snapshot_dir / "rollback_plan.yaml")
+
+    assert packet["artifact"] == "model_iteration_packet"
+    assert packet["iteration_id"] == "V0_1"
+    assert packet["business_question_registry_version"] == "BQ_V0_1"
+    assert packet["feedback_refs"] == {
+        "database_feedback": "metadata/model_specs/evolution/V0_1/db_state_snapshot.yaml",
+        "dbt_feedback": "metadata/model_specs/evolution/V0_1/dbt_artifacts_manifest.yaml",
+        "lineage_feedback": "metadata/model_specs/evolution/V0_1/lineage_summary.yaml",
+        "qa_feedback": "metadata/model_specs/evolution/V0_1/qa_gate_summary.yaml",
+        "rollback_plan": "metadata/model_specs/evolution/V0_1/rollback_plan.yaml",
+    }
+    assert packet["normalization_probe_policy"]["default_action_for_strange_data"] == (
+        "create_probe_before_semantic_issue"
+    )
+    assert packet["normalization_probe_policy"]["scratch_schema"] == "scratch"
+    assert packet["normalization_probe_policy"]["probe_registry_table"] == (
+        "scratch.normalization_probe_runs"
+    )
+    assert packet["advancement_gate"]["allowed_next_action"] == "continue_iteration"
+
+    assert bq_registry["registry_version"] == "BQ_V0_1"
+    assert bq_registry["question_count"] == 16
+    assert bq_registry["field_decision_count"] == 205
+    assert "tested local SQL output" in bq_registry["completion_rule"]
+
+    assert "row_counts" in db_state["required_feedback"]
+    assert "null_rates" in db_state["required_feedback"]
+    assert "duplicate_keys" in db_state["required_feedback"]
+    assert db_state["privacy_rule"] == (
+        "Do not store raw PHI or PII values in this snapshot."
+    )
+
+    assert dbt_manifest["dbt_status"] == "not_introduced"
+    assert "target/manifest.json" in dbt_manifest["required_artifacts_when_dbt_runs"]
+    assert "target/run_results.json" in dbt_manifest["required_artifacts_when_dbt_runs"]
+    assert "target/catalog.json" in dbt_manifest["required_artifacts_when_dbt_runs"]
+
+    assert lineage["lineage_backend_status"]["openlineage"].startswith("pending_hitl")
+    assert "input_datasets" in lineage["required_feedback_when_approved"]
+    assert "output_datasets" in lineage["required_feedback_when_approved"]
+
+    assert set(qa_gate["required_gate_families"]) >= {
+        "unit",
+        "integration",
+        "regression",
+        "e2e_local",
+        "dbt",
+        "sql_answer",
+        "rollback",
+    }
+    assert rollback["rollback_strategy"] == "redeploy_previous_complete_snapshot"
+    assert "weakening tests to preserve a broken iteration" in rollback["blocked_actions"]

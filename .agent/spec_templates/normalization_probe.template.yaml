@@ -1,0 +1,43 @@
+spec_version: 0.1
+artifact: normalization_probe
+probe_id: PROBE-V0_N-000
+iteration_id: V0_N
+status: planned
+business_question_ids: []
+provider_slug: ""
+source_entity: ""
+source_fields: []
+target_entity_candidate: ""
+target_fields_candidate: []
+hypothesis: ""
+decomposition_steps:
+- isolate source rows and fields
+- profile value shape and grain
+- create scratch transition table
+- run candidate normalization SQL
+- compare counts, nulls, domains, keys, and relationships
+- decide whether to promote, revise, quarantine, request HITL, or rollback
+scratch:
+  schema: scratch
+  transition_table: ""
+  evidence_table: scratch.normalization_probe_runs
+metrics:
+  input_row_count: null
+  output_row_count: null
+  rejected_row_count: null
+  null_rate_changes: []
+  duplicate_key_count: null
+  orphan_relationship_count: null
+  failed_cast_count: null
+  nested_payload_count: null
+  entity_mismatch_count: null
+decision:
+  outcome: unresolved
+  allowed_outcomes:
+  - promote_to_snapshot
+  - revise_probe
+  - quarantine
+  - request_hitl
+  - rollback
+  evidence_path: ""
+  notes: ""
