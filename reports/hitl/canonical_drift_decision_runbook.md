@@ -46,3 +46,30 @@ approval_date: "2026-04-29"
 decision: "Apply canonical normalization across status, relationship, parser, duplicate-code, sparse-coverage, coverage, financial, clinical-code, observation-payload, and PII/PHI fields using provider specs and business-question metadata."
 allowed_next_action: "plan_02_allowed"
 ```
+
+## Plan 02 Canonical Contract Application
+
+```yaml
+status: applied
+active_plan: "02_canonical_model_and_contracts_plan"
+provider: "all"
+approval_date: "2026-04-29"
+source_profile: "metadata/model_specs/impact/business_question_profiles.yaml"
+generated_contracts:
+  - "metadata/model_specs/bronze/bronze_contract.yaml"
+  - "metadata/model_specs/silver/members.yaml"
+  - "metadata/model_specs/silver/coverage_periods.yaml"
+  - "metadata/model_specs/silver/encounters.yaml"
+  - "metadata/model_specs/silver/conditions.yaml"
+  - "metadata/model_specs/silver/medications.yaml"
+  - "metadata/model_specs/silver/observations.yaml"
+  - "metadata/model_specs/silver/cost_records.yaml"
+  - "metadata/model_specs/mappings/provider_to_silver_matrix.yaml"
+  - "metadata/model_specs/impact/modeling_risk_report.md"
+validation_status: "passed_local_validation"
+validation_evidence:
+  - "uv run pytest tests/specs/test_model_specs.py tests/specs/test_provider_to_silver_matrix.py tests/specs/test_spec_chain_system.py"
+  - "uv run pytest"
+  - "uv run ruff check"
+allowed_next_action: "model_spec_validation"
+```

@@ -1,0 +1,389 @@
+spec_version: 0.1
+entity: members
+layer: silver
+plan_id: 02_canonical_model_and_contracts_plan
+status: approved
+grain: one provider-scoped member reference per provider source and source row
+description: Canonical source-scoped member demographic reference for Bronze to Silver modeling; not enterprise identity.
+provider_coverage:
+  required_provider_scope: all
+  providers:
+  - data_provider_1_aegis_care_network
+  - data_provider_2_bluestone_health
+  - data_provider_3_northcare_clinics
+  - data_provider_4_valleybridge_medical
+  - data_provider_5_pacific_shield_insurance
+  source_entities:
+  - patients
+  coverage_status: approved
+columns:
+- name: provider_slug
+  type: string
+  nullable: false
+  required: true
+  pii_class: non_sensitive_lineage
+  lineage_required: true
+  transform_rule: copy provider.provider_slug from source contract
+  quarantine_if_invalid: true
+  needs_human_review: false
+  review_reason: Approved lineage metadata by DRIFT-001.
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: patients
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/patients.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: patients
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/patients.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: patients
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/patients.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: patients
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/patients.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: patients
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/patients.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+- name: source_entity
+  type: string
+  nullable: false
+  required: true
+  pii_class: non_sensitive_lineage
+  lineage_required: true
+  transform_rule: copy source.entity from source contract
+  quarantine_if_invalid: true
+  needs_human_review: false
+  review_reason: Approved lineage metadata by DRIFT-001.
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: patients
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/patients.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: patients
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/patients.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: patients
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/patients.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: patients
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/patients.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: patients
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/patients.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+- name: source_row_id
+  type: string
+  nullable: false
+  required: true
+  pii_class: non_sensitive_lineage
+  lineage_required: true
+  transform_rule: normalize provider source row key to ROW_ID with provider-scoped lineage
+  quarantine_if_invalid: true
+  needs_human_review: false
+  review_reason: Approved lineage metadata by DRIFT-001.
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: patients
+    source_header: SRC_ROW
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/patients.yaml
+    field_decision_id: BQFD-1-patients-src_row-01
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: patients
+    source_header: LINE_ID
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/patients.yaml
+    field_decision_id: BQFD-2-patients-line_id-01
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: patients
+    source_header: EXPORT_ID
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/patients.yaml
+    field_decision_id: BQFD-3-patients-export_id-01
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: patients
+    source_header: DW_LOAD_SEQ
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/patients.yaml
+    field_decision_id: BQFD-4-patients-dw_load_seq-01
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: patients
+    source_header: CLM_SEQ
+    source_index: 0
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/patients.yaml
+    field_decision_id: BQFD-5-patients-clm_seq_0-01
+- name: source_lineage_ref
+  type: string
+  nullable: false
+  required: true
+  pii_class: non_sensitive_lineage
+  lineage_required: true
+  transform_rule: hash or compose provider_slug, source_entity, source row key, and source file identity
+  quarantine_if_invalid: true
+  needs_human_review: false
+  review_reason: Approved lineage metadata by DRIFT-001.
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: patients
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/patients.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: patients
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/patients.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: patients
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/patients.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: patients
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/patients.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: patients
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/patients.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+- name: member_reference
+  type: string
+  nullable: false
+  required: true
+  pii_class: phi_source_identifier
+  lineage_required: true
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: patients
+    source_header: PT_001_ID
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/patients.yaml
+    field_decision_id: BQFD-1-patients-pt_001_id-01
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: patients
+    source_header: CUST_ID
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/patients.yaml
+    field_decision_id: BQFD-2-patients-cust_id-01
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: patients
+    source_header: PT_001_ID
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/patients.yaml
+    field_decision_id: BQFD-3-patients-pt_001_id-01
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: patients
+    source_header: PTKEY
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/patients.yaml
+    field_decision_id: BQFD-4-patients-ptkey-01
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: patients
+    source_header: MEMBER_ID
+    source_index: 1
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/patients.yaml
+    field_decision_id: BQFD-5-patients-member_id_1-01
+  transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
+  quarantine_if_invalid: true
+  needs_human_review: false
+  review_reason: Approved for Plan 02 canonical normalization by linked field decisions and drift runbook.
+- name: gender_code
+  type: string
+  nullable: true
+  required: false
+  pii_class: phi_demographic
+  lineage_required: false
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: patients
+    source_header: GDR_CD
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/patients.yaml
+    field_decision_id: BQFD-1-patients-gdr_cd-01
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: patients
+    source_header: SEX_CD
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/patients.yaml
+    field_decision_id: BQFD-2-patients-sex_cd-01
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: patients
+    source_header: GDR_CD
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/patients.yaml
+    field_decision_id: BQFD-3-patients-gdr_cd-01
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: patients
+    source_header: SX_FLAG
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/patients.yaml
+    field_decision_id: BQFD-4-patients-sx_flag-01
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: patients
+    source_header: MBR_SEX
+    source_index: 5
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/patients.yaml
+    field_decision_id: BQFD-5-patients-mbr_sex_5-01
+  transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
+  quarantine_if_invalid: false
+  needs_human_review: false
+  review_reason: Approved for Plan 02 canonical normalization by linked field decisions and drift runbook.
+- name: birth_date
+  type: date
+  nullable: true
+  required: false
+  pii_class: phi_demographic_identifier
+  lineage_required: false
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: patients
+    source_header: BDT_VAL
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/patients.yaml
+    field_decision_id: BQFD-1-patients-bdt_val-01
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: patients
+    source_header: DOB_TXT
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/patients.yaml
+    field_decision_id: BQFD-2-patients-dob_txt-01
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: patients
+    source_header: BDT_VAL
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/patients.yaml
+    field_decision_id: BQFD-3-patients-bdt_val-01
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: patients
+    source_header: DT_BORN
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/patients.yaml
+    field_decision_id: BQFD-4-patients-dt_born-01
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: patients
+    source_header: MBR_DOB
+    source_index: 6
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/patients.yaml
+    field_decision_id: BQFD-5-patients-mbr_dob_6-01
+  transform_rule: safe-cast source date to ISO date; quarantine required values when invalid
+  quarantine_if_invalid: false
+  needs_human_review: false
+  review_reason: Approved for Plan 02 canonical normalization by linked field decisions and drift runbook.
+- name: record_status
+  type: string
+  nullable: true
+  required: false
+  pii_class: non_sensitive_status
+  lineage_required: false
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: patients
+    source_header: REC_STS
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/patients.yaml
+    field_decision_id: BQFD-1-patients-rec_sts-01
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: patients
+    source_header: STS_CD
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/patients.yaml
+    field_decision_id: BQFD-2-patients-sts_cd-01
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: patients
+    source_header: REC_STS
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/patients.yaml
+    field_decision_id: BQFD-3-patients-rec_sts-01
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: patients
+    source_header: REC_FLAG
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/patients.yaml
+    field_decision_id: BQFD-4-patients-rec_flag-01
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: patients
+    source_header: MBR_STS
+    source_index: 9
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/patients.yaml
+    field_decision_id: BQFD-5-patients-mbr_sts_9-01
+  transform_rule: normalize provider status variants to approved record_status with raw status lineage
+  quarantine_if_invalid: false
+  needs_human_review: false
+  review_reason: Approved for Plan 02 canonical normalization by linked field decisions and drift runbook.
+keys:
+  primary_key_candidates:
+  - provider_slug
+  - member_reference
+  - source_row_id
+  foreign_key_candidates: []
+relationships: []
+qa_expectations:
+  schema_tests:
+  - Validate members YAML shape and required model metadata.
+  - Validate every source mapping references an existing provider spec and source field.
+  data_quality_tests:
+  - Quarantine required lineage fields when missing.
+  - Warn on invalid optional dates, payloads, or casts while preserving raw lineage.
+  reconciliation_tests:
+  - Reconcile provider coverage against provider_to_silver_matrix.yaml.
+  - Validate field decision ids are applied and allow Plan 02.
+  regression_tests:
+  - Reject post-Silver artifacts, Databricks rollout specs, and raw sensitive examples.
+governance:
+  pii_phi_policy: sensitive fields require governed access or policy views before end-user exposure
+  identity_resolution: not_performed
+  clinical_interpretation: not_performed
+  financial_interpretation: not_performed
+  databricks_impact: none
+hitl_decisions:
+  runbook_decision_ids:
+  - DRIFT-001
+  - DRIFT-002
+  - DRIFT-003
+  - DRIFT-004
+  - DRIFT-006
+  - DRIFT-007
+  - DRIFT-008
+  - DRIFT-009
+  approval_status: applied
+  approval_date: '2026-04-29'
+  approved_by: Human reviewer
+readiness:
+  model_ready: true
+  blocked_reason: ''
+  allowed_next_action: adapter_contract_review

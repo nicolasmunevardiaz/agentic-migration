@@ -1,0 +1,576 @@
+spec_version: 0.1
+entity: medications
+layer: silver
+plan_id: 02_canonical_model_and_contracts_plan
+status: approved
+grain: one provider-scoped medication order or claim occurrence per source medication row
+description: Medication source-code facts with source-scoped member, encounter, and condition references.
+provider_coverage:
+  required_provider_scope: all
+  providers:
+  - data_provider_1_aegis_care_network
+  - data_provider_2_bluestone_health
+  - data_provider_3_northcare_clinics
+  - data_provider_4_valleybridge_medical
+  - data_provider_5_pacific_shield_insurance
+  source_entities:
+  - medications
+  coverage_status: approved
+columns:
+- name: provider_slug
+  type: string
+  nullable: false
+  required: true
+  pii_class: non_sensitive_lineage
+  lineage_required: true
+  transform_rule: copy provider.provider_slug from source contract
+  quarantine_if_invalid: true
+  needs_human_review: false
+  review_reason: Approved lineage metadata by DRIFT-001.
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: medications
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/medications.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: medications
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/medications.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: medications
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/medications.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: medications
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/medications.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: medications
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/medications.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+- name: source_entity
+  type: string
+  nullable: false
+  required: true
+  pii_class: non_sensitive_lineage
+  lineage_required: true
+  transform_rule: copy source.entity from source contract
+  quarantine_if_invalid: true
+  needs_human_review: false
+  review_reason: Approved lineage metadata by DRIFT-001.
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: medications
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/medications.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: medications
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/medications.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: medications
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/medications.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: medications
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/medications.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: medications
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/medications.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+- name: source_row_id
+  type: string
+  nullable: false
+  required: true
+  pii_class: non_sensitive_lineage
+  lineage_required: true
+  transform_rule: normalize provider source row key to ROW_ID with provider-scoped lineage
+  quarantine_if_invalid: true
+  needs_human_review: false
+  review_reason: Approved lineage metadata by DRIFT-001.
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: medications
+    source_header: SRC_ROW
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/medications.yaml
+    field_decision_id: BQFD-1-medications-src_row-01
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: medications
+    source_header: LINE_ID
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/medications.yaml
+    field_decision_id: BQFD-2-medications-line_id-01
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: medications
+    source_header: EXPORT_ID
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/medications.yaml
+    field_decision_id: BQFD-3-medications-export_id-01
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: medications
+    source_header: DW_LOAD_SEQ
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/medications.yaml
+    field_decision_id: BQFD-4-medications-dw_load_seq-01
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: medications
+    source_header: CLM_SEQ
+    source_index: 0
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/medications.yaml
+    field_decision_id: BQFD-5-medications-clm_seq_0-01
+- name: source_lineage_ref
+  type: string
+  nullable: false
+  required: true
+  pii_class: non_sensitive_lineage
+  lineage_required: true
+  transform_rule: hash or compose provider_slug, source_entity, source row key, and source file identity
+  quarantine_if_invalid: true
+  needs_human_review: false
+  review_reason: Approved lineage metadata by DRIFT-001.
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: medications
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/medications.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: medications
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/medications.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: medications
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/medications.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: medications
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/medications.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: medications
+    source_header: __metadata__
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/medications.yaml
+    field_decision_id: DRIFT-001-lineage-metadata
+- name: medication_reference
+  type: string
+  nullable: false
+  required: true
+  pii_class: phi_clinical_identifier
+  lineage_required: true
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: medications
+    source_header: RX_OCC_KEY
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/medications.yaml
+    field_decision_id: BQFD-1-medications-rx_occ_key-01
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: medications
+    source_header: RX_OCC_ID
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/medications.yaml
+    field_decision_id: BQFD-2-medications-rx_occ_id-01
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: medications
+    source_header: RX_ROW_KEY
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/medications.yaml
+    field_decision_id: BQFD-3-medications-rx_row_key-01
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: medications
+    source_header: M_OCC_SEQ
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/medications.yaml
+    field_decision_id: BQFD-4-medications-m_occ_seq-01
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: medications
+    source_header: RX_CLM_ID
+    source_index: 1
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/medications.yaml
+    field_decision_id: BQFD-5-medications-rx_clm_id_1-01
+  transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
+  quarantine_if_invalid: true
+  needs_human_review: false
+  review_reason: Approved for Plan 02 canonical normalization by linked field decisions and drift runbook.
+- name: member_reference
+  type: string
+  nullable: false
+  required: true
+  pii_class: phi_source_identifier
+  lineage_required: true
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: medications
+    source_header: PT_001_ID
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/medications.yaml
+    field_decision_id: BQFD-1-medications-pt_001_id-01
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: medications
+    source_header: PID_REF
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/medications.yaml
+    field_decision_id: BQFD-2-medications-pid_ref-01
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: medications
+    source_header: PT_REF
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/medications.yaml
+    field_decision_id: BQFD-3-medications-pt_ref-01
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: medications
+    source_header: PARENT_PT
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/medications.yaml
+    field_decision_id: BQFD-4-medications-parent_pt-01
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: medications
+    source_header: MEMBER_ID
+    source_index: 3
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/medications.yaml
+    field_decision_id: BQFD-5-medications-member_id_3-01
+  transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
+  quarantine_if_invalid: true
+  needs_human_review: false
+  review_reason: Approved for Plan 02 canonical normalization by linked field decisions and drift runbook.
+- name: encounter_reference
+  type: string
+  nullable: true
+  required: false
+  pii_class: phi_source_identifier
+  lineage_required: true
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: medications
+    source_header: APPT_REF
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/medications.yaml
+    field_decision_id: BQFD-1-medications-appt_ref-01
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: medications
+    source_header: E_REF
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/medications.yaml
+    field_decision_id: BQFD-2-medications-e_ref-01
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: medications
+    source_header: APPT_REF
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/medications.yaml
+    field_decision_id: BQFD-3-medications-appt_ref-01
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: medications
+    source_header: EN_REF
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/medications.yaml
+    field_decision_id: BQFD-4-medications-en_ref-01
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: medications
+    source_header: ENCOUNTER_ID
+    source_index: 4
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/medications.yaml
+    field_decision_id: BQFD-5-medications-encounter_id_4-01
+  transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
+  quarantine_if_invalid: false
+  needs_human_review: false
+  review_reason: Approved for Plan 02 canonical normalization by linked field decisions and drift runbook.
+- name: condition_reference
+  type: string
+  nullable: true
+  required: false
+  pii_class: phi_clinical_identifier
+  lineage_required: true
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: medications
+    source_header: LINK_CND
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/medications.yaml
+    field_decision_id: BQFD-1-medications-link_cnd-01
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: medications
+    source_header: RX_DX_REF
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/medications.yaml
+    field_decision_id: BQFD-2-medications-rx_dx_ref-01
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: medications
+    source_header: PARENT_CND
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/medications.yaml
+    field_decision_id: BQFD-3-medications-parent_cnd-01
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: medications
+    source_header: DX_LINK_ID
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/medications.yaml
+    field_decision_id: BQFD-4-medications-dx_link_id-01
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: medications
+    source_header: DX_LINE_REF
+    source_index: 5
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/medications.yaml
+    field_decision_id: BQFD-5-medications-dx_line_ref_5-01
+  transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
+  quarantine_if_invalid: false
+  needs_human_review: false
+  review_reason: Approved for Plan 02 canonical normalization by linked field decisions and drift runbook.
+- name: medication_source_code
+  type: string
+  nullable: true
+  required: false
+  pii_class: phi_clinical_code
+  lineage_required: false
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: medications
+    source_header: MED_KEY
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/medications.yaml
+    field_decision_id: BQFD-1-medications-med_key-01
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: medications
+    source_header: RX_PROD_CD
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/medications.yaml
+    field_decision_id: BQFD-2-medications-rx_prod_cd-01
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: medications
+    source_header: MED_KEY
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/medications.yaml
+    field_decision_id: BQFD-3-medications-med_key-01
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: medications
+    source_header: M_KEY
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/medications.yaml
+    field_decision_id: BQFD-4-medications-m_key-01
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: medications
+    source_header: DRUG_CD
+    source_index: 2
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/medications.yaml
+    field_decision_id: BQFD-5-medications-drug_cd_2-01
+  transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
+  quarantine_if_invalid: false
+  needs_human_review: false
+  review_reason: Approved for Plan 02 canonical normalization by linked field decisions and drift runbook.
+- name: medication_description
+  type: string
+  nullable: true
+  required: false
+  pii_class: phi_clinical_text
+  lineage_required: false
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: medications
+    source_header: MED_NM_TXT
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/medications.yaml
+    field_decision_id: BQFD-1-medications-med_nm_txt-01
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: medications
+    source_header: DRUG_DESC
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/medications.yaml
+    field_decision_id: BQFD-2-medications-drug_desc-01
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: medications
+    source_header: MED_PRODUCT_NM
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/medications.yaml
+    field_decision_id: BQFD-3-medications-med_product_nm-01
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: medications
+    source_header: MED_LBL
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/medications.yaml
+    field_decision_id: BQFD-4-medications-med_lbl-01
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: medications
+    source_header: DRUG_NM
+    source_index: 6
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/medications.yaml
+    field_decision_id: BQFD-5-medications-drug_nm_6-01
+  transform_rule: copy source-scoped value with provider lineage; no enterprise identity or clinical interpretation inferred
+  quarantine_if_invalid: false
+  needs_human_review: false
+  review_reason: Approved for Plan 02 canonical normalization by linked field decisions and drift runbook.
+- name: medication_datetime
+  type: datetime
+  nullable: true
+  required: false
+  pii_class: phi_event_datetime
+  lineage_required: false
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: medications
+    source_header: ORD_DT_RAW
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/medications.yaml
+    field_decision_id: BQFD-1-medications-ord_dt_raw-01
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: medications
+    source_header: ORDER_TS
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/medications.yaml
+    field_decision_id: BQFD-2-medications-order_ts-01
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: medications
+    source_header: ORD_DT_RAW
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/medications.yaml
+    field_decision_id: BQFD-3-medications-ord_dt_raw-01
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: medications
+    source_header: MED_DT
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/medications.yaml
+    field_decision_id: BQFD-4-medications-med_dt-01
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: medications
+    source_header: FILL_DT
+    source_index: 8
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/medications.yaml
+    field_decision_id: BQFD-5-medications-fill_dt_8-01
+  transform_rule: safe-cast source date or timestamp to canonical datetime; preserve raw source lineage
+  quarantine_if_invalid: false
+  needs_human_review: false
+  review_reason: Approved for Plan 02 canonical normalization by linked field decisions and drift runbook.
+- name: record_status
+  type: string
+  nullable: true
+  required: false
+  pii_class: non_sensitive_status
+  lineage_required: false
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: medications
+    source_header: REC_STS
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/medications.yaml
+    field_decision_id: BQFD-1-medications-rec_sts-01
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: medications
+    source_header: REC_FLAG
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/medications.yaml
+    field_decision_id: BQFD-2-medications-rec_flag-01
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: medications
+    source_header: REC_STS
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/medications.yaml
+    field_decision_id: BQFD-3-medications-rec_sts-01
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: medications
+    source_header: ACT_FLAG
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/medications.yaml
+    field_decision_id: BQFD-4-medications-act_flag-01
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: medications
+    source_header: CLM_STS
+    source_index: 9
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/medications.yaml
+    field_decision_id: BQFD-5-medications-clm_sts_9-01
+  transform_rule: normalize provider status variants to approved record_status with raw status lineage
+  quarantine_if_invalid: false
+  needs_human_review: false
+  review_reason: Approved for Plan 02 canonical normalization by linked field decisions and drift runbook.
+keys:
+  primary_key_candidates:
+  - provider_slug
+  - medication_reference
+  - source_row_id
+  foreign_key_candidates:
+  - member_reference -> members.member_reference
+  - encounter_reference -> encounters.encounter_reference
+  - condition_reference -> conditions.condition_reference
+relationships:
+- name: medication_member_reference
+  from_column: member_reference
+  to_entity: members
+  to_column: member_reference
+  confidence: source_scoped
+  risk: References are provider-scoped and may require downstream reconciliation.
+- name: medication_encounter_reference
+  from_column: encounter_reference
+  to_entity: encounters
+  to_column: encounter_reference
+  confidence: source_asserted
+  risk: Encounter references may be absent or broken by source design.
+- name: medication_condition_reference
+  from_column: condition_reference
+  to_entity: conditions
+  to_column: condition_reference
+  confidence: source_asserted
+  risk: Condition-medication association is a source fact, not clinical interpretation.
+qa_expectations:
+  schema_tests:
+  - Validate medications YAML shape and required model metadata.
+  - Validate every source mapping references an existing provider spec and source field.
+  data_quality_tests:
+  - Quarantine required lineage fields when missing.
+  - Warn on invalid optional dates, payloads, or casts while preserving raw lineage.
+  reconciliation_tests:
+  - Reconcile provider coverage against provider_to_silver_matrix.yaml.
+  - Validate field decision ids are applied and allow Plan 02.
+  regression_tests:
+  - Reject post-Silver artifacts, Databricks rollout specs, and raw sensitive examples.
+governance:
+  pii_phi_policy: sensitive fields require governed access or policy views before end-user exposure
+  identity_resolution: not_performed
+  clinical_interpretation: not_performed
+  financial_interpretation: not_performed
+  databricks_impact: none
+hitl_decisions:
+  runbook_decision_ids:
+  - DRIFT-001
+  - DRIFT-002
+  - DRIFT-003
+  - DRIFT-004
+  - DRIFT-006
+  - DRIFT-007
+  - DRIFT-008
+  - DRIFT-009
+  - DRIFT-011
+  - DRIFT-014
+  approval_status: applied
+  approval_date: '2026-04-29'
+  approved_by: Human reviewer
+readiness:
+  model_ready: true
+  blocked_reason: ''
+  allowed_next_action: adapter_contract_review
