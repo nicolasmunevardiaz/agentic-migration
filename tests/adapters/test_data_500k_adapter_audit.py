@@ -22,6 +22,7 @@ def test_data_500k_audit_defaults_to_registered_adapter_targets() -> None:
         "data_provider_1_aegis_care_network",
         "data_provider_2_bluestone_health",
         "data_provider_3_northcare_clinics",
+        "data_provider_4_valleybridge_medical",
     }
 
 
