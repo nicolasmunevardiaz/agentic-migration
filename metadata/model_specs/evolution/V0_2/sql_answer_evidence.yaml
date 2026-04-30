@@ -85,3 +85,4 @@ business_question_results:
   status: answered
   row_count: 5
   acceptance: pass
+  semantic_review: PROBE-V0_2-001 aligned FHIR-style member and encounter references before coverage classification

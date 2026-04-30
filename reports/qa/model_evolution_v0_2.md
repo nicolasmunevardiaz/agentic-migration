@@ -26,6 +26,10 @@ V0_2 executes the Plan 04.5 local-only PostgreSQL/dbt model evolution loop acros
 
 All 16 `BQ_V0_2` questions are answered by local SQL outputs in PostgreSQL `evidence` schema. No HITL-approved deferral is required for this fixture-backed iteration.
 
+## Semantic Review
+
+The SQL outputs are fixture-backed local answers, not production Gold analytics. A semantic review found that BQ-016 initially classified the Aegis medication price row as `UNKNOWN` coverage because FHIR-style references used `Patient/member-1` and `Encounter/encounter-1` in cost records while related Silver rows stored `member-1` and `encounter-1`. `PROBE-V0_2-001` promoted final-segment reference alignment in the BQ-016 SQL answer; the corrected view returns `COVERED` for all five fixture providers. BQ-001 remains source-scoped member attribution evidence and does not claim cross-provider identity resolution.
+
 ## Boundaries
 
 This evidence is local-only. It does not claim production Gold readiness, Databricks parity, Unity Catalog lineage, Terraform execution, bundle deployment, Docker service execution, or production data validation.

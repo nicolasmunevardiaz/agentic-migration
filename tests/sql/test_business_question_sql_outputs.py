@@ -46,3 +46,21 @@ def test_dbt_sql_outputs_stay_local_and_do_not_create_production_gold() -> None:
     forbidden = ["databricks", "unity catalog", "terraform", "production", "gold."]
     assert not any(token in sql_text.lower() for token in forbidden)
     assert "{{ source('review'" in sql_text
+
+
+def test_bq_016_records_reference_alignment_probe() -> None:
+    model_path = (
+        DBT_ROOT / "models/business_questions/bq_016_medication_unit_prices_by_coverage.sql"
+    )
+    sql = model_path.read_text(encoding="utf-8")
+    probe = load_yaml(EVOLUTION_ROOT / "normalization_probe_bq_016_reference_alignment.yaml")
+    evidence = load_yaml(EVOLUTION_ROOT / "sql_answer_evidence.yaml")
+
+    assert "regexp_replace(costs.encounter_reference" in sql
+    assert "regexp_replace(costs.member_reference" in sql
+    assert probe["decision"]["outcome"] == "promote_to_snapshot"
+    assert probe["business_question_ids"] == ["BQ-016"]
+    assert any(
+        result["question_id"] == "BQ-016" and "semantic_review" in result
+        for result in evidence["business_question_results"]
+    )

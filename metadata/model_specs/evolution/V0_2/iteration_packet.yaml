@@ -17,6 +17,8 @@ metadata_inputs:
   - metadata/runtime_specs/local/**
 database_feedback:
   snapshot_path: metadata/model_specs/evolution/V0_2/db_state_snapshot.yaml
+  normalization_probes:
+  - metadata/model_specs/evolution/V0_2/normalization_probe_bq_016_reference_alignment.yaml
   captured_after_actions:
   - postgres_dry_run
   - postgres_apply_verify
@@ -28,7 +30,7 @@ database_feedback:
   failed_cast_checks: no_blocking_failed_casts_from_fixture_load
   duplicate_key_checks: captured
   orphan_relationship_checks: captured
-  entity_mismatch_checks: captured
+  entity_mismatch_checks: PROBE-V0_2-001 resolved BQ-016 FHIR-style reference alignment for Aegis fixture rows
   nested_payload_checks: captured
 dbt_feedback:
   artifacts_manifest_path: metadata/model_specs/evolution/V0_2/dbt_artifacts_manifest.yaml
