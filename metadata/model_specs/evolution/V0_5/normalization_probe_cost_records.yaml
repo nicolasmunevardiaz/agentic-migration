@@ -1,0 +1,70 @@
+spec_version: 0.1
+artifact: normalization_probe
+probe_id: PROBE-V0_5-COST-RECORDS-001
+iteration_id: V0_5
+status: complete
+business_question_ids: []
+provider_slug: all
+source_entity: review.silver_cost_records
+source_fields:
+- provider_slug
+- source_row_id
+- source_lineage_ref
+- medication_reference
+- member_reference
+- encounter_reference
+- cost_amount
+- cost_date
+- record_status
+target_entity_candidate: derived.cost_record_fact
+target_fields_candidate:
+- cost_record_id
+- cost_source_row_id
+- medication_provider_id
+- patient_provider_member_id
+- encounter_provider_id
+- cost_amount_source_id
+- source_cost_amount
+- source_cost_amount_field_name
+- cost_record_quality_status
+- has_missing_cost_amount
+- has_missing_cost_date
+- has_orphan_member_reference
+- has_orphan_encounter_reference
+- has_orphan_medication_reference
+hypothesis: >
+  Medication financial source facts can be normalized as provider-scoped cost records with
+  amount/date completeness and relationship QA flags while avoiding benchmark, payment,
+  utilization, or financial interpretation.
+scratch:
+  schema: derived
+  transition_table: derived.cost_record_source_normalized
+  evidence_table: derived.cost_record_fact
+metrics:
+  input_row_count: 1606374
+  cost_record_fact_row_count: 1606374
+  cost_record_member_summary_row_count: 480914
+  cost_amount_source_dimension_row_count: 4
+  cost_record_status_dimension_row_count: 3
+  duplicate_cost_record_reference_count: 0
+  missing_amount_row_count: 146375
+  nonpositive_amount_row_count: 0
+  missing_date_row_count: 638728
+  implausible_date_row_count: 0
+  orphan_member_reference_row_count: 805499
+  orphan_encounter_reference_row_count: 554329
+  orphan_medication_reference_row_count: 0
+decision:
+  outcome: promote_to_snapshot
+  allowed_outcomes:
+  - promote_to_snapshot
+  - revise_probe
+  - quarantine
+  - request_hitl
+  - rollback
+  evidence_path: dbt/models/derived/cost_records
+  notes: >
+    Promote provider-scoped cost record derived views. Preserve source financial amount
+    fields as PHI financial source facts, expose source-field provenance and quality flags,
+    and do not introduce financial interpretation, benchmarks, payment conclusions, or
+    local Gold outputs.

@@ -1,0 +1,96 @@
+version: 2
+
+models:
+  - name: condition_source_normalized
+    description: Row-level provider-scoped normalization of Silver conditions.
+    columns:
+      - name: condition_source_row_id
+        tests:
+          - not_null
+          - unique
+      - name: condition_provider_id
+        tests:
+          - not_null
+          - unique
+      - name: patient_provider_member_id
+        tests: [not_null]
+      - name: encounter_provider_id
+        tests: [not_null]
+      - name: condition_code_id
+        tests: [not_null]
+      - name: provider_slug
+        tests: [not_null]
+      - name: source_row_id
+        tests: [not_null]
+      - name: source_lineage_ref
+        tests: [not_null]
+      - name: condition_reference
+        tests: [not_null]
+      - name: record_status
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['active', 'inactive', 'unknown']
+
+  - name: condition_fact
+    description: Condition occurrence fact with source-code and relationship QA flags.
+    columns:
+      - name: condition_source_row_id
+        tests:
+          - not_null
+          - unique
+      - name: condition_provider_id
+        tests:
+          - not_null
+          - unique
+      - name: patient_provider_member_id
+        tests: [not_null]
+      - name: encounter_provider_id
+        tests: [not_null]
+      - name: condition_quality_status
+        tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - review_missing_source_code
+                  - review_missing_code_hint
+                  - review_missing_description
+                  - review_orphan_member_reference
+                  - review_orphan_encounter_reference
+                  - complete
+
+  - name: condition_code_dimension
+    description: Provider-scoped condition source-code dimension without clinical interpretation.
+    columns:
+      - name: condition_code_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests: [not_null]
+      - name: condition_row_count
+        tests: [not_null]
+
+  - name: condition_record_status_dimension
+    description: Condition record status dimension observed in active local batch.
+    columns:
+      - name: condition_record_status_id
+        tests:
+          - not_null
+          - unique
+      - name: record_status
+        tests:
+          - not_null
+          - unique
+
+  - name: condition_member_summary
+    description: Provider-scoped member condition rollup with relationship QA flags.
+    columns:
+      - name: patient_provider_member_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests: [not_null]
+      - name: condition_row_count
+        tests: [not_null]

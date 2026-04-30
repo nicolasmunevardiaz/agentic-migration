@@ -14,3 +14,6 @@ models:
     business_questions:
       +schema: evidence
       +materialized: view
+    derived:
+      +schema: derived
+      +materialized: view

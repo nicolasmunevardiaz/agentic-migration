@@ -1,0 +1,101 @@
+artifact: lineage_summary
+iteration_id: V0_5
+lineage_backend_status:
+  dbt_manifest: captured
+  openlineage: not_required_for_local_snapshot
+input_datasets:
+- relation: review.silver_members
+  contract: metadata/model_specs/silver/members.yaml
+- relation: review.silver_observations
+  contract: metadata/model_specs/silver/observations.yaml
+  nested_columns:
+  - observation_payload_raw
+- relation: review.silver_coverage_periods
+  contract: metadata/model_specs/silver/coverage_periods.yaml
+- relation: review.silver_encounters
+  contract: metadata/model_specs/silver/encounters.yaml
+- relation: review.silver_conditions
+  contract: metadata/model_specs/silver/conditions.yaml
+- relation: review.silver_medications
+  contract: metadata/model_specs/silver/medications.yaml
+- relation: review.silver_cost_records
+  contract: metadata/model_specs/silver/cost_records.yaml
+output_datasets:
+- relation: derived.patient_source_normalized
+  purpose: provider-scoped source member row preservation
+- relation: derived.patient_dimension
+  purpose: provider-scoped member dimension with conflict flags
+- relation: derived.patient_transaction_activity
+  purpose: provider-scoped member transaction activity flags
+- relation: derived.observation_payload_source_normalized
+  purpose: typed row-level extraction of nested observation payloads
+- relation: derived.observation_vital_components
+  purpose: long-form non-null vital components with payload path lineage
+- relation: derived.observation_vitals_wide
+  purpose: wide row-level vitals view with nested-payload QA flags
+- relation: derived.coverage_source_normalized
+  purpose: typed row-level preservation of source coverage rows
+- relation: derived.coverage_period_fact
+  purpose: coverage-period fact with date and duplicate-key QA flags
+- relation: derived.coverage_status_dimension
+  purpose: canonical status dimension observed in active local batch
+- relation: derived.coverage_member_summary
+  purpose: provider-scoped member rollup preserving multiple-row/status signals
+- relation: derived.encounter_source_normalized
+  purpose: provider-scoped source encounter row preservation
+- relation: derived.encounter_fact
+  purpose: encounter fact with datetime and member-reference QA flags
+- relation: derived.encounter_coverage_status_dimension
+  purpose: encounter-context coverage status dimension
+- relation: derived.encounter_record_status_dimension
+  purpose: encounter record status dimension
+- relation: derived.encounter_member_summary
+  purpose: provider-scoped member encounter rollup with QA flags
+- relation: derived.condition_source_normalized
+  purpose: provider-scoped source condition row preservation
+- relation: derived.condition_fact
+  purpose: condition occurrence fact with source-code and relationship QA flags
+- relation: derived.condition_code_dimension
+  purpose: provider-scoped condition source-code facts without clinical interpretation
+- relation: derived.condition_record_status_dimension
+  purpose: condition record status dimension
+- relation: derived.condition_member_summary
+  purpose: provider-scoped member condition rollup with QA flags
+- relation: derived.medication_source_normalized
+  purpose: provider-scoped source medication row preservation
+- relation: derived.medication_fact
+  purpose: medication occurrence fact with source-code, datetime, and relationship QA flags
+- relation: derived.medication_code_dimension
+  purpose: provider-scoped medication source-code facts without clinical interpretation
+- relation: derived.medication_code_variant_dimension
+  purpose: provider-scoped raw medication source-code variant provenance
+- relation: derived.medication_description_variant_dimension
+  purpose: provider-scoped medication description variant provenance
+- relation: derived.medication_record_status_dimension
+  purpose: medication record status dimension
+- relation: derived.medication_member_summary
+  purpose: provider-scoped member medication rollup with QA flags
+- relation: derived.cost_record_source_normalized
+  purpose: provider-scoped medication financial source row preservation
+- relation: derived.cost_record_fact
+  purpose: medication financial source fact with amount, date, and relationship QA flags
+- relation: derived.cost_amount_source_dimension
+  purpose: provider-scoped source financial amount field provenance
+- relation: derived.cost_record_status_dimension
+  purpose: cost record status dimension
+- relation: derived.cost_record_member_summary
+  purpose: provider-scoped member cost-record rollup with QA flags
+lineage_keys:
+- provider_slug
+- source_entity
+- source_row_id
+- source_lineage_ref
+- member_reference
+blocked_lineage_actions:
+- no enterprise identity resolution
+- no current eligibility inference
+- no clinical interpretation
+- no diagnosis hierarchy or code crosswalk inference
+- no medication class, drug taxonomy, or formulary inference
+- no financial interpretation
+- no Databricks parity claim

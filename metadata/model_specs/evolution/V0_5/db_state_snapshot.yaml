@@ -1,0 +1,521 @@
+artifact: local_v0_5_table_by_table_derived_state_snapshot
+iteration_id: V0_5
+captured_at: "2026-04-30"
+review_batch_id: plan-04-5-v0-3-data-500k
+source_schema: review
+target_schema: derived
+privacy_rule: Do not store raw PHI, PII, or raw payload values in this snapshot.
+entities_completed:
+- patients
+- observations
+- coverage_periods
+- encounters
+- conditions
+- medications
+- cost_records
+derived_outputs:
+  derived.patient_source_normalized:
+    row_count: 875760
+    grain: one provider-scoped source member row
+  derived.patient_dimension:
+    row_count: 479813
+    grain: one provider-scoped member_reference
+  derived.patient_transaction_activity:
+    row_count: 479813
+    grain: one provider-scoped member_reference
+  derived.observation_payload_source_normalized:
+    row_count: 535326
+    grain: one provider-scoped source observation row
+  derived.observation_vital_components:
+    row_count: 3279647
+    grain: one non-null vital component per provider-scoped source observation row
+  derived.observation_vitals_wide:
+    row_count: 535326
+    grain: one provider-scoped source observation row with typed vitals columns
+  derived.coverage_source_normalized:
+    row_count: 875760
+    grain: one provider-scoped source coverage row
+  derived.coverage_period_fact:
+    row_count: 875760
+    grain: one provider-scoped source coverage period/status row
+  derived.coverage_status_dimension:
+    row_count: 2
+    grain: one canonical coverage status observed in active batch
+  derived.coverage_member_summary:
+    row_count: 479813
+    grain: one provider-scoped member_reference
+  derived.encounter_source_normalized:
+    row_count: 535326
+    grain: one provider-scoped source encounter row
+  derived.encounter_fact:
+    row_count: 535326
+    grain: one provider-scoped encounter event
+  derived.encounter_coverage_status_dimension:
+    row_count: 3
+    grain: one encounter-context coverage status observed in active batch
+  derived.encounter_record_status_dimension:
+    row_count: 3
+    grain: one encounter record status observed in active batch
+  derived.encounter_member_summary:
+    row_count: 261959
+    grain: one provider-scoped encounter member_reference
+  derived.condition_source_normalized:
+    row_count: 803595
+    grain: one provider-scoped source condition row
+  derived.condition_fact:
+    row_count: 803595
+    grain: one provider-scoped condition occurrence
+  derived.condition_code_dimension:
+    row_count: 320
+    grain: one provider-scoped source-code and code-hint pair
+  derived.condition_record_status_dimension:
+    row_count: 3
+    grain: one condition record status observed in active batch
+  derived.condition_member_summary:
+    row_count: 369363
+    grain: one provider-scoped condition member_reference
+  derived.medication_source_normalized:
+    row_count: 1606374
+    grain: one provider-scoped source medication row
+  derived.medication_fact:
+    row_count: 1606374
+    grain: one provider-scoped medication occurrence
+  derived.medication_code_dimension:
+    row_count: 700
+    grain: one provider-scoped medication source-code
+  derived.medication_code_variant_dimension:
+    row_count: 1015
+    grain: one provider-scoped raw medication source-code variant
+  derived.medication_description_variant_dimension:
+    row_count: 1260
+    grain: one provider-scoped medication description variant
+  derived.medication_record_status_dimension:
+    row_count: 3
+    grain: one medication record status observed in active batch
+  derived.medication_member_summary:
+    row_count: 480914
+    grain: one provider-scoped medication member_reference
+  derived.cost_record_source_normalized:
+    row_count: 1606374
+    grain: one provider-scoped medication financial source row
+  derived.cost_record_fact:
+    row_count: 1606374
+    grain: one provider-scoped medication financial source fact
+  derived.cost_amount_source_dimension:
+    row_count: 4
+    grain: one provider-scoped financial amount source field
+  derived.cost_record_status_dimension:
+    row_count: 3
+    grain: one cost record status observed in active batch
+  derived.cost_record_member_summary:
+    row_count: 480914
+    grain: one provider-scoped cost-record member_reference
+patient_quality_summary:
+  gender_conflict_member_count: 9704
+  birth_date_conflict_member_count: 9957
+  implausible_birth_date_member_count: 92
+observation_nested_summary:
+  source_relation: review.silver_observations
+  nested_column: observation_payload_raw
+  source_row_count: 535326
+  vital_components_row_count: 3279647
+  silver_extract_mismatch_rows: 0
+  component_counts:
+    height_cm: 481921
+    weight_kg: 481858
+    systolic_bp: 481244
+    diastolic_bp: 481244
+    pulse_lpm: 481218
+    temperature_c: 481458
+    bmi: 390704
+coverage_quality_summary:
+  source_relation: review.silver_coverage_periods
+  source_row_count: 875760
+  coverage_member_summary_row_count: 479813
+  coverage_status_dimension_row_count: 2
+  inverted_date_range_count: 0
+  implausible_coverage_date_row_count: 1570
+  duplicate_period_key_row_count: 34823
+encounter_quality_summary:
+  source_relation: review.silver_encounters
+  source_row_count: 535326
+  encounter_member_summary_row_count: 261959
+  encounter_coverage_status_dimension_row_count: 3
+  encounter_record_status_dimension_row_count: 3
+  duplicate_encounter_reference_count: 0
+  missing_datetime_row_count: 322555
+  orphan_member_reference_row_count: 297896
+  implausible_datetime_row_count: 0
+  quality_status_counts:
+    review_missing_datetime: 322555
+    review_orphan_member_reference: 134301
+    complete: 78470
+  coverage_status_counts:
+    COVERED: 402449
+    UNINSURED: 80583
+    OUT_OF_COVERAGE: 52294
+condition_quality_summary:
+  source_relation: review.silver_conditions
+  source_row_count: 803595
+  condition_member_summary_row_count: 369363
+  condition_code_dimension_row_count: 320
+  condition_record_status_dimension_row_count: 3
+  duplicate_condition_reference_count: 0
+  orphan_member_reference_row_count: 402976
+  orphan_encounter_reference_row_count: 277300
+  missing_source_code_row_count: 0
+  missing_code_hint_row_count: 0
+  missing_description_row_count: 0
+  source_code_matches_hint_row_count: 192286
+  quality_status_counts:
+    review_orphan_member_reference: 402976
+    complete: 267158
+    review_orphan_encounter_reference: 133461
+medication_quality_summary:
+  source_relation: review.silver_medications
+  source_row_count: 1606374
+  medication_member_summary_row_count: 480914
+  medication_code_dimension_row_count: 700
+  medication_code_variant_dimension_row_count: 1015
+  medication_description_variant_dimension_row_count: 1260
+  medication_record_status_dimension_row_count: 3
+  duplicate_medication_reference_count: 0
+  codes_with_raw_code_variants: 105
+  codes_with_description_variants: 140
+  max_raw_code_variants: 4
+  max_description_variants: 5
+  orphan_member_reference_row_count: 805499
+  orphan_encounter_reference_row_count: 554329
+  orphan_condition_reference_row_count: 770892
+  missing_datetime_row_count: 638728
+  implausible_datetime_row_count: 0
+  missing_source_code_row_count: 0
+  missing_description_row_count: 0
+  quality_status_counts:
+    review_missing_datetime: 638728
+    review_orphan_member_reference: 427371
+    complete: 231652
+    review_orphan_encounter_reference: 159508
+    review_orphan_condition_reference: 149115
+cost_record_quality_summary:
+  source_relation: review.silver_cost_records
+  source_row_count: 1606374
+  cost_record_member_summary_row_count: 480914
+  cost_amount_source_dimension_row_count: 4
+  cost_record_status_dimension_row_count: 3
+  duplicate_cost_record_reference_count: 0
+  missing_amount_row_count: 146375
+  nonpositive_amount_row_count: 0
+  missing_date_row_count: 638728
+  implausible_date_row_count: 0
+  orphan_member_reference_row_count: 805499
+  orphan_encounter_reference_row_count: 554329
+  orphan_medication_reference_row_count: 0
+  quality_status_counts:
+    review_missing_date: 580571
+    review_orphan_member_reference: 392697
+    complete: 338750
+    review_orphan_encounter_reference: 147981
+    review_missing_amount: 146375
+provider_dimension_summary:
+- provider_slug: data_provider_1_aegis_care_network
+  patient_count: 61915
+  source_row_count: 76825
+- provider_slug: data_provider_2_bluestone_health
+  patient_count: 79613
+  source_row_count: 102719
+- provider_slug: data_provider_3_northcare_clinics
+  patient_count: 41297
+  source_row_count: 51462
+- provider_slug: data_provider_4_valleybridge_medical
+  patient_count: 74234
+  source_row_count: 92414
+- provider_slug: data_provider_5_pacific_shield_insurance
+  patient_count: 222754
+  source_row_count: 552340
+provider_activity_summary:
+- provider_slug: data_provider_1_aegis_care_network
+  patient_count: 61915
+  patients_with_transactional_data: 53058
+  patients_with_clinical_transactional_data: 53058
+  patients_with_financial_transactional_data: 44007
+  patients_with_observation_payload: 25018
+- provider_slug: data_provider_2_bluestone_health
+  patient_count: 79613
+  patients_with_transactional_data: 74611
+  patients_with_clinical_transactional_data: 74611
+  patients_with_financial_transactional_data: 72272
+  patients_with_observation_payload: 65616
+- provider_slug: data_provider_3_northcare_clinics
+  patient_count: 41297
+  patients_with_transactional_data: 35402
+  patients_with_clinical_transactional_data: 35402
+  patients_with_financial_transactional_data: 29314
+  patients_with_observation_payload: 16583
+- provider_slug: data_provider_4_valleybridge_medical
+  patient_count: 74234
+  patients_with_transactional_data: 63616
+  patients_with_clinical_transactional_data: 63616
+  patients_with_financial_transactional_data: 52848
+  patients_with_observation_payload: 29960
+- provider_slug: data_provider_5_pacific_shield_insurance
+  patient_count: 222754
+  patients_with_transactional_data: 0
+  patients_with_clinical_transactional_data: 0
+  patients_with_financial_transactional_data: 0
+  patients_with_observation_payload: 0
+provider_payload_summary:
+- provider_slug: data_provider_1_aegis_care_network
+  source_rows: 128019
+  height_rows: 115137
+  weight_rows: 115379
+  blood_pressure_pair_rows: 115188
+  pulse_rows: 114953
+  temperature_rows: 115212
+  bmi_rows: 93529
+- provider_slug: data_provider_2_bluestone_health
+  source_rows: 169468
+  height_rows: 152585
+  weight_rows: 152456
+  blood_pressure_pair_rows: 152389
+  pulse_rows: 152479
+  temperature_rows: 152364
+  bmi_rows: 123658
+- provider_slug: data_provider_3_northcare_clinics
+  source_rows: 84752
+  height_rows: 76326
+  weight_rows: 76236
+  blood_pressure_pair_rows: 76202
+  pulse_rows: 76205
+  temperature_rows: 76260
+  bmi_rows: 61889
+- provider_slug: data_provider_4_valleybridge_medical
+  source_rows: 153087
+  height_rows: 137873
+  weight_rows: 137787
+  blood_pressure_pair_rows: 137465
+  pulse_rows: 137581
+  temperature_rows: 137622
+  bmi_rows: 111628
+provider_coverage_fact_summary:
+- provider_slug: data_provider_1_aegis_care_network
+  fact_rows: 76825
+  covered_rows: 64250
+  out_of_coverage_rows: 12575
+  implausible_date_rows: 0
+  duplicate_key_rows: 4686
+- provider_slug: data_provider_2_bluestone_health
+  fact_rows: 102719
+  covered_rows: 85700
+  out_of_coverage_rows: 17019
+  implausible_date_rows: 0
+  duplicate_key_rows: 233
+- provider_slug: data_provider_3_northcare_clinics
+  fact_rows: 51462
+  covered_rows: 42850
+  out_of_coverage_rows: 8612
+  implausible_date_rows: 1570
+  duplicate_key_rows: 2983
+- provider_slug: data_provider_4_valleybridge_medical
+  fact_rows: 92414
+  covered_rows: 77100
+  out_of_coverage_rows: 15314
+  implausible_date_rows: 0
+  duplicate_key_rows: 5766
+- provider_slug: data_provider_5_pacific_shield_insurance
+  fact_rows: 552340
+  covered_rows: 253069
+  out_of_coverage_rows: 299271
+  implausible_date_rows: 0
+  duplicate_key_rows: 21155
+provider_encounter_fact_summary:
+- provider_slug: data_provider_1_aegis_care_network
+  fact_rows: 128019
+  member_count: 66927
+  missing_datetime_rows: 0
+  orphan_member_reference_rows: 80718
+  implausible_datetime_rows: 0
+- provider_slug: data_provider_2_bluestone_health
+  fact_rows: 169468
+  member_count: 70411
+  missing_datetime_rows: 169468
+  orphan_member_reference_rows: 66659
+  implausible_datetime_rows: 0
+- provider_slug: data_provider_3_northcare_clinics
+  fact_rows: 84752
+  member_count: 44436
+  missing_datetime_rows: 0
+  orphan_member_reference_rows: 53583
+  implausible_datetime_rows: 0
+- provider_slug: data_provider_4_valleybridge_medical
+  fact_rows: 153087
+  member_count: 80185
+  missing_datetime_rows: 153087
+  orphan_member_reference_rows: 96936
+  implausible_datetime_rows: 0
+provider_condition_fact_summary:
+- provider_slug: data_provider_1_aegis_care_network
+  fact_rows: 192286
+  member_count: 96889
+  encounter_count: 142978
+  orphan_member_reference_rows: 113940
+  orphan_encounter_reference_rows: 77285
+  source_code_matches_hint_rows: 192286
+- provider_slug: data_provider_2_bluestone_health
+  fact_rows: 254161
+  member_count: 91887
+  encounter_count: 169895
+  orphan_member_reference_rows: 77111
+  orphan_encounter_reference_rows: 56747
+  source_code_matches_hint_rows: 0
+- provider_slug: data_provider_3_northcare_clinics
+  fact_rows: 127181
+  member_count: 64287
+  encounter_count: 94506
+  orphan_member_reference_rows: 75404
+  orphan_encounter_reference_rows: 50845
+  source_code_matches_hint_rows: 0
+- provider_slug: data_provider_4_valleybridge_medical
+  fact_rows: 229967
+  member_count: 116300
+  encounter_count: 171048
+  orphan_member_reference_rows: 136521
+  orphan_encounter_reference_rows: 92423
+  source_code_matches_hint_rows: 0
+provider_condition_code_summary:
+- provider_slug: data_provider_1_aegis_care_network
+  code_dimension_rows: 80
+  represented_condition_rows: 192286
+- provider_slug: data_provider_2_bluestone_health
+  code_dimension_rows: 80
+  represented_condition_rows: 254161
+- provider_slug: data_provider_3_northcare_clinics
+  code_dimension_rows: 80
+  represented_condition_rows: 127181
+- provider_slug: data_provider_4_valleybridge_medical
+  code_dimension_rows: 80
+  represented_condition_rows: 229967
+provider_medication_fact_summary:
+- provider_slug: data_provider_1_aegis_care_network
+  fact_rows: 384514
+  member_count: 129676
+  encounter_count: 197321
+  condition_count: 237141
+  missing_datetime_rows: 384514
+  orphan_member_reference_rows: 227703
+  orphan_encounter_reference_rows: 154480
+  orphan_condition_reference_rows: 230250
+- provider_slug: data_provider_2_bluestone_health
+  fact_rows: 507900
+  member_count: 110262
+  encounter_count: 202277
+  condition_count: 272025
+  missing_datetime_rows: 0
+  orphan_member_reference_rows: 154861
+  orphan_encounter_reference_rows: 113506
+  orphan_condition_reference_rows: 112263
+- provider_slug: data_provider_3_northcare_clinics
+  fact_rows: 254214
+  member_count: 85849
+  encounter_count: 130343
+  condition_count: 156993
+  missing_datetime_rows: 254214
+  orphan_member_reference_rows: 150425
+  orphan_encounter_reference_rows: 101839
+  orphan_condition_reference_rows: 152652
+- provider_slug: data_provider_4_valleybridge_medical
+  fact_rows: 459746
+  member_count: 155127
+  encounter_count: 235726
+  condition_count: 283332
+  missing_datetime_rows: 0
+  orphan_member_reference_rows: 272510
+  orphan_encounter_reference_rows: 184504
+  orphan_condition_reference_rows: 275727
+provider_medication_code_summary:
+- provider_slug: data_provider_1_aegis_care_network
+  code_dimension_rows: 175
+  raw_code_variant_rows: 280
+  description_variant_rows: 315
+  codes_with_raw_code_variants: 35
+  codes_with_description_variants: 35
+  max_raw_code_variants: 4
+  max_description_variants: 5
+  represented_medication_rows: 384514
+- provider_slug: data_provider_2_bluestone_health
+  code_dimension_rows: 175
+  raw_code_variant_rows: 175
+  description_variant_rows: 315
+  codes_with_raw_code_variants: 0
+  codes_with_description_variants: 35
+  max_raw_code_variants: 1
+  max_description_variants: 5
+  represented_medication_rows: 507900
+- provider_slug: data_provider_3_northcare_clinics
+  code_dimension_rows: 175
+  raw_code_variant_rows: 280
+  description_variant_rows: 315
+  codes_with_raw_code_variants: 35
+  codes_with_description_variants: 35
+  max_raw_code_variants: 4
+  max_description_variants: 5
+  represented_medication_rows: 254214
+- provider_slug: data_provider_4_valleybridge_medical
+  code_dimension_rows: 175
+  raw_code_variant_rows: 280
+  description_variant_rows: 315
+  codes_with_raw_code_variants: 35
+  codes_with_description_variants: 35
+  max_raw_code_variants: 4
+  max_description_variants: 5
+  represented_medication_rows: 459746
+provider_cost_record_fact_summary:
+- provider_slug: data_provider_1_aegis_care_network
+  fact_rows: 384514
+  missing_amount_rows: 34982
+  missing_date_rows: 384514
+  orphan_member_reference_rows: 227703
+  orphan_encounter_reference_rows: 154480
+  orphan_medication_reference_rows: 0
+- provider_slug: data_provider_2_bluestone_health
+  fact_rows: 507900
+  missing_amount_rows: 46321
+  missing_date_rows: 0
+  orphan_member_reference_rows: 154861
+  orphan_encounter_reference_rows: 113506
+  orphan_medication_reference_rows: 0
+- provider_slug: data_provider_3_northcare_clinics
+  fact_rows: 254214
+  missing_amount_rows: 23175
+  missing_date_rows: 254214
+  orphan_member_reference_rows: 150425
+  orphan_encounter_reference_rows: 101839
+  orphan_medication_reference_rows: 0
+- provider_slug: data_provider_4_valleybridge_medical
+  fact_rows: 459746
+  missing_amount_rows: 41897
+  missing_date_rows: 0
+  orphan_member_reference_rows: 272510
+  orphan_encounter_reference_rows: 184504
+  orphan_medication_reference_rows: 0
+provider_cost_amount_source_summary:
+- provider_slug: data_provider_1_aegis_care_network
+  source_cost_amount_field_name: UNIT_COST
+  cost_record_row_count: 384514
+  populated_amount_row_count: 349532
+  missing_amount_row_count: 34982
+- provider_slug: data_provider_2_bluestone_health
+  source_cost_amount_field_name: RX_UNIT_AMT
+  cost_record_row_count: 507900
+  populated_amount_row_count: 461579
+  missing_amount_row_count: 46321
+- provider_slug: data_provider_3_northcare_clinics
+  source_cost_amount_field_name: MED_PRICE
+  cost_record_row_count: 254214
+  populated_amount_row_count: 231039
+  missing_amount_row_count: 23175
+- provider_slug: data_provider_4_valleybridge_medical
+  source_cost_amount_field_name: LINE_PRICE
+  cost_record_row_count: 459746
+  populated_amount_row_count: 417849
+  missing_amount_row_count: 41897

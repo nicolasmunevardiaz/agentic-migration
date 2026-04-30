@@ -190,7 +190,12 @@ def test_model_specs_do_not_introduce_forbidden_scope_or_sensitive_examples() ->
 def test_model_evolution_snapshots_are_complete_and_local_only() -> None:
     snapshots = sorted(path for path in EVOLUTION_ROOT.glob("V0_*") if path.is_dir())
 
-    assert [path.name for path in snapshots] == ["V0_1", "V0_2", "V0_3"]
+    assert [path.name for path in snapshots] == [
+        "V0_1",
+        "V0_2",
+        "V0_3",
+        "V0_5",
+    ]
 
     for snapshot_dir in snapshots:
         snapshot = load_yaml(snapshot_dir / "model_snapshot.yaml")
@@ -243,6 +248,8 @@ def test_model_evolution_snapshots_are_complete_and_local_only() -> None:
         assert bq_registry["completion_status"] in {
             "plan_02_allowed_not_plan_04_5_complete",
             "plan_04_5_complete_sql_answered",
+            "derived_patient_normalization_no_bq_change",
+            "derived_table_by_table_normalization_no_bq_change",
         }
         assert "tested local SQL outputs" in bq_registry["acceptance_rule"]
 
@@ -294,6 +301,29 @@ def test_model_evolution_snapshots_are_complete_and_local_only() -> None:
             assert snapshot["rollback"]["current_previous_snapshot"] == "V0_2"
             assert "data_500k" in snapshot["purpose"]
             assert "--load-data-500k" in "\n".join(snapshot["quality_gates"]["e2e_local"])
+        if snapshot_dir.name == "V0_5":
+            assert snapshot["rollback"]["current_previous_snapshot"] == "V0_3"
+            assert snapshot["dbt_contract"]["target_schema"] == "derived"
+            assert "patients" in snapshot["purpose"]
+            assert "observations" in snapshot["modeling_scope"]["normalized_entities_in_scope"]
+            assert "coverage_periods" in snapshot["modeling_scope"][
+                "normalized_entities_in_scope"
+            ]
+            assert "encounters" in snapshot["modeling_scope"]["normalized_entities_in_scope"]
+            assert "conditions" in snapshot["modeling_scope"]["normalized_entities_in_scope"]
+            assert "medications" in snapshot["modeling_scope"]["normalized_entities_in_scope"]
+            assert "cost_records" in snapshot["modeling_scope"][
+                "normalized_entities_in_scope"
+            ]
+            assert "enterprise_identity_resolution" in snapshot["modeling_scope"][
+                "forbidden_until_later_plan"
+            ]
+            assert "clinical_interpretation" in snapshot["modeling_scope"][
+                "forbidden_until_later_plan"
+            ]
+            assert "financial_interpretation" in snapshot["modeling_scope"][
+                "forbidden_until_later_plan"
+            ]
 
 
 def test_model_evolution_iteration_packet_maps_required_feedback() -> None:
@@ -420,3 +450,141 @@ def test_model_evolution_v0_3_loads_only_data_500k() -> None:
     assert "--load-data-500k" in commands
     assert "--load-fixtures" not in commands
     assert "tests/fixtures" not in commands
+
+
+def test_model_evolution_v0_5_table_by_table_derived_normalization() -> None:
+    snapshot_dir = EVOLUTION_ROOT / "V0_5"
+    packet = load_yaml(snapshot_dir / "iteration_packet.yaml")
+    registry = load_yaml(snapshot_dir / "business_question_registry.yaml")
+    db_state = load_yaml(snapshot_dir / "db_state_snapshot.yaml")
+    dbt_manifest = load_yaml(snapshot_dir / "dbt_artifacts_manifest.yaml")
+    probe = load_yaml(snapshot_dir / "normalization_probe_patients_provider_scoped_dimension.yaml")
+    qa_gate = load_yaml(snapshot_dir / "qa_gate_summary.yaml")
+
+    assert packet["previous_iteration_id"] == "V0_3"
+    assert packet["business_question_registry_version"] == "BQ_V0_5"
+    assert packet["business_question_progress"]["answered"] == []
+    assert packet["entities_completed"] == [
+        "patients",
+        "observations",
+        "coverage_periods",
+        "encounters",
+        "conditions",
+        "medications",
+        "cost_records",
+    ]
+    assert packet["database_feedback"]["nested_payload_checks"]["observations"] == "complete"
+
+    assert registry["registry_version"] == "BQ_V0_5"
+    assert registry["status"] == "unchanged_for_table_by_table_derived_normalization"
+    assert all(item["status"] == "unchanged" for item in registry["question_states"])
+
+    assert db_state["artifact"] == "local_v0_5_table_by_table_derived_state_snapshot"
+    assert db_state["derived_outputs"]["derived.patient_source_normalized"]["row_count"] == 875760
+    assert db_state["derived_outputs"]["derived.patient_dimension"]["row_count"] == 479813
+    assert (
+        db_state["derived_outputs"]["derived.patient_transaction_activity"]["row_count"]
+        == 479813
+    )
+    assert (
+        db_state["derived_outputs"][
+            "derived.observation_payload_source_normalized"
+        ]["row_count"]
+        == 535326
+    )
+    assert (
+        db_state["derived_outputs"]["derived.observation_vital_components"]["row_count"]
+        == 3279647
+    )
+    assert db_state["derived_outputs"]["derived.coverage_period_fact"]["row_count"] == 875760
+    assert (
+        db_state["derived_outputs"]["derived.coverage_member_summary"]["row_count"]
+        == 479813
+    )
+    assert db_state["derived_outputs"]["derived.encounter_fact"]["row_count"] == 535326
+    assert (
+        db_state["derived_outputs"]["derived.encounter_member_summary"]["row_count"]
+        == 261959
+    )
+    assert db_state["derived_outputs"]["derived.condition_fact"]["row_count"] == 803595
+    assert (
+        db_state["derived_outputs"]["derived.condition_member_summary"]["row_count"]
+        == 369363
+    )
+    assert db_state["derived_outputs"]["derived.medication_fact"]["row_count"] == 1606374
+    assert (
+        db_state["derived_outputs"]["derived.medication_member_summary"]["row_count"]
+        == 480914
+    )
+    assert db_state["derived_outputs"]["derived.cost_record_fact"]["row_count"] == 1606374
+    assert (
+        db_state["derived_outputs"]["derived.cost_record_member_summary"]["row_count"]
+        == 480914
+    )
+    assert len(db_state["provider_dimension_summary"]) == 5
+    assert len(db_state["provider_payload_summary"]) == 4
+    assert len(db_state["provider_coverage_fact_summary"]) == 5
+    assert len(db_state["provider_encounter_fact_summary"]) == 4
+    assert len(db_state["provider_condition_fact_summary"]) == 4
+    assert len(db_state["provider_medication_fact_summary"]) == 4
+    assert len(db_state["provider_cost_record_fact_summary"]) == 4
+    assert db_state["encounter_quality_summary"]["missing_datetime_row_count"] == 322555
+    assert db_state["condition_quality_summary"]["orphan_member_reference_row_count"] == 402976
+    assert db_state["medication_quality_summary"]["missing_datetime_row_count"] == 638728
+    assert db_state["cost_record_quality_summary"]["missing_amount_row_count"] == 146375
+
+    assert probe["decision"]["outcome"] == "promote_to_snapshot"
+    assert probe["business_question_ids"] == []
+    assert probe["metrics"]["gender_conflict_member_count"] == 9704
+    assert probe["metrics"]["birth_date_conflict_member_count"] == 9957
+
+    assert set(dbt_manifest["derived_nodes"]) == {
+        "model.agentic_migration_local.patient_source_normalized",
+        "model.agentic_migration_local.patient_dimension",
+        "model.agentic_migration_local.patient_transaction_activity",
+        "model.agentic_migration_local.observation_payload_source_normalized",
+        "model.agentic_migration_local.observation_vital_components",
+        "model.agentic_migration_local.observation_vitals_wide",
+        "model.agentic_migration_local.coverage_source_normalized",
+        "model.agentic_migration_local.coverage_period_fact",
+        "model.agentic_migration_local.coverage_status_dimension",
+        "model.agentic_migration_local.coverage_member_summary",
+        "model.agentic_migration_local.encounter_source_normalized",
+        "model.agentic_migration_local.encounter_fact",
+        "model.agentic_migration_local.encounter_coverage_status_dimension",
+        "model.agentic_migration_local.encounter_record_status_dimension",
+        "model.agentic_migration_local.encounter_member_summary",
+        "model.agentic_migration_local.condition_source_normalized",
+        "model.agentic_migration_local.condition_fact",
+        "model.agentic_migration_local.condition_code_dimension",
+        "model.agentic_migration_local.condition_record_status_dimension",
+        "model.agentic_migration_local.condition_member_summary",
+        "model.agentic_migration_local.medication_source_normalized",
+        "model.agentic_migration_local.medication_fact",
+        "model.agentic_migration_local.medication_code_dimension",
+        "model.agentic_migration_local.medication_code_variant_dimension",
+        "model.agentic_migration_local.medication_description_variant_dimension",
+        "model.agentic_migration_local.medication_record_status_dimension",
+        "model.agentic_migration_local.medication_member_summary",
+        "model.agentic_migration_local.cost_record_source_normalized",
+        "model.agentic_migration_local.cost_record_fact",
+        "model.agentic_migration_local.cost_amount_source_dimension",
+        "model.agentic_migration_local.cost_record_status_dimension",
+        "model.agentic_migration_local.cost_record_member_summary",
+    }
+
+    commands = "\n".join(item["command"] for item in qa_gate["current_evidence"])
+    assert "path:models/derived/patients" in commands
+    assert "path:tests/derived/patients" in commands
+    assert "path:models/derived/observations" in commands
+    assert "path:tests/derived/observations" in commands
+    assert "path:models/derived/coverage" in commands
+    assert "path:tests/derived/coverage" in commands
+    assert "path:models/derived/encounters" in commands
+    assert "path:tests/derived/encounters" in commands
+    assert "path:models/derived/conditions" in commands
+    assert "path:tests/derived/conditions" in commands
+    assert "path:models/derived/medications" in commands
+    assert "path:tests/derived/medications" in commands
+    assert "path:models/derived/cost_records" in commands
+    assert "path:tests/derived/cost_records" in commands

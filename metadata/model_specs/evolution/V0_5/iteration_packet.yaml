@@ -1,0 +1,48 @@
+artifact: model_iteration_packet
+iteration_id: V0_5
+previous_iteration_id: V0_3
+business_question_registry_version: BQ_V0_5
+status: in_progress
+provider_scope: all
+source_data_scope: data_500k_only
+normalization_focus: table_by_table_derived_model
+entities_completed:
+- patients
+- observations
+- coverage_periods
+- encounters
+- conditions
+- medications
+- cost_records
+business_question_progress:
+  answered: []
+  partial: []
+  unanswered: []
+  deferred_hitl: []
+  unchanged_reason: V0_5 normalizes Silver entities and does not change BQ answer logic.
+database_feedback:
+  captured_after_actions:
+  - patient_sql_profile
+  - observation_nested_payload_sql_profile
+  - coverage_sql_profile
+  - encounter_sql_profile
+  - condition_sql_profile
+  - medication_sql_profile
+  - cost_record_sql_profile
+  - dbt_run
+  - dbt_test
+  nested_payload_checks:
+    observations: complete
+    patients: not_applicable
+    coverage_periods: not_applicable
+    encounters: not_applicable
+    conditions: not_applicable
+    medications: not_applicable
+    cost_records: not_applicable
+dbt_feedback: metadata/model_specs/evolution/V0_5/dbt_artifacts_manifest.yaml
+lineage_feedback: metadata/model_specs/evolution/V0_5/lineage_summary.yaml
+qa_feedback: metadata/model_specs/evolution/V0_5/qa_gate_summary.yaml
+rollback_plan: metadata/model_specs/evolution/V0_5/rollback_plan.yaml
+advancement_gate:
+  allowed_next_action: continue_table_by_table_derivation
+  blocked_until: []

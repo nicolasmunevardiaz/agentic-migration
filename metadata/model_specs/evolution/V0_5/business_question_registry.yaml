@@ -1,0 +1,16 @@
+artifact: business_question_registry_snapshot
+registry_version: BQ_V0_5
+iteration_id: V0_5
+profile_path: metadata/model_specs/impact/business_question_profiles.yaml
+profile_sha256: e9e2f2e338936c40743f3029ebd1155d14b5bd64a2851ac1c659e8357a8e3a83
+question_count: 16
+field_decision_count: 205
+status: unchanged_for_table_by_table_derived_normalization
+completion_rule: >
+  Business questions are intentionally unchanged while V0_5 table-by-table normalization
+  is in progress; each entity addition requires tested local dbt derived outputs while
+  preserving existing tested local SQL outputs.
+question_states:
+- status: unchanged
+  scope: all_business_questions
+  reason: V0_5 derived normalization does not introduce or change business-question answer logic.

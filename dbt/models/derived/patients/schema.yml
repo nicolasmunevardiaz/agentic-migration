@@ -1,0 +1,59 @@
+version: 2
+
+models:
+  - name: patient_source_normalized
+    description: Row-level patient source normalization for provider-scoped members.
+    columns:
+      - name: patient_source_row_id
+        tests: [not_null]
+      - name: patient_provider_member_id
+        tests: [not_null]
+      - name: provider_slug
+        tests: [not_null]
+      - name: source_row_id
+        tests: [not_null]
+      - name: source_lineage_ref
+        tests: [not_null]
+      - name: member_reference
+        tests: [not_null]
+      - name: gender_normalization_status
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['accepted', 'missing', 'unexpected']
+
+  - name: patient_dimension
+    description: Provider-scoped patient dimension with stable id and conflict flags.
+    columns:
+      - name: patient_provider_member_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests: [not_null]
+      - name: member_reference
+        tests: [not_null]
+      - name: patient_dimension_quality_status
+        tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - usable_provider_scoped_dimension
+                  - conflicting_gender
+                  - conflicting_birth_date
+                  - implausible_birth_date
+                  - missing_member_reference
+
+  - name: patient_transaction_activity
+    description: Provider-scoped patient activity rollup across related transaction entities.
+    columns:
+      - name: patient_provider_member_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests: [not_null]
+      - name: member_reference
+        tests: [not_null]
+      - name: transactional_row_count
+        tests: [not_null]

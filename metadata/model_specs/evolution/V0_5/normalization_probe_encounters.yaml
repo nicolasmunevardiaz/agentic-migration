@@ -1,0 +1,56 @@
+spec_version: 0.1
+artifact: normalization_probe
+probe_id: PROBE-V0_5-ENCOUNTERS-001
+iteration_id: V0_5
+status: complete
+business_question_ids: []
+provider_slug: all
+source_entity: review.silver_encounters
+source_fields:
+- provider_slug
+- source_row_id
+- source_lineage_ref
+- encounter_reference
+- member_reference
+- encounter_datetime
+- coverage_status
+- record_status
+target_entity_candidate: derived.encounter_fact
+target_fields_candidate:
+- encounter_provider_id
+- encounter_source_row_id
+- patient_provider_member_id
+- encounter_coverage_status_id
+- encounter_record_status_id
+- encounter_quality_status
+- has_missing_encounter_datetime
+- has_orphan_member_reference
+hypothesis: >
+  Encounters can be normalized as provider-scoped facts with status dimensions and member
+  rollups when missing datetime values and orphan member references are preserved as QA flags.
+scratch:
+  schema: derived
+  transition_table: derived.encounter_source_normalized
+  evidence_table: derived.encounter_fact
+metrics:
+  input_row_count: 535326
+  encounter_fact_row_count: 535326
+  encounter_member_summary_row_count: 261959
+  encounter_coverage_status_dimension_row_count: 3
+  encounter_record_status_dimension_row_count: 3
+  duplicate_encounter_reference_count: 0
+  missing_datetime_row_count: 322555
+  orphan_member_reference_row_count: 297896
+  implausible_datetime_row_count: 0
+decision:
+  outcome: promote_to_snapshot
+  allowed_outcomes:
+  - promote_to_snapshot
+  - revise_probe
+  - quarantine
+  - request_hitl
+  - rollback
+  evidence_path: dbt/models/derived/encounters
+  notes: >
+    Promote provider-scoped encounter derived views. Do not infer encounter clinical meaning,
+    do not force member joins, and preserve missing datetimes and orphan references as QA flags.
