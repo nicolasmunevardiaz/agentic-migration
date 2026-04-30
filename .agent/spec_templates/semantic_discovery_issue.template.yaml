@@ -1,0 +1,50 @@
+spec_version: 0.1
+artifact: semantic_discovery_issue
+issue_id: ISSUE-V0_N-000
+iteration_id: V0_N
+status: open
+detected_at: ""
+detected_by: local-postgres-dbt-modeling-orchestrator
+provider_slug: ""
+source_entity: ""
+source_field: ""
+target_entity_candidate: ""
+business_question_ids: []
+issue_type: nested_payload
+allowed_issue_types:
+- nested_payload
+- entity_mismatch
+- mixed_grain
+- duplicate_key
+- orphan_relationship
+- unsafe_cast
+- unit_or_code_ambiguity
+- temporal_ambiguity
+- pii_phi_exposure
+- sparse_or_unmapped_field
+observed_pattern: ""
+evidence:
+  db_query: ""
+  db_result_fingerprint: ""
+  row_count: null
+  sample_redaction_status: no_raw_sensitive_values
+risk:
+  severity: medium
+  blocks_iteration: true
+  blocks_business_questions: []
+required_action:
+  recommendation: request_hitl
+  allowed_actions:
+  - preserve_in_bronze
+  - quarantine
+  - map_to_existing_silver
+  - create_new_review_table
+  - create_new_silver_column
+  - create_new_entity
+  - request_hitl
+  - rollback
+decision:
+  selected_action: ""
+  decided_by: ""
+  decision_evidence_path: ""
+  applied_in_snapshot: ""

@@ -1,0 +1,58 @@
+artifact: dbt_artifacts_manifest
+iteration_id: V0_5
+dbt_status: introduced_for_active_table_by_table_derived_views
+approved_adapter: dbt-postgres
+project: dbt/dbt_project.yml
+profiles: dbt/profiles.yml
+target_schema: derived
+derived_nodes:
+- model.agentic_migration_local.patient_source_normalized
+- model.agentic_migration_local.patient_dimension
+- model.agentic_migration_local.patient_transaction_activity
+- model.agentic_migration_local.observation_payload_source_normalized
+- model.agentic_migration_local.observation_vital_components
+- model.agentic_migration_local.observation_vitals_wide
+- model.agentic_migration_local.coverage_source_normalized
+- model.agentic_migration_local.coverage_period_fact
+- model.agentic_migration_local.coverage_status_dimension
+- model.agentic_migration_local.coverage_member_summary
+- model.agentic_migration_local.encounter_source_normalized
+- model.agentic_migration_local.encounter_fact
+- model.agentic_migration_local.encounter_coverage_status_dimension
+- model.agentic_migration_local.encounter_record_status_dimension
+- model.agentic_migration_local.encounter_member_summary
+- model.agentic_migration_local.condition_source_normalized
+- model.agentic_migration_local.condition_fact
+- model.agentic_migration_local.condition_code_dimension
+- model.agentic_migration_local.condition_record_status_dimension
+- model.agentic_migration_local.condition_member_summary
+- model.agentic_migration_local.medication_source_normalized
+- model.agentic_migration_local.medication_fact
+- model.agentic_migration_local.medication_code_dimension
+- model.agentic_migration_local.medication_code_variant_dimension
+- model.agentic_migration_local.medication_description_variant_dimension
+- model.agentic_migration_local.medication_record_status_dimension
+- model.agentic_migration_local.medication_member_summary
+- model.agentic_migration_local.cost_record_source_normalized
+- model.agentic_migration_local.cost_record_fact
+- model.agentic_migration_local.cost_amount_source_dimension
+- model.agentic_migration_local.cost_record_status_dimension
+- model.agentic_migration_local.cost_record_member_summary
+test_node_groups:
+- patients
+- observations
+- coverage
+- encounters
+- conditions
+- medications
+- cost_records
+artifacts:
+  manifest_json:
+    path: dbt/target/manifest.json
+    sha256: a169b1e3bc84127166e47679fcc7949cd20508e66912c0e6b20cc33b02b926a6
+  run_results_json:
+    path: dbt/target/run_results.json
+    sha256: a41eb90c452de9f52f96380baf25abdc718ac3b7b91fdf3529a306cb2a3337cb
+  catalog_json:
+    path: dbt/target/catalog.json
+    sha256: ee8f1ba936ae45915b9740fcf6961214d6fc122ae9dfc952fc204fa4dfe2dcfa

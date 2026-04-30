@@ -1,0 +1,13 @@
+artifact: rollback_plan
+iteration_id: V0_5
+rollback_strategy: redeploy_previous_complete_snapshot
+rollback_target_snapshot: V0_3
+rollback_target_ddl: metadata/model_specs/evolution/V0_3/postgres_schema.sql
+dry_run_output: artifacts/local_runtime/postgres/rollback_V0_3_schema.sql
+dry_run_command: UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_postgres_workbench_deploy --database agentic_migration_local --dry-run --output artifacts/local_runtime/postgres/rollback_V0_3_schema.sql
+blocked_actions:
+- hand-patching PostgreSQL as durable model history
+- creating a new V0_N snapshot before table-by-table V0_5 normalization is complete
+- dropping provider-scoped lineage
+- weakening tests to preserve a broken iteration
+validation_required_before_pr: true

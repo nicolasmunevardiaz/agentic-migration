@@ -1,0 +1,55 @@
+spec_version: 0.1
+artifact: normalization_probe
+probe_id: PROBE-V0_5-PATIENTS-001
+iteration_id: V0_5
+status: complete
+business_question_ids: []
+provider_slug: all
+source_entity: review.silver_members
+source_fields:
+- provider_slug
+- source_row_id
+- source_lineage_ref
+- member_reference
+- gender_code
+- birth_date
+- record_status
+target_entity_candidate: derived.patient_dimension
+target_fields_candidate:
+- patient_provider_member_id
+- normalized_gender_code
+- normalized_birth_date
+- has_gender_conflict
+- has_birth_date_conflict
+- has_implausible_birth_date
+- patient_dimension_quality_status
+hypothesis: >
+  Patients can be safely normalized one table at a time by preserving every source row in
+  patient_source_normalized and creating a provider-scoped member dimension with conflict flags,
+  without performing enterprise identity resolution or silently choosing conflicting values.
+scratch:
+  schema: derived
+  transition_table: derived.patient_source_normalized
+  evidence_table: derived.patient_dimension
+metrics:
+  input_row_count: 875760
+  output_dimension_row_count: 479813
+  rejected_row_count: 0
+  duplicate_member_reference_count: 390306
+  gender_conflict_member_count: 9704
+  birth_date_conflict_member_count: 9957
+  implausible_birth_date_member_count: 92
+  transaction_activity_rows: 479813
+decision:
+  outcome: promote_to_snapshot
+  allowed_outcomes:
+  - promote_to_snapshot
+  - revise_probe
+  - quarantine
+  - request_hitl
+  - rollback
+  evidence_path: dbt/models/derived/patients
+  notes: >
+    Promote provider-scoped patient derived views. Do not collapse across providers, do not
+    resolve conflicting gender or birth date values, and do not infer clinical/financial
+    meaning beyond transaction-count flags.

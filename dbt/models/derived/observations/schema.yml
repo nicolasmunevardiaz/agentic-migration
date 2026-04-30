@@ -1,0 +1,67 @@
+version: 2
+
+models:
+  - name: observation_payload_source_normalized
+    description: Row-level extraction of nested observation payload fields.
+    columns:
+      - name: observation_source_row_id
+        tests:
+          - not_null
+          - unique
+      - name: observation_provider_id
+        tests: [not_null]
+      - name: patient_provider_member_id
+        tests: [not_null]
+      - name: provider_slug
+        tests: [not_null]
+      - name: source_row_id
+        tests: [not_null]
+      - name: source_lineage_ref
+        tests: [not_null]
+      - name: observation_reference
+        tests: [not_null]
+      - name: payload_type
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['vitals']
+
+  - name: observation_vital_components
+    description: Long-form vital components extracted from nested observation payloads.
+    columns:
+      - name: observation_component_id
+        tests:
+          - not_null
+          - unique
+      - name: observation_source_row_id
+        tests: [not_null]
+      - name: component_name
+        tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - height_cm
+                  - weight_kg
+                  - systolic_bp
+                  - diastolic_bp
+                  - pulse_lpm
+                  - temperature_c
+                  - bmi
+      - name: component_value
+        tests: [not_null]
+      - name: component_unit
+        tests: [not_null]
+
+  - name: observation_vitals_wide
+    description: Wide vital-sign view retaining row-level lineage and nested-payload QA flags.
+    columns:
+      - name: observation_source_row_id
+        tests:
+          - not_null
+          - unique
+      - name: observation_provider_id
+        tests: [not_null]
+      - name: patient_provider_member_id
+        tests: [not_null]
+      - name: provider_slug
+        tests: [not_null]

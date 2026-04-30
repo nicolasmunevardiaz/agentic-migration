@@ -1,0 +1,37 @@
+spec_version: 0.1
+artifact: model_iteration_packet
+iteration_id: V0_1
+previous_iteration_id: none
+status: planned_not_executed
+business_question_registry_version: BQ_V0_1
+change_intent: Initial local PostgreSQL workbench model snapshot before data loading and dbt execution.
+metadata_inputs:
+- metadata/provider_specs/**
+- metadata/model_specs/bronze/bronze_contract.yaml
+- metadata/model_specs/silver/**
+- metadata/model_specs/mappings/provider_to_silver_matrix.yaml
+- metadata/model_specs/impact/business_question_profiles.yaml
+- metadata/runtime_specs/local/**
+feedback_refs:
+  database_feedback: metadata/model_specs/evolution/V0_1/db_state_snapshot.yaml
+  dbt_feedback: metadata/model_specs/evolution/V0_1/dbt_artifacts_manifest.yaml
+  lineage_feedback: metadata/model_specs/evolution/V0_1/lineage_summary.yaml
+  qa_feedback: metadata/model_specs/evolution/V0_1/qa_gate_summary.yaml
+  rollback_plan: metadata/model_specs/evolution/V0_1/rollback_plan.yaml
+normalization_probe_policy:
+  default_action_for_strange_data: create_probe_before_semantic_issue
+  template: .agent/spec_templates/normalization_probe.template.yaml
+  scratch_schema: scratch
+  probe_registry_table: scratch.normalization_probe_runs
+  escalation_template: .agent/spec_templates/semantic_discovery_issue.template.yaml
+  escalation_rule: Create a semantic discovery issue only when ownership, meaning, privacy, clinical interpretation, financial interpretation, or business impact remains ambiguous after the probe or cannot be safely probed.
+advancement_gate:
+  allowed_next_action: continue_iteration
+  reason: Initial packet maps required evidence; data loading and dbt execution remain future controlled iterations.
+  blockers:
+  - no loaded local sample data recorded in this snapshot
+  - no dbt project execution recorded in this snapshot
+  - no OpenLineage or Marquez service approval recorded in this snapshot
+business_question_progress:
+  default_state: partial
+  note: BQ_V0_1 is approved for Plan 02 inputs but not yet answered by Plan 04.5 SQL outputs.

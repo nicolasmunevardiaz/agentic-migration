@@ -1,0 +1,29 @@
+spec_version: 0.1
+artifact: business_question_registry_snapshot
+registry_version: BQ_V0_3
+iteration_id: V0_3
+status: plan_04_5_complete_sql_answered
+profile_path: metadata/model_specs/impact/business_question_profiles.yaml
+profile_sha256: e9e2f2e338936c40743f3029ebd1155d14b5bd64a2851ac1c659e8357a8e3a83
+question_count: 16
+field_decision_count: 205
+completion_rule: Every business question must have tested local SQL output or explicit HITL-approved deferral.
+acceptance_rule: Every BQ_V0_3 question is answered by a local dbt SQL output in evidence schema.
+question_states:
+- {question_id: BQ-001, status: answered, sql_output: evidence.bq_001_member_overlap}
+- {question_id: BQ-002, status: answered, sql_output: evidence.bq_002_gender_distribution}
+- {question_id: BQ-003, status: answered, sql_output: evidence.bq_003_age_groups}
+- {question_id: BQ-004, status: answered, sql_output: evidence.bq_004_total_cost_of_care}
+- {question_id: BQ-005, status: answered, sql_output: evidence.bq_005_prevalent_conditions}
+- {question_id: BQ-006, status: answered, sql_output: evidence.bq_006_medications_per_member}
+- {question_id: BQ-007, status: answered, sql_output: evidence.bq_007_condition_catalog}
+- {question_id: BQ-008, status: answered, sql_output: evidence.bq_008_medication_catalog}
+- {question_id: BQ-009, status: answered, sql_output: evidence.bq_009_treatment_patterns}
+- {question_id: BQ-010, status: answered, sql_output: evidence.bq_010_vital_signs}
+- {question_id: BQ-011, status: answered, sql_output: evidence.bq_011_unit_price_benchmark}
+- {question_id: BQ-012, status: answered, sql_output: evidence.bq_012_enrollment_gaps}
+- {question_id: BQ-013, status: answered, sql_output: evidence.bq_013_uninsured_members}
+- {question_id: BQ-014, status: answered, sql_output: evidence.bq_014_tcoc_coverage_split}
+- {question_id: BQ-015, status: answered, sql_output: evidence.bq_015_enrollment_continuity_cost}
+- {question_id: BQ-016, status: answered, sql_output: evidence.bq_016_medication_unit_prices_by_coverage}
+deferred_hitl: []

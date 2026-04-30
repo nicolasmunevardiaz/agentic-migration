@@ -1,0 +1,82 @@
+artifact: qa_gate_summary
+iteration_id: V0_5
+status: pass
+current_evidence:
+- gate: dbt_compile_derived
+  command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt compile --project-dir dbt --profiles-dir dbt --select path:models/derived
+  status: pass
+- gate: dbt_run_derived
+  command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt run --project-dir dbt --profiles-dir dbt --select path:models/derived
+  status: pass
+  result: 32 views
+- gate: dbt_test_derived
+  command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt test --project-dir dbt --profiles-dir dbt --select path:models/derived path:tests/derived
+  status: pass
+  result: 247 passed
+- gate: dbt_run_patients
+  command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt run --project-dir dbt --profiles-dir dbt --select path:models/derived/patients
+  status: pass
+- gate: dbt_test_patients
+  command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt test --project-dir dbt --profiles-dir dbt --select path:models/derived/patients path:tests/derived/patients
+  status: pass
+- gate: dbt_run_observations
+  command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt run --project-dir dbt --profiles-dir dbt --select path:models/derived/observations
+  status: pass
+- gate: dbt_test_observations
+  command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt test --project-dir dbt --profiles-dir dbt --select path:models/derived/observations path:tests/derived/observations
+  status: pass
+  result: 27 passed
+- gate: dbt_run_coverage
+  command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt run --project-dir dbt --profiles-dir dbt --select path:models/derived/coverage
+  status: pass
+- gate: dbt_test_coverage
+  command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt test --project-dir dbt --profiles-dir dbt --select path:models/derived/coverage path:tests/derived/coverage
+  status: pass
+  result: 30 passed
+- gate: dbt_run_encounters
+  command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt run --project-dir dbt --profiles-dir dbt --select path:models/derived/encounters
+  status: pass
+- gate: dbt_test_encounters
+  command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt test --project-dir dbt --profiles-dir dbt --select path:models/derived/encounters path:tests/derived/encounters
+  status: pass
+  result: 34 passed
+- gate: dbt_run_conditions
+  command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt run --project-dir dbt --profiles-dir dbt --select path:models/derived/conditions
+  status: pass
+- gate: dbt_test_conditions
+  command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt test --project-dir dbt --profiles-dir dbt --select path:models/derived/conditions path:tests/derived/conditions
+  status: pass
+  result: 36 passed
+- gate: dbt_run_medications
+  command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt run --project-dir dbt --profiles-dir dbt --select path:models/derived/medications
+  status: pass
+  result: 7 views
+- gate: dbt_test_medications
+  command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt test --project-dir dbt --profiles-dir dbt --select path:models/derived/medications path:tests/derived/medications
+  status: pass
+  result: 57 passed
+- gate: dbt_run_cost_records
+  command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt run --project-dir dbt --profiles-dir dbt --select path:models/derived/cost_records
+  status: pass
+- gate: dbt_test_cost_records
+  command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt test --project-dir dbt --profiles-dir dbt --select path:models/derived/cost_records path:tests/derived/cost_records
+  status: pass
+  result: 42 passed
+- gate: dbt_docs_generate
+  command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt docs generate --project-dir dbt --profiles-dir dbt
+  status: pass
+  result: includes V0_5 derived patients, observations, coverage, encounters, conditions, medications, and cost records in dbt manifest and catalog
+- gate: rollback_dry_run_to_v0_3
+  command: UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_postgres_workbench_deploy --database agentic_migration_local --dry-run --output artifacts/local_runtime/postgres/rollback_V0_3_schema.sql
+  status: pass
+- gate: full_pytest
+  command: UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync pytest
+  status: pass
+  result: 237 passed
+- gate: ruff_check
+  command: UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync ruff check
+  status: pass
+pending_evidence: []
+acceptance_summary: >
+  V0_5 remains the active model version while table-by-table normalization continues.
+  Entity additions are accumulated inside V0_5 until the full derived model is complete.

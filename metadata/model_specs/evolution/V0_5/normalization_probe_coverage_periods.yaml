@@ -1,0 +1,58 @@
+spec_version: 0.1
+artifact: normalization_probe
+probe_id: PROBE-V0_5-COVERAGE-001
+iteration_id: V0_5
+status: complete
+business_question_ids: []
+provider_slug: all
+source_entity: review.silver_coverage_periods
+source_fields:
+- provider_slug
+- source_row_id
+- source_lineage_ref
+- member_reference
+- coverage_start_date
+- coverage_end_date
+- coverage_status
+target_entity_candidate: derived.coverage_period_fact
+target_fields_candidate:
+- coverage_period_id
+- coverage_source_row_id
+- patient_provider_member_id
+- coverage_status_id
+- coverage_period_quality_status
+- has_duplicate_period_key
+- has_implausible_coverage_date
+hypothesis: >
+  Coverage can be safely normalized as provider-scoped period facts plus member rollups
+  because status values are canonicalized, repeated periods are measurable, and date issues
+  can be flagged without choosing corrected values.
+scratch:
+  schema: derived
+  transition_table: derived.coverage_source_normalized
+  evidence_table: derived.coverage_period_fact
+metrics:
+  input_row_count: 875760
+  coverage_period_fact_row_count: 875760
+  coverage_member_summary_row_count: 479813
+  coverage_status_dimension_row_count: 2
+  inverted_date_range_count: 0
+  implausible_coverage_date_row_count: 1570
+  duplicate_period_key_row_count: 34823
+  quality_status_counts:
+    open_ended: 330979
+    review_end_date_only: 310508
+    review_missing_dates: 232703
+    review_implausible_dates: 1570
+decision:
+  outcome: promote_to_snapshot
+  allowed_outcomes:
+  - promote_to_snapshot
+  - revise_probe
+  - quarantine
+  - request_hitl
+  - rollback
+  evidence_path: dbt/models/derived/coverage
+  notes: >
+    Promote provider-scoped coverage derived views. Do not collapse duplicate periods, do not
+    infer current eligibility, and do not correct implausible historical dates without HITL.

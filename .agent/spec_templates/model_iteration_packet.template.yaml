@@ -1,0 +1,56 @@
+spec_version: 0.1
+artifact: model_iteration_packet
+iteration_id: V0_N
+previous_iteration_id: V0_N_MINUS_1_OR_NONE
+status: planned
+business_question_registry_version: BQ_V0_N
+change_intent: ""
+metadata_inputs:
+  provider_specs: []
+  bronze_contract: metadata/model_specs/bronze/bronze_contract.yaml
+  silver_contracts: []
+  provider_to_silver_matrix: metadata/model_specs/mappings/provider_to_silver_matrix.yaml
+  business_question_profile: metadata/model_specs/impact/business_question_profiles.yaml
+  runtime_specs: []
+database_feedback:
+  snapshot_path: metadata/model_specs/evolution/V0_N/db_state_snapshot.yaml
+  captured_after_actions: []
+  row_count_checks: []
+  null_rate_checks: []
+  domain_value_checks: []
+  failed_cast_checks: []
+  duplicate_key_checks: []
+  orphan_relationship_checks: []
+  entity_mismatch_checks: []
+  nested_payload_checks: []
+dbt_feedback:
+  artifacts_manifest_path: metadata/model_specs/evolution/V0_N/dbt_artifacts_manifest.yaml
+  manifest_json: ""
+  run_results_json: ""
+  catalog_json: ""
+  changed_nodes: []
+  failed_nodes: []
+lineage_feedback:
+  lineage_summary_path: metadata/model_specs/evolution/V0_N/lineage_summary.yaml
+  backend: none
+  emitted_event_paths: []
+qa_feedback:
+  qa_gate_summary_path: metadata/model_specs/evolution/V0_N/qa_gate_summary.yaml
+  unit: []
+  integration: []
+  regression: []
+  e2e_local: []
+  dbt: []
+  sql_answer: []
+  rollback: []
+hitl_feedback:
+  decisions_applied: []
+  decisions_pending: []
+  decisions_deferred: []
+business_question_progress:
+  answered: []
+  partial: []
+  unanswered: []
+  deferred_hitl: []
+next_action: stop
+next_action_reason: ""

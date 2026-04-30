@@ -1,0 +1,89 @@
+spec_version: 0.1
+artifact: sql_answer_evidence
+iteration_id: V0_3
+status: passed
+answered_count: 16
+deferred_hitl_count: 0
+business_question_results:
+- question_id: BQ-001
+  sql_output: evidence.bq_001_member_overlap
+  status: answered
+  row_count: 5
+  acceptance: pass
+- question_id: BQ-002
+  sql_output: evidence.bq_002_gender_distribution
+  status: answered
+  row_count: 5
+  acceptance: pass
+- question_id: BQ-003
+  sql_output: evidence.bq_003_age_groups
+  status: answered
+  row_count: 5
+  acceptance: pass
+- question_id: BQ-004
+  sql_output: evidence.bq_004_total_cost_of_care
+  status: answered
+  row_count: 5
+  acceptance: pass
+- question_id: BQ-005
+  sql_output: evidence.bq_005_prevalent_conditions
+  status: answered
+  row_count: 5
+  acceptance: pass
+- question_id: BQ-006
+  sql_output: evidence.bq_006_medications_per_member
+  status: answered
+  row_count: 5
+  acceptance: pass
+- question_id: BQ-007
+  sql_output: evidence.bq_007_condition_catalog
+  status: answered
+  row_count: 5
+  acceptance: pass
+- question_id: BQ-008
+  sql_output: evidence.bq_008_medication_catalog
+  status: answered
+  row_count: 5
+  acceptance: pass
+- question_id: BQ-009
+  sql_output: evidence.bq_009_treatment_patterns
+  status: answered
+  row_count: 5
+  acceptance: pass
+- question_id: BQ-010
+  sql_output: evidence.bq_010_vital_signs
+  status: answered
+  row_count: 5
+  acceptance: pass
+- question_id: BQ-011
+  sql_output: evidence.bq_011_unit_price_benchmark
+  status: answered
+  row_count: 5
+  acceptance: pass
+- question_id: BQ-012
+  sql_output: evidence.bq_012_enrollment_gaps
+  status: answered
+  row_count: 5
+  acceptance: pass
+- question_id: BQ-013
+  sql_output: evidence.bq_013_uninsured_members
+  status: answered
+  row_count: 5
+  acceptance: pass
+- question_id: BQ-014
+  sql_output: evidence.bq_014_tcoc_coverage_split
+  status: answered
+  row_count: 5
+  acceptance: pass
+- question_id: BQ-015
+  sql_output: evidence.bq_015_enrollment_continuity_cost
+  status: answered
+  row_count: 5
+  acceptance: pass
+- question_id: BQ-016
+  sql_output: evidence.bq_016_medication_unit_prices_by_coverage
+  status: answered
+  row_count: 5
+  acceptance: pass
+  semantic_review: PROBE-V0_3-001 retained final-segment member and encounter reference
+    alignment before coverage classification

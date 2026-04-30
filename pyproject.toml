@@ -4,7 +4,11 @@ version = "0.1.0"
 description = "AgentOps-governed healthcare data migration operating model."
 requires-python = ">=3.12"
 dependencies = [
+    "dbt-core>=1.11.8",
+    "dbt-duckdb>=1.10.1",
+    "dbt-postgres>=1.10.0",
     "delta-spark>=4.2.0",
+    "duckdb>=1.5.2",
     "openlineage-python>=1.46.0",
     "pyspark>=4.1.1",
     "pyyaml>=6.0.3",

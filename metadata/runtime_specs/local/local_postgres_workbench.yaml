@@ -1,0 +1,260 @@
+spec_version: "0.1"
+artifact: "local_postgres_workbench"
+plan_id: "04_5_local_data_workbench_and_drift_resolution_plan"
+status: "draft_ready_for_hitl_deploy"
+purpose: "Create an idempotent local PostgreSQL workbench for Silver review, drift inspection, and HITL decision capture before semantic or Gold modeling."
+database:
+  engine: "postgresql"
+  default_database: "agentic_migration_local"
+  credential_policy: "use_local_psql_environment_or_pgpass_only"
+  forbidden:
+    - "production_data"
+    - "cloud_credentials"
+    - "databricks_execution"
+    - "terraform"
+    - "bundle_deploy"
+    - "docker_desktop"
+schemas:
+  - name: "staging"
+    purpose: "Local load manifests and transient import bookkeeping."
+  - name: "scratch"
+    purpose: "Local normalization probes and transitional tables used to evaluate candidate fixes before promotion."
+  - name: "review"
+    purpose: "HITL-readable Silver review, drift, and decision tables."
+  - name: "evidence"
+    purpose: "Deployment and QA evidence references."
+silver_review_tables:
+  enabled: true
+  schema: "review"
+  table_prefix: "silver_"
+  source_spec_root: "metadata/model_specs/silver"
+  include_all_silver_columns: true
+  generated_table_names:
+    - "review.silver_conditions"
+    - "review.silver_cost_records"
+    - "review.silver_coverage_periods"
+    - "review.silver_encounters"
+    - "review.silver_medications"
+    - "review.silver_members"
+    - "review.silver_observations"
+  additional_columns:
+    - name: "review_batch_id"
+      type: "text"
+      nullable: true
+    - name: "loaded_at"
+      type: "timestamptz"
+      nullable: false
+      default: "now()"
+manual_tables:
+  - schema: "staging"
+    name: "load_manifest"
+    purpose: "Track local file or artifact loads into the workbench."
+    primary_key: ["load_id"]
+    columns:
+      - {name: "load_id", type: "text", nullable: false}
+      - {name: "plan_id", type: "text", nullable: false}
+      - {name: "provider_slug", type: "text", nullable: true}
+      - {name: "source_entity", type: "text", nullable: true}
+      - {name: "source_path", type: "text", nullable: false}
+      - {name: "source_checksum", type: "text", nullable: true}
+      - {name: "row_count", type: "bigint", nullable: true}
+      - {name: "load_status", type: "text", nullable: false}
+      - {name: "evidence_path", type: "text", nullable: false}
+      - {name: "loaded_at", type: "timestamptz", nullable: false, default: "now()"}
+    indexes:
+      - {name: "idx_staging_load_manifest_provider_entity", columns: ["provider_slug", "source_entity"]}
+  - schema: "evidence"
+    name: "local_deploy_runs"
+    purpose: "Record idempotent local workbench deploy attempts."
+    primary_key: ["deployment_id"]
+    columns:
+      - {name: "deployment_id", type: "text", nullable: false}
+      - {name: "plan_id", type: "text", nullable: false}
+      - {name: "spec_path", type: "text", nullable: false}
+      - {name: "spec_checksum", type: "text", nullable: false}
+      - {name: "deploy_status", type: "text", nullable: false}
+      - {name: "message", type: "text", nullable: true}
+      - {name: "deployed_at", type: "timestamptz", nullable: false, default: "now()"}
+    indexes:
+      - {name: "idx_evidence_local_deploy_runs_plan", columns: ["plan_id"]}
+  - schema: "evidence"
+    name: "qa_artifact_refs"
+    purpose: "Reference QA artifacts without copying raw sensitive payloads."
+    primary_key: ["artifact_id"]
+    columns:
+      - {name: "artifact_id", type: "text", nullable: false}
+      - {name: "plan_id", type: "text", nullable: false}
+      - {name: "artifact_path", type: "text", nullable: false}
+      - {name: "artifact_kind", type: "text", nullable: false}
+      - {name: "artifact_checksum", type: "text", nullable: true}
+      - {name: "record_count", type: "bigint", nullable: true}
+      - {name: "created_at", type: "timestamptz", nullable: false, default: "now()"}
+    indexes:
+      - {name: "idx_evidence_qa_artifact_refs_kind", columns: ["artifact_kind"]}
+  - schema: "scratch"
+    name: "normalization_probe_runs"
+    purpose: "Record local normalization probes, transitional table evidence, and candidate outcomes without making them durable model history."
+    primary_key: ["probe_id"]
+    columns:
+      - {name: "probe_id", type: "text", nullable: false}
+      - {name: "iteration_id", type: "text", nullable: false}
+      - {name: "business_question_id", type: "text", nullable: true}
+      - {name: "provider_slug", type: "text", nullable: true}
+      - {name: "source_entity", type: "text", nullable: true}
+      - {name: "target_entity_candidate", type: "text", nullable: true}
+      - {name: "scratch_table", type: "text", nullable: true}
+      - {name: "hypothesis", type: "text", nullable: false}
+      - {name: "probe_status", type: "text", nullable: false}
+      - {name: "input_row_count", type: "bigint", nullable: true}
+      - {name: "output_row_count", type: "bigint", nullable: true}
+      - {name: "rejected_row_count", type: "bigint", nullable: true}
+      - {name: "evidence_path", type: "text", nullable: false}
+      - {name: "created_at", type: "timestamptz", nullable: false, default: "now()"}
+    checks:
+      - name: "ck_scratch_normalization_probe_runs_status"
+        expression: "probe_status IN ('planned', 'running', 'passed', 'failed', 'promoted', 'revised', 'needs_hitl', 'rolled_back')"
+    indexes:
+      - {name: "idx_scratch_normalization_probe_runs_iteration", columns: ["iteration_id", "probe_status"]}
+  - schema: "review"
+    name: "hitl_decisions"
+    purpose: "Controlled write table where reviewers approve, reject, defer, or request more evidence for drift decisions."
+    primary_key: ["decision_id"]
+    columns:
+      - {name: "decision_id", type: "text", nullable: false}
+      - {name: "plan_id", type: "text", nullable: false}
+      - {name: "business_question_id", type: "text", nullable: true}
+      - {name: "drift_domain", type: "text", nullable: false}
+      - {name: "source_entity", type: "text", nullable: true}
+      - {name: "source_field", type: "text", nullable: true}
+      - {name: "observed_value", type: "text", nullable: true}
+      - {name: "recommended_option", type: "text", nullable: true}
+      - {name: "selected_option", type: "text", nullable: true}
+      - {name: "decision_status", type: "text", nullable: false}
+      - {name: "reviewer_notes", type: "text", nullable: true}
+      - {name: "evidence_path", type: "text", nullable: false}
+      - {name: "updated_at", type: "timestamptz", nullable: false, default: "now()"}
+    checks:
+      - name: "ck_review_hitl_decisions_status"
+        expression: "decision_status IN ('approved', 'rejected', 'deferred_with_human_approval', 'needs_more_evidence')"
+    indexes:
+      - {name: "idx_review_hitl_decisions_domain_status", columns: ["drift_domain", "decision_status"]}
+  - schema: "review"
+    name: "drift_status_values"
+    purpose: "Review raw and normalized record/coverage status values."
+    primary_key: ["drift_id"]
+    columns:
+      - {name: "drift_id", type: "text", nullable: false}
+      - {name: "provider_slug", type: "text", nullable: false}
+      - {name: "source_entity", type: "text", nullable: false}
+      - {name: "source_field", type: "text", nullable: false}
+      - {name: "observed_value", type: "text", nullable: true}
+      - {name: "normalized_candidate", type: "text", nullable: true}
+      - {name: "observed_count", type: "bigint", nullable: true}
+      - {name: "review_status", type: "text", nullable: false, default: "'needs_review'"}
+      - {name: "decision_id", type: "text", nullable: true}
+      - {name: "evidence_path", type: "text", nullable: false}
+      - {name: "updated_at", type: "timestamptz", nullable: false, default: "now()"}
+    checks:
+      - name: "ck_review_drift_status_values_review_status"
+        expression: "review_status IN ('needs_review', 'approved', 'rejected', 'deferred_with_human_approval', 'needs_more_evidence')"
+    indexes:
+      - {name: "idx_review_drift_status_values_lookup", columns: ["provider_slug", "source_entity", "source_field"]}
+  - schema: "review"
+    name: "drift_gender_values"
+    purpose: "Review gender source codes without forcing unsupported normalization."
+    primary_key: ["drift_id"]
+    columns:
+      - {name: "drift_id", type: "text", nullable: false}
+      - {name: "provider_slug", type: "text", nullable: false}
+      - {name: "source_entity", type: "text", nullable: false}
+      - {name: "source_field", type: "text", nullable: false}
+      - {name: "observed_value", type: "text", nullable: true}
+      - {name: "normalized_candidate", type: "text", nullable: true}
+      - {name: "observed_count", type: "bigint", nullable: true}
+      - {name: "review_status", type: "text", nullable: false, default: "'needs_review'"}
+      - {name: "decision_id", type: "text", nullable: true}
+      - {name: "evidence_path", type: "text", nullable: false}
+      - {name: "updated_at", type: "timestamptz", nullable: false, default: "now()"}
+    checks:
+      - name: "ck_review_drift_gender_values_review_status"
+        expression: "review_status IN ('needs_review', 'approved', 'rejected', 'deferred_with_human_approval', 'needs_more_evidence')"
+    indexes:
+      - {name: "idx_review_drift_gender_values_lookup", columns: ["provider_slug", "source_entity", "source_field"]}
+  - schema: "review"
+    name: "drift_coverage_values"
+    purpose: "Review coverage status and period semantics before semantic modeling."
+    primary_key: ["drift_id"]
+    columns:
+      - {name: "drift_id", type: "text", nullable: false}
+      - {name: "provider_slug", type: "text", nullable: false}
+      - {name: "source_entity", type: "text", nullable: false}
+      - {name: "source_field", type: "text", nullable: false}
+      - {name: "observed_value", type: "text", nullable: true}
+      - {name: "normalized_candidate", type: "text", nullable: true}
+      - {name: "observed_count", type: "bigint", nullable: true}
+      - {name: "review_status", type: "text", nullable: false, default: "'needs_review'"}
+      - {name: "decision_id", type: "text", nullable: true}
+      - {name: "evidence_path", type: "text", nullable: false}
+      - {name: "updated_at", type: "timestamptz", nullable: false, default: "now()"}
+    checks:
+      - name: "ck_review_drift_coverage_values_review_status"
+        expression: "review_status IN ('needs_review', 'approved', 'rejected', 'deferred_with_human_approval', 'needs_more_evidence')"
+    indexes:
+      - {name: "idx_review_drift_coverage_values_lookup", columns: ["provider_slug", "source_entity", "source_field"]}
+  - schema: "review"
+    name: "drift_nullability"
+    purpose: "Review nullability gaps that should remain QA-visible before semantic modeling."
+    primary_key: ["drift_id"]
+    columns:
+      - {name: "drift_id", type: "text", nullable: false}
+      - {name: "silver_entity", type: "text", nullable: false}
+      - {name: "column_name", type: "text", nullable: false}
+      - {name: "provider_slug", type: "text", nullable: true}
+      - {name: "null_count", type: "bigint", nullable: true}
+      - {name: "total_count", type: "bigint", nullable: true}
+      - {name: "null_rate", type: "numeric", nullable: true}
+      - {name: "review_status", type: "text", nullable: false, default: "'needs_review'"}
+      - {name: "decision_id", type: "text", nullable: true}
+      - {name: "evidence_path", type: "text", nullable: false}
+      - {name: "updated_at", type: "timestamptz", nullable: false, default: "now()"}
+    checks:
+      - name: "ck_review_drift_nullability_review_status"
+        expression: "review_status IN ('needs_review', 'approved', 'rejected', 'deferred_with_human_approval', 'needs_more_evidence')"
+    indexes:
+      - {name: "idx_review_drift_nullability_lookup", columns: ["silver_entity", "column_name", "provider_slug"]}
+  - schema: "review"
+    name: "drift_unmapped_or_sparse_fields"
+    purpose: "Review unmapped fields and sparse provider coverage before semantic modeling."
+    primary_key: ["drift_id"]
+    columns:
+      - {name: "drift_id", type: "text", nullable: false}
+      - {name: "provider_slug", type: "text", nullable: false}
+      - {name: "source_entity", type: "text", nullable: false}
+      - {name: "source_field", type: "text", nullable: false}
+      - {name: "candidate_concept", type: "text", nullable: true}
+      - {name: "coverage_note", type: "text", nullable: true}
+      - {name: "review_status", type: "text", nullable: false, default: "'needs_review'"}
+      - {name: "decision_id", type: "text", nullable: true}
+      - {name: "evidence_path", type: "text", nullable: false}
+      - {name: "updated_at", type: "timestamptz", nullable: false, default: "now()"}
+    checks:
+      - name: "ck_review_drift_unmapped_or_sparse_fields_review_status"
+        expression: "review_status IN ('needs_review', 'approved', 'rejected', 'deferred_with_human_approval', 'needs_more_evidence')"
+    indexes:
+      - {name: "idx_review_drift_sparse_lookup", columns: ["provider_slug", "source_entity", "source_field"]}
+deploy:
+  sql_artifact: "artifacts/local_runtime/postgres/local_workbench_schema.sql"
+  default_command: "UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_postgres_workbench_deploy --database agentic_migration_local --apply --verify"
+  dry_run_command: "UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_postgres_workbench_deploy --database agentic_migration_local --dry-run"
+  idempotency:
+    - "CREATE SCHEMA IF NOT EXISTS"
+    - "CREATE TABLE IF NOT EXISTS"
+    - "ALTER TABLE ADD COLUMN IF NOT EXISTS"
+    - "CREATE INDEX IF NOT EXISTS"
+    - "constraint creation guarded by pg_constraint checks"
+guardrails:
+  - "No DROP, TRUNCATE, DELETE, or destructive DDL."
+  - "No production data."
+  - "No cloud credentials."
+  - "No Databricks, Terraform, bundle, Docker Desktop, or Snowflake execution."
+  - "Generated SQL must be reviewable before apply."

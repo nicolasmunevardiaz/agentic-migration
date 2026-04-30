@@ -1,0 +1,62 @@
+spec_version: 0.1
+artifact: qa_gate_summary
+iteration_id: V0_2
+status: passed
+required_gate_families:
+- schema
+- unit
+- integration
+- regression
+- e2e_local
+- dbt
+- sql_answer
+- data_quality
+- reconciliation
+- rollback
+current_evidence:
+- command: UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync pytest tests/specs tests/sql
+  status: passed
+  result: 56 passed
+- command: UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync pytest
+  status: passed
+  result: 213 passed
+- command: UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync ruff check src/handlers/local_model_evolution_workbench.py tests/specs/test_model_specs.py tests/sql/test_business_question_sql_outputs.py
+  status: passed
+  result: all checks passed
+- command: UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync ruff check
+  status: passed
+  result: all checks passed
+- command: UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_postgres_workbench_deploy --database agentic_migration_local --dry-run
+  status: passed
+  result: artifacts/local_runtime/postgres/local_workbench_schema.sql rendered
+- command: UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_postgres_workbench_deploy --database agentic_migration_local --apply --verify
+  status: passed
+  result: workbench applied and verified
+- command: UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_model_evolution_workbench --database agentic_migration_local --load-fixtures --capture-state
+  status: passed
+  result: 35 Silver review rows loaded across 7 tables
+- command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt debug --project-dir dbt --profiles-dir dbt
+  status: passed
+  result: dbt-postgres connected to local PostgreSQL
+- command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt parse --project-dir dbt --profiles-dir dbt
+  status: passed
+  result: parsed 16 models and 16 data tests
+- command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt compile --project-dir dbt --profiles-dir dbt
+  status: passed
+  result: compiled local SQL-answer models
+- command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt run --project-dir dbt --profiles-dir dbt
+  status: passed
+  result: 16 SQL-answer views created in evidence schema
+- command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt test --project-dir dbt --profiles-dir dbt
+  status: passed
+  result: 16 passed
+- command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt docs generate --project-dir dbt --profiles-dir dbt
+  status: passed
+  result: dbt/target/catalog.json generated
+- command: PGHOST=/tmp PGDATABASE=agentic_migration_local UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_model_evolution_workbench --database agentic_migration_local --capture-state --capture-dbt-artifacts --validate-sql-answers
+  status: passed
+  result: 16 SQL-answer outputs validated
+- command: UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_postgres_workbench_deploy --database agentic_migration_local --dry-run --output artifacts/local_runtime/postgres/rollback_V0_1_schema.sql
+  status: passed
+  result: rollback dry-run artifact rendered
+advancement_rule: Every material iteration must record pass/fail counts, evidence paths, and blockers before advancing.

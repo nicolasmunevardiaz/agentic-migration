@@ -1,0 +1,20 @@
+spec_version: 0.1
+artifact: dbt_artifacts_manifest
+iteration_id: V0_2
+dbt_status: captured
+project: dbt/dbt_project.yml
+profiles: dbt/profiles.yml
+approved_adapter: dbt-postgres
+artifacts:
+  manifest.json:
+    path: dbt/target/manifest.json
+    sha256: ad9bd7e4129af9daeb94ceef58df7d206642a1889095299612e16eb665347562
+    size_bytes: 581709
+  run_results.json:
+    path: dbt/target/run_results.json
+    sha256: c06d23267045847aad8221c9ffde689056dd5c996d833090b4b446fb14925370
+    size_bytes: 4112
+  catalog.json:
+    path: dbt/target/catalog.json
+    sha256: fd29241d58d5397d9b80807388716b04407e32632665b21a23e9f466a22ed2f7
+    size_bytes: 28908

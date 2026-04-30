@@ -1,0 +1,57 @@
+spec_version: 0.1
+artifact: normalization_probe
+probe_id: PROBE-V0_3-001
+iteration_id: V0_3
+status: complete
+business_question_ids:
+- BQ-016
+provider_slug: data_provider_1_aegis_care_network
+source_entity: review.silver_cost_records
+source_fields:
+- member_reference
+- encounter_reference
+- medication_reference
+- cost_amount
+target_entity_candidate: review.silver_encounters and review.silver_coverage_periods
+target_fields_candidate:
+- encounter_reference
+- member_reference
+- coverage_status
+hypothesis: >
+  FHIR-style references that include a resource prefix can prevent local SQL-answer joins from finding
+  equivalent Silver entities even when the final identifier segment is aligned.
+decomposition_steps:
+- isolate source rows and fields
+- profile value shape and grain
+- create scratch transition table
+- run candidate normalization SQL
+- compare counts, nulls, domains, keys, and relationships
+- decide whether to promote, revise, quarantine, request HITL, or rollback
+scratch:
+  schema: scratch
+  transition_table: scratch.probe_bq_016_reference_alignment
+  evidence_table: scratch.normalization_probe_runs
+metrics:
+  input_row_count: 1
+  output_row_count: 1
+  rejected_row_count: 0
+  null_rate_changes: []
+  duplicate_key_count: 0
+  orphan_relationship_count: 0
+  failed_cast_count: 0
+  nested_payload_count: 0
+  entity_mismatch_count: 1
+decision:
+  outcome: promote_to_snapshot
+  allowed_outcomes:
+  - promote_to_snapshot
+  - revise_probe
+  - quarantine
+  - request_hitl
+  - rollback
+  evidence_path: dbt/models/business_questions/bq_016_medication_unit_prices_by_coverage.sql
+  notes: >
+    The first semantic review found Aegis cost rows using Patient/member-1 and
+    Encounter/encounter-1 while related Silver coverage/encounter rows used member-1
+    and encounter-1. BQ-016 now aligns references by comparing the final identifier
+    segment and prefers encounter coverage before coverage-period fallback.

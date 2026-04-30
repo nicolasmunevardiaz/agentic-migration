@@ -1,0 +1,98 @@
+spec_version: 0.1
+artifact: model_iteration_packet
+iteration_id: V0_3
+previous_iteration_id: V0_2
+status: complete
+business_question_registry_version: BQ_V0_3
+change_intent: Execute the third Plan 04.5 iteration with data_500k as the sole approved load source and local PostgreSQL/dbt SQL outputs for all business questions.
+metadata_inputs:
+  provider_specs:
+  - metadata/provider_specs/**
+  bronze_contract: metadata/model_specs/bronze/bronze_contract.yaml
+  silver_contracts:
+  - metadata/model_specs/silver/**
+  provider_to_silver_matrix: metadata/model_specs/mappings/provider_to_silver_matrix.yaml
+  business_question_profile: metadata/model_specs/impact/business_question_profiles.yaml
+  runtime_specs:
+  - metadata/runtime_specs/local/**
+database_feedback:
+  snapshot_path: metadata/model_specs/evolution/V0_3/db_state_snapshot.yaml
+  normalization_probes:
+  - metadata/model_specs/evolution/V0_3/normalization_probe_bq_016_reference_alignment.yaml
+  captured_after_actions:
+  - postgres_dry_run
+  - postgres_apply_verify
+  - data_500k_silver_load
+  - dbt_run
+  row_count_checks: captured
+  null_rate_checks: captured
+  domain_value_checks: captured_by_sql_outputs
+  failed_cast_checks: no_blocking_failed_casts_from_data_500k_load
+  duplicate_key_checks: captured
+  orphan_relationship_checks: captured
+  entity_mismatch_checks: PROBE-V0_3-001 retained BQ-016 FHIR-style reference alignment for data_500k rows
+  nested_payload_checks: captured
+dbt_feedback:
+  artifacts_manifest_path: metadata/model_specs/evolution/V0_3/dbt_artifacts_manifest.yaml
+  manifest_json: dbt/target/manifest.json
+  run_results_json: dbt/target/run_results.json
+  catalog_json: dbt/target/catalog.json
+  changed_nodes:
+  - dbt/models/business_questions/*.sql
+  failed_nodes: []
+lineage_feedback:
+  lineage_summary_path: metadata/model_specs/evolution/V0_3/lineage_summary.yaml
+  backend: dbt_manifest_only
+  emitted_event_paths: []
+qa_feedback:
+  qa_gate_summary_path: metadata/model_specs/evolution/V0_3/qa_gate_summary.yaml
+  unit:
+  - tests/specs/test_model_specs.py
+  integration:
+  - tests/specs
+  - tests/adapters
+  regression:
+  - uv run --no-sync pytest
+  - uv run --no-sync ruff check
+  e2e_local:
+  - local PostgreSQL dry-run/apply/verify
+  - data_500k load into review.silver_*
+  dbt:
+  - dbt parse
+  - dbt compile
+  - dbt run
+  - dbt test
+  - dbt docs generate
+  sql_answer:
+  - metadata/model_specs/evolution/V0_3/sql_answer_evidence.yaml
+  rollback:
+  - metadata/model_specs/evolution/V0_3/rollback_plan.yaml
+hitl_feedback:
+  decisions_applied:
+  - approved local PostgreSQL writes for V0_3
+  - approved dbt-postgres local dependency
+  decisions_pending: []
+  decisions_deferred: []
+business_question_progress:
+  answered:
+  - BQ-001
+  - BQ-002
+  - BQ-003
+  - BQ-004
+  - BQ-005
+  - BQ-006
+  - BQ-007
+  - BQ-008
+  - BQ-009
+  - BQ-010
+  - BQ-011
+  - BQ-012
+  - BQ-013
+  - BQ-014
+  - BQ-015
+  - BQ-016
+  partial: []
+  unanswered: []
+  deferred_hitl: []
+next_action: create_pr
+next_action_reason: Plan 04.5 DoD is satisfied once validation evidence is captured and repo governance allows PR creation.

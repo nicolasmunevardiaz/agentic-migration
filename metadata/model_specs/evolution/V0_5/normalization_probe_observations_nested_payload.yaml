@@ -1,0 +1,72 @@
+spec_version: 0.1
+artifact: normalization_probe
+probe_id: PROBE-V0_5-OBSERVATIONS-001
+iteration_id: V0_5
+status: complete
+business_question_ids: []
+provider_slug: all
+source_entity: review.silver_observations
+source_fields:
+- provider_slug
+- source_row_id
+- source_lineage_ref
+- observation_reference
+- member_reference
+- encounter_reference
+- observation_datetime
+- observation_payload_raw
+- height_cm
+- weight_kg
+- systolic_bp
+target_entity_candidate: derived.observation_vital_components
+target_fields_candidate:
+- observation_component_id
+- observation_source_row_id
+- patient_provider_member_id
+- component_name
+- component_value
+- component_unit
+- payload_value_path
+- payload_unit_path
+hypothesis: >
+  The nested vitals payload can be decomposed without HITL into stable typed components because
+  provider payload shape, units, and Silver-extracted height/weight/systolic fields are consistent.
+scratch:
+  schema: derived
+  transition_table: derived.observation_payload_source_normalized
+  evidence_table: derived.observation_vital_components
+metrics:
+  input_row_count: 535326
+  payload_source_row_count: 535326
+  vital_components_row_count: 3279647
+  vitals_wide_row_count: 535326
+  provider_count_with_payload_rows: 4
+  expected_payload_type: vitals
+  component_counts:
+    height_cm: 481921
+    weight_kg: 481858
+    systolic_bp: 481244
+    diastolic_bp: 481244
+    pulse_lpm: 481218
+    temperature_c: 481458
+    bmi: 390704
+  expected_units:
+    height_cm: cm
+    weight_kg: kg
+    systolic_bp: mmHg
+    diastolic_bp: mmHg
+    pulse_lpm: lpm
+    temperature_c: C
+    bmi: kg/m2
+decision:
+  outcome: promote_to_snapshot
+  allowed_outcomes:
+  - promote_to_snapshot
+  - revise_probe
+  - quarantine
+  - request_hitl
+  - rollback
+  evidence_path: dbt/models/derived/observations
+  notes: >
+    Promote typed nested-payload observation views. Do not infer diagnoses, clinical ranges,
+    financial meaning, or cross-provider identity resolution from these derived vitals.

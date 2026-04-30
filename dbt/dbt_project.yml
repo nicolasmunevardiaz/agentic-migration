@@ -1,0 +1,19 @@
+name: agentic_migration_local
+version: "0.1.0"
+config-version: 2
+
+profile: agentic_migration_local
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  agentic_migration_local:
+    business_questions:
+      +schema: evidence
+      +materialized: view
+    derived:
+      +schema: derived
+      +materialized: view

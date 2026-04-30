@@ -1,0 +1,61 @@
+spec_version: 0.1
+artifact: normalization_probe
+probe_id: PROBE-V0_5-CONDITIONS-001
+iteration_id: V0_5
+status: complete
+business_question_ids: []
+provider_slug: all
+source_entity: review.silver_conditions
+source_fields:
+- provider_slug
+- source_row_id
+- source_lineage_ref
+- condition_reference
+- member_reference
+- encounter_reference
+- condition_source_code
+- condition_code_hint
+- condition_description
+- record_status
+target_entity_candidate: derived.condition_fact
+target_fields_candidate:
+- condition_provider_id
+- condition_source_row_id
+- patient_provider_member_id
+- encounter_provider_id
+- condition_code_id
+- condition_quality_status
+- has_orphan_member_reference
+- has_orphan_encounter_reference
+hypothesis: >
+  Conditions can be normalized as provider-scoped source-code facts with code dimensions
+  and relationship QA flags while avoiding clinical interpretation or code crosswalks.
+scratch:
+  schema: derived
+  transition_table: derived.condition_source_normalized
+  evidence_table: derived.condition_fact
+metrics:
+  input_row_count: 803595
+  condition_fact_row_count: 803595
+  condition_member_summary_row_count: 369363
+  condition_code_dimension_row_count: 320
+  condition_record_status_dimension_row_count: 3
+  duplicate_condition_reference_count: 0
+  orphan_member_reference_row_count: 402976
+  orphan_encounter_reference_row_count: 277300
+  missing_source_code_row_count: 0
+  missing_code_hint_row_count: 0
+  missing_description_row_count: 0
+decision:
+  outcome: promote_to_snapshot
+  allowed_outcomes:
+  - promote_to_snapshot
+  - revise_probe
+  - quarantine
+  - request_hitl
+  - rollback
+  evidence_path: dbt/models/derived/conditions
+  notes: >
+    Promote provider-scoped condition derived views. Preserve duplicate-source-header decisions
+    as source code and hint fields, do not infer clinical meaning, and keep orphan relationships
+    as QA flags.

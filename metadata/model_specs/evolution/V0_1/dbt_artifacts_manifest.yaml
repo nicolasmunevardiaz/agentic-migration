@@ -1,0 +1,21 @@
+spec_version: 0.1
+artifact: dbt_artifacts_manifest
+iteration_id: V0_1
+status: planned_not_captured
+dbt_status: not_introduced
+required_artifacts_when_dbt_runs:
+- target/manifest.json
+- target/run_results.json
+- target/catalog.json
+required_metadata:
+- artifact_path
+- sha256
+- dbt_version
+- generated_at
+- command
+- target_name
+- model_count
+- test_count
+- failed_node_count
+- compiled_sql_refs
+next_capture_trigger: Capture after dbt parse, compile, run, test, build, or docs generation.

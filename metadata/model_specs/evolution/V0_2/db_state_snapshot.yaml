@@ -1,0 +1,328 @@
+spec_version: 0.1
+artifact: local_postgres_state_snapshot
+iteration_id: V0_2
+status: captured
+database: agentic_migration_local
+review_batch_id: plan-04-5-v0-2-fixtures
+privacy_rule: No raw PHI or PII values are stored in this snapshot.
+schemas:
+- staging
+- scratch
+- review
+- evidence
+row_counts:
+  review.silver_conditions: 5
+  review.silver_cost_records: 5
+  review.silver_coverage_periods: 5
+  review.silver_encounters: 5
+  review.silver_medications: 5
+  review.silver_members: 5
+  review.silver_observations: 5
+null_rate_checks:
+  conditions:
+    provider_slug:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    source_entity:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    source_row_id:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    source_lineage_ref:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    condition_reference:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    member_reference:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    encounter_reference:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    condition_source_code:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    condition_code_hint:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    condition_description:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    record_status:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+  cost_records:
+    provider_slug:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    source_entity:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    source_row_id:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    source_lineage_ref:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    medication_reference:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    member_reference:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    encounter_reference:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    cost_amount:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    cost_date:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    record_status:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+  coverage_periods:
+    provider_slug:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    source_entity:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    source_row_id:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    source_lineage_ref:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    member_reference:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    coverage_start_date:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    coverage_end_date:
+      null_count: 5
+      total_count: 5
+      null_rate: 1.0
+    coverage_status:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+  encounters:
+    provider_slug:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    source_entity:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    source_row_id:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    source_lineage_ref:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    encounter_reference:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    member_reference:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    encounter_datetime:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    coverage_status:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    record_status:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+  medications:
+    provider_slug:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    source_entity:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    source_row_id:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    source_lineage_ref:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    medication_reference:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    member_reference:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    encounter_reference:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    condition_reference:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    medication_source_code:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    medication_description:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    medication_datetime:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    record_status:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+  members:
+    provider_slug:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    source_entity:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    source_row_id:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    source_lineage_ref:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    member_reference:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    gender_code:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    birth_date:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    record_status:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+  observations:
+    provider_slug:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    source_entity:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    source_row_id:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    source_lineage_ref:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    observation_reference:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    member_reference:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    encounter_reference:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    observation_datetime:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    observation_payload_raw:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+    height_cm:
+      null_count: 2
+      total_count: 5
+      null_rate: 0.4
+    weight_kg:
+      null_count: 3
+      total_count: 5
+      null_rate: 0.6
+    systolic_bp:
+      null_count: 1
+      total_count: 5
+      null_rate: 0.2
+    record_status:
+      null_count: 0
+      total_count: 5
+      null_rate: 0.0
+duplicate_key_checks:
+  conditions: 0
+  cost_records: 0
+  coverage_periods: 0
+  encounters: 0
+  medications: 0
+  members: 0
+  observations: 0
+orphan_relationship_checks:
+  conditions_without_member: 1
+  encounters_without_member: 1
+  medications_without_member: 1
+  observations_without_member: 1
+failed_cast_checks: []
+nested_payload_checks: []
+entity_mismatch_checks: []
