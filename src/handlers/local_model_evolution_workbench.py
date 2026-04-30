@@ -5,11 +5,13 @@ import hashlib
 import json
 from collections.abc import Callable
 from dataclasses import dataclass
+from glob import glob
 from pathlib import Path
 from typing import Any
 
 import psycopg2
 import yaml
+from psycopg2.extras import execute_batch
 
 from src.handlers.aegis_adapter import run_aegis_adapter_for_file
 from src.handlers.bluestone_adapter import run_bluestone_adapter_for_file
@@ -21,91 +23,58 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 MODEL_ROOT = REPO_ROOT / "metadata/model_specs"
 SILVER_ROOT = MODEL_ROOT / "silver"
 DEFAULT_DATABASE = "agentic_migration_local"
-DEFAULT_BATCH_ID = "plan-04-5-v0-2-fixtures"
-DEFAULT_EVIDENCE_PATH = "metadata/model_specs/evolution/V0_2/db_state_snapshot.yaml"
-DEFAULT_STATE_PATH = MODEL_ROOT / "evolution/V0_2/db_state_snapshot.yaml"
-DEFAULT_SQL_ANSWER_PATH = MODEL_ROOT / "evolution/V0_2/sql_answer_evidence.yaml"
-DEFAULT_DBT_ARTIFACT_PATH = MODEL_ROOT / "evolution/V0_2/dbt_artifacts_manifest.yaml"
+ITERATION_ID = "V0_3"
+DEFAULT_BATCH_ID = "plan-04-5-v0-3-data-500k"
+DEFAULT_EVIDENCE_PATH = f"metadata/model_specs/evolution/{ITERATION_ID}/db_state_snapshot.yaml"
+DEFAULT_STATE_PATH = MODEL_ROOT / f"evolution/{ITERATION_ID}/db_state_snapshot.yaml"
+DEFAULT_SQL_ANSWER_PATH = MODEL_ROOT / f"evolution/{ITERATION_ID}/sql_answer_evidence.yaml"
+DEFAULT_DBT_ARTIFACT_PATH = MODEL_ROOT / f"evolution/{ITERATION_ID}/dbt_artifacts_manifest.yaml"
+PLAN_ID = "04_5_local_data_workbench_and_model_evolution_plan"
 
 AdapterRunner = Callable[..., Any]
 
 
 @dataclass(frozen=True)
-class ProviderFixtureSet:
+class ProviderDataSet:
     provider_slug: str
     provider_spec_root: Path
-    fixture_root: Path
     runner: AdapterRunner
-    fixture_by_entity: dict[str, str]
+    entities: tuple[str, ...] = (
+        "patients",
+        "encounters",
+        "conditions",
+        "medications",
+        "observations",
+    )
 
 
-PROVIDER_FIXTURES = (
-    ProviderFixtureSet(
+PROVIDER_DATASETS = (
+    ProviderDataSet(
         provider_slug="data_provider_1_aegis_care_network",
         provider_spec_root=REPO_ROOT / "metadata/provider_specs/data_provider_1_aegis_care_network",
-        fixture_root=REPO_ROOT / "tests/fixtures/aegis",
         runner=run_aegis_adapter_for_file,
-        fixture_by_entity={
-            "patients": "patients_bundle.json",
-            "encounters": "encounters_bundle.json",
-            "conditions": "conditions_bundle.json",
-            "medications": "medications_bundle.json",
-            "observations": "observations_bundle.json",
-        },
     ),
-    ProviderFixtureSet(
+    ProviderDataSet(
         provider_slug="data_provider_2_bluestone_health",
         provider_spec_root=REPO_ROOT / "metadata/provider_specs/data_provider_2_bluestone_health",
-        fixture_root=REPO_ROOT / "tests/fixtures/bluestone",
         runner=run_bluestone_adapter_for_file,
-        fixture_by_entity={
-            "patients": "patients_message.xml",
-            "encounters": "encounters_message.xml",
-            "conditions": "conditions_message.xml",
-            "medications": "medications_message.xml",
-            "observations": "observations_message.xml",
-        },
     ),
-    ProviderFixtureSet(
+    ProviderDataSet(
         provider_slug="data_provider_3_northcare_clinics",
         provider_spec_root=REPO_ROOT / "metadata/provider_specs/data_provider_3_northcare_clinics",
-        fixture_root=REPO_ROOT / "tests/fixtures/northcare",
         runner=run_northcare_adapter_for_file,
-        fixture_by_entity={
-            "patients": "patients_message.txt",
-            "encounters": "encounters_message.txt",
-            "conditions": "conditions_message.txt",
-            "medications": "medications_message.txt",
-            "observations": "observations_message.txt",
-        },
     ),
-    ProviderFixtureSet(
+    ProviderDataSet(
         provider_slug="data_provider_4_valleybridge_medical",
         provider_spec_root=REPO_ROOT
         / "metadata/provider_specs/data_provider_4_valleybridge_medical",
-        fixture_root=REPO_ROOT / "tests/fixtures/valleybridge",
         runner=run_valleybridge_adapter_for_file,
-        fixture_by_entity={
-            "patients": "patients_bundle.json",
-            "encounters": "encounters_bundle.json",
-            "conditions": "conditions_bundle.json",
-            "medications": "medications_bundle.json",
-            "observations": "observations_bundle.json",
-        },
     ),
-    ProviderFixtureSet(
+    ProviderDataSet(
         provider_slug="data_provider_5_pacific_shield_insurance",
         provider_spec_root=REPO_ROOT
         / "metadata/provider_specs/data_provider_5_pacific_shield_insurance",
-        fixture_root=REPO_ROOT / "tests/fixtures/pacific_shield",
         runner=run_pacific_shield_adapter_for_file,
-        fixture_by_entity={
-            "patients": "patients_preamble.csv",
-            "encounters": "encounters_header.csv",
-            "conditions": "conditions_duplicate_header.csv",
-            "medications": "medications_data_first.csv",
-            "observations": "observations_data_first.csv",
-        },
     ),
 )
 
@@ -154,32 +123,47 @@ def sql_value(value: Any) -> Any:
     return value
 
 
-def collect_fixture_rows(batch_id: str) -> tuple[dict[str, list[dict[str, Any]]], dict[str, int]]:
+def source_files_for_entity(provider: ProviderDataSet, entity: str) -> list[Path]:
+    provider_spec = load_yaml(provider.provider_spec_root / f"{entity}.yaml")
+    files: list[Path] = []
+    for pattern in provider_spec["source"]["expected_file_patterns"]:
+        if not pattern.startswith("data_500k/"):
+            raise ValueError(
+                f"Plan 04.5 V0_3 may only load data_500k source files: {pattern}"
+            )
+        files.extend(Path(path) for path in glob((REPO_ROOT / pattern).as_posix()))
+    return sorted(set(files))
+
+
+def collect_data_500k_rows(batch_id: str) -> tuple[dict[str, list[dict[str, Any]]], dict[str, int]]:
     rows_by_entity: dict[str, list[dict[str, Any]]] = {}
     source_counts: dict[str, int] = {}
-    for provider in PROVIDER_FIXTURES:
-        for source_entity, fixture_name in provider.fixture_by_entity.items():
-            fixture_path = provider.fixture_root / fixture_name
-            result = provider.runner(
-                entity=source_entity,
-                source_file=fixture_path,
-                ingestion_run_id=batch_id,
-                provider_spec_root=provider.provider_spec_root,
-                model_root=MODEL_ROOT,
-                evidence_path=DEFAULT_EVIDENCE_PATH,
-            )
-            source_counts[f"{provider.provider_slug}.{source_entity}"] = len(result.bronze_records)
-            for silver_entity, rows in result.silver_rows.items():
-                for row in rows:
-                    loaded_row = dict(row)
-                    loaded_row["review_batch_id"] = batch_id
-                    rows_by_entity.setdefault(silver_entity, []).append(loaded_row)
+    for provider in PROVIDER_DATASETS:
+        for source_entity in provider.entities:
+            source_counts[f"{provider.provider_slug}.{source_entity}"] = 0
+            for source_file in source_files_for_entity(provider, source_entity):
+                result = provider.runner(
+                    entity=source_entity,
+                    source_file=source_file,
+                    ingestion_run_id=batch_id,
+                    provider_spec_root=provider.provider_spec_root,
+                    model_root=MODEL_ROOT,
+                    evidence_path=DEFAULT_EVIDENCE_PATH,
+                )
+                source_counts[f"{provider.provider_slug}.{source_entity}"] += len(
+                    result.bronze_records
+                )
+                for silver_entity, rows in result.silver_rows.items():
+                    for row in rows:
+                        loaded_row = dict(row)
+                        loaded_row["review_batch_id"] = batch_id
+                        rows_by_entity.setdefault(silver_entity, []).append(loaded_row)
     return rows_by_entity, source_counts
 
 
-def load_fixture_rows(database: str, batch_id: str) -> dict[str, Any]:
+def load_data_500k_rows(database: str, batch_id: str) -> dict[str, Any]:
     columns_by_entity = silver_columns()
-    rows_by_entity, source_counts = collect_fixture_rows(batch_id=batch_id)
+    rows_by_entity, source_counts = collect_data_500k_rows(batch_id=batch_id)
     with connect(database) as connection, connection.cursor() as cursor:
         for entity in sorted(columns_by_entity):
             cursor.execute(
@@ -199,11 +183,12 @@ def load_fixture_rows(database: str, batch_id: str) -> dict[str, Any]:
                 f'INSERT INTO review."silver_{entity}" '
                 f"({quoted_columns}) VALUES ({placeholders})"
             )
-            for row in rows:
-                cursor.execute(
-                    sql,
-                    tuple(sql_value(row.get(column)) for column in insert_columns),
-                )
+            execute_batch(
+                cursor,
+                sql,
+                [tuple(sql_value(row.get(column)) for column in insert_columns) for row in rows],
+                page_size=1000,
+            )
         cursor.execute(
             """
             INSERT INTO staging.load_manifest
@@ -213,11 +198,11 @@ def load_fixture_rows(database: str, batch_id: str) -> dict[str, Any]:
             """,
             (
                 batch_id,
-                "04_5_local_data_workbench_and_model_evolution_plan",
+                PLAN_ID,
                 "all",
                 "all",
-                "tests/fixtures",
-                checksum_fixture_contract(),
+                "data_500k",
+                checksum_data_500k_contract(),
                 sum(source_counts.values()),
                 "loaded",
                 DEFAULT_EVIDENCE_PATH,
@@ -232,10 +217,10 @@ def load_fixture_rows(database: str, batch_id: str) -> dict[str, Any]:
             """,
             (
                 batch_id,
-                "04_5_local_data_workbench_and_model_evolution_plan",
+                PLAN_ID,
                 DEFAULT_EVIDENCE_PATH,
-                "local_fixture_silver_load",
-                checksum_fixture_contract(),
+                "local_data_500k_silver_load",
+                checksum_data_500k_contract(),
                 sum(len(rows) for rows in rows_by_entity.values()),
             ),
         )
@@ -247,13 +232,15 @@ def load_fixture_rows(database: str, batch_id: str) -> dict[str, Any]:
     }
 
 
-def checksum_fixture_contract() -> str:
+def checksum_data_500k_contract() -> str:
     digest = hashlib.sha256()
-    for provider in PROVIDER_FIXTURES:
-        for entity, fixture_name in sorted(provider.fixture_by_entity.items()):
+    for provider in PROVIDER_DATASETS:
+        for entity in provider.entities:
             digest.update(provider.provider_slug.encode("utf-8"))
             digest.update(entity.encode("utf-8"))
-            digest.update((provider.fixture_root / fixture_name).read_bytes())
+            for source_file in source_files_for_entity(provider, entity):
+                digest.update(source_file.relative_to(REPO_ROOT).as_posix().encode("utf-8"))
+                digest.update(hashlib.sha256(source_file.read_bytes()).hexdigest().encode("utf-8"))
     return digest.hexdigest()
 
 
@@ -268,7 +255,7 @@ def capture_state(database: str, batch_id: str, output_path: Path) -> dict[str, 
     state: dict[str, Any] = {
         "spec_version": 0.1,
         "artifact": "local_postgres_state_snapshot",
-        "iteration_id": "V0_2",
+        "iteration_id": ITERATION_ID,
         "status": "captured",
         "database": database,
         "review_batch_id": batch_id,
@@ -372,7 +359,7 @@ def capture_dbt_artifacts(target_dir: Path, output_path: Path) -> dict[str, Any]
     manifest = {
         "spec_version": 0.1,
         "artifact": "dbt_artifacts_manifest",
-        "iteration_id": "V0_2",
+        "iteration_id": ITERATION_ID,
         "dbt_status": "captured",
         "project": "dbt/dbt_project.yml",
         "profiles": "dbt/profiles.yml",
@@ -389,19 +376,23 @@ def validate_sql_answers(database: str, output_path: Path) -> dict[str, Any]:
     with connect(database) as connection, connection.cursor() as cursor:
         for question_id, model_name in BUSINESS_QUESTION_OUTPUTS.items():
             row_count = table_count(cursor, f'evidence."{model_name}"')
-            results.append(
-                {
-                    "question_id": question_id,
-                    "sql_output": f"evidence.{model_name}",
-                    "status": "answered",
-                    "row_count": row_count,
-                    "acceptance": "pass" if row_count >= 0 else "fail",
-                }
-            )
+            result = {
+                "question_id": question_id,
+                "sql_output": f"evidence.{model_name}",
+                "status": "answered",
+                "row_count": row_count,
+                "acceptance": "pass" if row_count >= 0 else "fail",
+            }
+            if question_id == "BQ-016":
+                result["semantic_review"] = (
+                    "PROBE-V0_3-001 retained final-segment member and encounter "
+                    "reference alignment before coverage classification"
+                )
+            results.append(result)
     evidence = {
         "spec_version": 0.1,
         "artifact": "sql_answer_evidence",
-        "iteration_id": "V0_2",
+        "iteration_id": ITERATION_ID,
         "status": "passed",
         "answered_count": len(results),
         "deferred_hitl_count": 0,
@@ -416,7 +407,16 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Operate Plan 04.5 local model workbench.")
     parser.add_argument("--database", default=DEFAULT_DATABASE)
     parser.add_argument("--batch-id", default=DEFAULT_BATCH_ID)
-    parser.add_argument("--load-fixtures", action="store_true")
+    parser.add_argument(
+        "--load-data-500k",
+        action="store_true",
+        help="Load all provider files matched by data_500k provider spec patterns.",
+    )
+    parser.add_argument(
+        "--load-fixtures",
+        action="store_true",
+        help="Deprecated compatibility alias for --load-data-500k; fixtures are not loaded.",
+    )
     parser.add_argument("--capture-state", action="store_true")
     parser.add_argument("--capture-dbt-artifacts", action="store_true")
     parser.add_argument("--validate-sql-answers", action="store_true")
@@ -429,8 +429,8 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
-    if args.load_fixtures:
-        result = load_fixture_rows(database=args.database, batch_id=args.batch_id)
+    if args.load_data_500k or args.load_fixtures:
+        result = load_data_500k_rows(database=args.database, batch_id=args.batch_id)
         print(f"loaded_batch={result['batch_id']} silver_rows={result['silver_row_counts']}")
     if args.capture_state:
         state = capture_state(

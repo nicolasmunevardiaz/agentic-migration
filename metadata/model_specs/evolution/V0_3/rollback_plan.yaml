@@ -1,0 +1,20 @@
+spec_version: 0.1
+artifact: rollback_plan
+iteration_id: V0_3
+status: rollback_target_defined
+rollback_strategy: redeploy_previous_complete_snapshot
+previous_snapshot: V0_2
+rollback_target_ddl: metadata/model_specs/evolution/V0_2/postgres_schema.sql
+rollback_dry_run_status: passed
+rollback_dry_run_artifact: artifacts/local_runtime/postgres/rollback_V0_2_schema.sql
+required_steps:
+- review metadata/model_specs/evolution/V0_2/model_snapshot.yaml
+- render V0_2 PostgreSQL schema dry-run to artifacts/local_runtime/postgres/rollback_V0_2_schema.sql
+- apply only after HITL approval if rollback is needed
+- rerun Plan 04.5 validation commands
+- verify business-question SQL outputs did not regress or explicitly return to V0_2 partial state
+blocked_actions:
+- hand-editing PostgreSQL as durable rollback history
+- weakening tests to preserve a broken iteration
+- using production data
+- claiming Databricks parity

@@ -4,7 +4,7 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DBT_ROOT = REPO_ROOT / "dbt"
-EVOLUTION_ROOT = REPO_ROOT / "metadata/model_specs/evolution/V0_2"
+EVOLUTION_ROOT = REPO_ROOT / "metadata/model_specs/evolution/V0_3"
 
 
 def load_yaml(path: Path) -> dict:

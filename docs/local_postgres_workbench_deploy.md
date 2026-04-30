@@ -49,10 +49,10 @@ psql -d agentic_migration_local -c "select table_schema, table_name from informa
 
 Plan 04.5 uses the same local PostgreSQL database as the dbt Core target after the dbt layout is declared in `dbt/dbt_project.yml` and `dbt/profiles.yml`. Credentials must come from local PostgreSQL defaults, `PG*` environment variables, or `.pgpass`; do not commit secrets.
 
-Approved local fixture load and dbt validation commands:
+Approved local data_500k load and dbt validation commands:
 
 ```bash
-UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_model_evolution_workbench --database agentic_migration_local --load-fixtures --capture-state
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_model_evolution_workbench --database agentic_migration_local --load-data-500k --capture-state
 UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt parse --project-dir dbt --profiles-dir dbt
 UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt compile --project-dir dbt --profiles-dir dbt
 UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt run --project-dir dbt --profiles-dir dbt

@@ -190,7 +190,7 @@ def test_model_specs_do_not_introduce_forbidden_scope_or_sensitive_examples() ->
 def test_model_evolution_snapshots_are_complete_and_local_only() -> None:
     snapshots = sorted(path for path in EVOLUTION_ROOT.glob("V0_*") if path.is_dir())
 
-    assert [path.name for path in snapshots] == ["V0_1", "V0_2"]
+    assert [path.name for path in snapshots] == ["V0_1", "V0_2", "V0_3"]
 
     for snapshot_dir in snapshots:
         snapshot = load_yaml(snapshot_dir / "model_snapshot.yaml")
@@ -290,6 +290,10 @@ def test_model_evolution_snapshots_are_complete_and_local_only() -> None:
                 ]
                 == "satisfied"
             )
+        if snapshot_dir.name == "V0_3":
+            assert snapshot["rollback"]["current_previous_snapshot"] == "V0_2"
+            assert "data_500k" in snapshot["purpose"]
+            assert "--load-data-500k" in "\n".join(snapshot["quality_gates"]["e2e_local"])
 
 
 def test_model_evolution_iteration_packet_maps_required_feedback() -> None:
@@ -385,3 +389,34 @@ def test_model_evolution_v0_2_answers_all_business_questions() -> None:
     assert sql_evidence["iteration_id"] == "V0_2"
     assert dbt_manifest["approved_adapter"] == "dbt-postgres"
     assert dbt_manifest["project"] == "dbt/dbt_project.yml"
+
+
+def test_model_evolution_v0_3_loads_only_data_500k() -> None:
+    snapshot_dir = EVOLUTION_ROOT / "V0_3"
+    packet = load_yaml(snapshot_dir / "iteration_packet.yaml")
+    registry = load_yaml(snapshot_dir / "business_question_registry.yaml")
+    db_state = load_yaml(snapshot_dir / "db_state_snapshot.yaml")
+    qa_gate = load_yaml(snapshot_dir / "qa_gate_summary.yaml")
+
+    assert packet["previous_iteration_id"] == "V0_2"
+    assert packet["business_question_registry_version"] == "BQ_V0_3"
+    assert packet["database_feedback"]["captured_after_actions"] == [
+        "postgres_dry_run",
+        "postgres_apply_verify",
+        "data_500k_silver_load",
+        "dbt_run",
+    ]
+
+    assert registry["registry_version"] == "BQ_V0_3"
+    assert registry["question_count"] == 16
+    assert registry["field_decision_count"] == 205
+    assert len(registry["question_states"]) == 16
+    assert all(item["status"] == "answered" for item in registry["question_states"])
+
+    assert db_state["iteration_id"] == "V0_3"
+    assert db_state["review_batch_id"] == "plan-04-5-v0-3-data-500k"
+
+    commands = "\n".join(item["command"] for item in qa_gate["current_evidence"])
+    assert "--load-data-500k" in commands
+    assert "--load-fixtures" not in commands
+    assert "tests/fixtures" not in commands

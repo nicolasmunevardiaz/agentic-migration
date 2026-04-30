@@ -1,0 +1,37 @@
+spec_version: 0.1
+artifact: lineage_summary
+iteration_id: V0_3
+status: dbt_manifest_lineage_captured
+lineage_backend_status:
+  dbt_manifest: approved_local_artifact
+  openlineage: pending_hitl_not_emitted
+  marquez: pending_hitl_not_started
+input_datasets:
+- review.silver_members
+- review.silver_coverage_periods
+- review.silver_encounters
+- review.silver_conditions
+- review.silver_medications
+- review.silver_observations
+- review.silver_cost_records
+output_datasets:
+- evidence.bq_001_member_overlap
+- evidence.bq_002_gender_distribution
+- evidence.bq_003_age_groups
+- evidence.bq_004_total_cost_of_care
+- evidence.bq_005_prevalent_conditions
+- evidence.bq_006_medications_per_member
+- evidence.bq_007_condition_catalog
+- evidence.bq_008_medication_catalog
+- evidence.bq_009_treatment_patterns
+- evidence.bq_010_vital_signs
+- evidence.bq_011_unit_price_benchmark
+- evidence.bq_012_enrollment_gaps
+- evidence.bq_013_uninsured_members
+- evidence.bq_014_tcoc_coverage_split
+- evidence.bq_015_enrollment_continuity_cost
+- evidence.bq_016_medication_unit_prices_by_coverage
+blocked_external_lineage_actions:
+- no OpenLineage transport emission
+- no Marquez container service start
+- no Unity Catalog lineage claim
