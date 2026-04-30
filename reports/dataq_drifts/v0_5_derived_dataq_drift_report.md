@@ -8,6 +8,8 @@ Generated from: PostgreSQL `derived` schema plus dbt model inventory.
 Authoring rule: no remediation was applied; findings are aggregated by
 provider, entity, and field/column only.
 Companion matrix: `reports/dataq_drifts/v0_5_derived_dataq_drift_matrix.tsv`.
+Category backlog: `reports/dataq_drifts/v0_5_dataq_category_backlog.md`.
+Category matrix: `reports/dataq_drifts/v0_5_dataq_category_matrix.tsv`.
 
 ## dbt Scope
 
