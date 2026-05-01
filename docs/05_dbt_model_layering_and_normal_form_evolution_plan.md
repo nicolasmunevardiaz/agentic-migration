@@ -2,7 +2,7 @@
 
 ## Goal
 
-Evolve the local PostgreSQL/dbt model into a sustainable, layered, contract-driven analytical model after approved adapters have already loaded the `data_500k` dataset into PostgreSQL review/Silver tables.
+Evolve the local PostgreSQL/dbt model into a sustainable, layered, contract-driven analytical model after approved adapters have already loaded the `data_500k` dataset into PostgreSQL `landing` tables.
 
 This plan is not an adapter-loading plan, not a Databricks rollout plan, and not a business-question-first plan. Its purpose is to make the dbt model maintainable from global standards to entity-specific normalized outputs, with clear lineage, robust QA, and a path from Silver contracts toward stable Gold-ready facts, dimensions, and marts.
 
@@ -13,7 +13,7 @@ Run this plan as a dbt model architecture and relational normalization effort. P
 The starting point is:
 
 ```text
-approved provider adapters -> local PostgreSQL review/Silver tables -> dbt source() -> dbt layered model
+approved provider adapters -> local PostgreSQL landing tables -> dbt source() -> staging/derived dbt layered model
 ```
 
 Do not reload source files, rewrite adapters, hand-patch PostgreSQL as durable model history, or treat dbt as an isolated SQL scratchpad.
@@ -24,7 +24,7 @@ Use `dbt-layering-orchestrator` as the primary dbt architecture skill. Use `rela
 
 ## Definition Of Ready
 
-The local PostgreSQL database contains adapter-loaded `data_500k` review/Silver tables. `dbt/dbt_project.yml`, `dbt/profiles.yml`, and `dbt/models/sources.yml` are valid. The active contracts exist under `metadata/model_specs/silver/`, `metadata/model_specs/data_quality/contracts/`, and `metadata/model_specs/dbt/dbt_model_layering_contract.yaml`. The V0_5 model snapshot exists and remains the active model evolution baseline until a later model version is explicitly approved.
+The local PostgreSQL database contains adapter-loaded `data_500k` tables in `landing`. `dbt/dbt_project.yml`, `dbt/profiles.yml`, and `dbt/models/sources.yml` are valid. The active agreements and contracts exist under `metadata/provider_specs/**`, `metadata/model_specs/bronze/bronze_contract.yaml`, `metadata/model_specs/silver/`, `metadata/model_specs/mappings/provider_to_silver_matrix.yaml`, `metadata/model_specs/data_quality/contracts/`, `metadata/model_specs/dbt/dbt_model_layering_contract.yaml`, and `metadata/model_specs/evolution/V0_5/**`. The V0_5 model snapshot exists and remains the active model evolution baseline until a later model version is explicitly approved.
 
 ## Inputs
 
@@ -96,7 +96,9 @@ If the model needs a new lookup dimension, bridge, survivor candidate, or confor
 
 `dbt/models/data_quality/` is a governed diagnostic and standardization layer. It is not enough for this layer to report a problem. A drift category is only considered closed when the derived model path that users query consumes the relevant standardization through macros, refs, conformed dimensions, survivor candidates, null handling, or unresolved flags.
 
-Use the contracts under `metadata/model_specs/data_quality/contracts/` to decide what can be resolved deterministically. Do not request HITL for blank-to-null cleanup, trim/lower/upper normalization, provider-scoped key generation, approved timezone conversion, approved decimal normalization, or explicit unresolved flags.
+Use the contracts under `metadata/model_specs/data_quality/contracts/` and the wider active agreements under `metadata/provider_specs/**`, `metadata/model_specs/silver/**`, `metadata/model_specs/mappings/provider_to_silver_matrix.yaml`, `metadata/model_specs/dbt/dbt_model_layering_contract.yaml`, and `metadata/model_specs/evolution/V0_5/**` to decide what can be resolved deterministically. Do not request HITL for blank-to-null cleanup, trim/lower/upper normalization, provider-scoped key generation, approved timezone conversion, approved decimal normalization, or explicit unresolved flags.
+
+Escalate to HITL quickly when an issue is not easy to resolve deterministically from the active contracts and local SQL evidence. "Not easy" means the proposed fix would require interpreting business meaning, clinical meaning, financial meaning, provider ownership, privacy exposure, default timezone attribution, survivorship preference, cross-provider identity, field deprecation, or a new semantic mapping not already covered by contract. Before escalating, run a small SQL probe that shows the provider/entity/field scope, examples, counts, null/duplicate/range impact, candidate options, and recommended default. Do not weaken tests, infer hidden meaning, or silently drop rows to make a difficult issue pass.
 
 ## Materialization Strategy
 
@@ -127,7 +129,7 @@ When a change touches full-data quality behavior, run the relevant exhaustive SQ
 
 ## HITL Rules
 
-HITL is required for unresolved semantics, provider ownership, clinical meaning, financial meaning, privacy exposure, default timezone attribution without contract, survivorship preferences that change business interpretation, or proposed field deprecation. HITL is not required for deterministic transformations already governed by a contract.
+HITL is required for unresolved semantics, provider ownership, clinical meaning, financial meaning, privacy exposure, default timezone attribution without contract, survivorship preferences that change business interpretation, cross-provider identity decisions, or proposed field deprecation. HITL is not required for deterministic transformations already governed by a contract.
 
 Every HITL question must identify the entity, field, provider scope, source examples, proposed dbt layer, affected downstream models, risk, and recommended default.
 

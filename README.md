@@ -129,7 +129,7 @@ UV_CACHE_DIR=/private/tmp/uv-cache \
 uv run --no-sync dbt parse --project-dir dbt --profiles-dir dbt
 ```
 
-dbt reads `landing.*` through `source()` and creates configured relations in `derived`.
+dbt reads `landing.*` through `source()` and creates configured relations in the PostgreSQL `staging` schema.
 
 ## Validate
 
@@ -140,6 +140,30 @@ PGHOST=/tmp PGDATABASE=agentic_migration_local \
 UV_CACHE_DIR=/private/tmp/uv-cache \
 uv run --no-sync dbt test --project-dir dbt --profiles-dir dbt --select path:models/derived
 ```
+
+For faster feedback, use the named selectors in `dbt/selectors.yml`:
+
+```bash
+# Lightweight smoke, currently 58 tests:
+# custom SQL assertions plus accepted-values/domain checks.
+PGHOST=/tmp PGDATABASE=agentic_migration_local DBT_THREADS=10 \
+UV_CACHE_DIR=/private/tmp/uv-cache \
+uv run --no-sync dbt test --project-dir dbt --profiles-dir dbt --selector staging_smoke
+
+# Critical regression, currently 110 tests:
+# smoke plus uniqueness checks, excluding broad not-null scans.
+PGHOST=/tmp PGDATABASE=agentic_migration_local DBT_THREADS=10 \
+UV_CACHE_DIR=/private/tmp/uv-cache \
+uv run --no-sync dbt test --project-dir dbt --profiles-dir dbt --selector staging_critical
+
+# Full certification, currently 267 tests:
+# all derived model tests.
+PGHOST=/tmp PGDATABASE=agentic_migration_local DBT_THREADS=10 \
+UV_CACHE_DIR=/private/tmp/uv-cache \
+uv run --no-sync dbt test --project-dir dbt --profiles-dir dbt --selector staging_full
+```
+
+`DBT_THREADS` controls dbt concurrency. The local profile defaults to `10`, which is appropriate for a Mac M4 with 48 GB RAM. dbt parallelizes independent DAG nodes/tests whose dependencies are ready; one large SQL test still runs as one PostgreSQL query.
 
 Run Python/spec validation:
 

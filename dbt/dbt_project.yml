@@ -15,5 +15,5 @@ models:
       +schema: data_quality
       +materialized: view
     derived:
-      +schema: derived
+      +schema: staging
       +materialized: view

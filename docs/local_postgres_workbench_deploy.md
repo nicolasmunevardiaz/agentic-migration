@@ -61,4 +61,6 @@ UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt docs generate --project-
 UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_model_evolution_workbench --database agentic_migration_local --capture-dbt-artifacts --validate-sql-answers
 ```
 
+dbt reads adapter-loaded records from `landing.*`. The model tree under `dbt/models/derived/**` materializes into the PostgreSQL `staging` schema by default.
+
 These commands produce local SQL-answer evidence only. They do not create production Gold models, Databricks serving tables, Terraform resources, bundles, Docker services, or Databricks parity claims.

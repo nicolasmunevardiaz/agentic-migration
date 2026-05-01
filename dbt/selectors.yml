@@ -1,0 +1,35 @@
+selectors:
+  - name: staging_smoke
+    description: "Fast staging confidence check: custom derived SQL assertions plus contract enum/domain checks."
+    definition:
+      union:
+        - method: path
+          value: tests/derived
+        - intersection:
+            - method: path
+              value: models/derived
+            - method: test_name
+              value: accepted_values
+
+  - name: staging_critical
+    description: "Critical staging regression check: smoke tests plus uniqueness checks, excluding high-volume not-null scans."
+    definition:
+      union:
+        - method: path
+          value: tests/derived
+        - intersection:
+            - method: path
+              value: models/derived
+            - method: test_name
+              value: accepted_values
+        - intersection:
+            - method: path
+              value: models/derived
+            - method: test_name
+              value: unique
+
+  - name: staging_full
+    description: "Full staging certification for all derived models and their indirect tests."
+    definition:
+      method: path
+      value: models/derived

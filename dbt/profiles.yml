@@ -9,5 +9,5 @@ agentic_migration_local:
       port: "{{ env_var('PGPORT', '5432') | as_number }}"
       dbname: "{{ env_var('PGDATABASE', 'agentic_migration_local') }}"
       schema: evidence
-      threads: 1
+      threads: "{{ env_var('DBT_THREADS', '10') | as_number }}"
       connect_timeout: 10
