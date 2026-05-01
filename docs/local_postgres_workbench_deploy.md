@@ -37,7 +37,13 @@ After HITL approval, apply the idempotent schema and verify all expected tables:
 UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_postgres_workbench_deploy --database agentic_migration_local --apply --verify
 ```
 
-The deploy creates only the `landing` schema. `landing.*` is where adapter-loaded provider data lands before dbt. Operational manifests, evidence tables, review tables, scratch tables, and data quality tables are intentionally not created in PostgreSQL by the default provision path. The deploy uses `CREATE ... IF NOT EXISTS`, `ALTER TABLE ADD COLUMN IF NOT EXISTS`, and `CREATE INDEX IF NOT EXISTS`. The deploy must not emit `DROP`, `TRUNCATE`, `DELETE`, production data access, Databricks jobs, Terraform, bundles, or Docker Desktop operations.
+The deploy creates only the `landing` schema. `landing.*` is where adapter-loaded
+provider data lands. Operational manifests, evidence tables, review tables,
+scratch tables, and modeled schemas are intentionally not created in PostgreSQL by
+the default provision path. The deploy uses `CREATE ... IF NOT EXISTS`,
+`ALTER TABLE ADD COLUMN IF NOT EXISTS`, and `CREATE INDEX IF NOT EXISTS`. The
+deploy must not emit `DROP`, `TRUNCATE`, `DELETE`, production data access,
+Databricks jobs, Terraform, bundles, or Docker Desktop operations.
 
 For manual verification:
 
@@ -45,22 +51,17 @@ For manual verification:
 psql -d agentic_migration_local -c "select table_schema, table_name from information_schema.tables where table_schema = 'landing' order by table_schema, table_name;"
 ```
 
-## Plan 04.5 Model Evolution
+## Load data_500k
 
-Plan 04.5 uses the same local PostgreSQL database as the dbt Core target after the dbt layout is declared in `dbt/dbt_project.yml` and `dbt/profiles.yml`. Credentials must come from local PostgreSQL defaults, `PG*` environment variables, or `.pgpass`; do not commit secrets.
+Load adapter output into `landing.*` after the schema is applied. Credentials must
+come from local PostgreSQL defaults, `PG*` environment variables, or `.pgpass`; do
+not commit secrets.
 
-Approved local data_500k load and dbt validation commands:
+Approved local `data_500k` load command:
 
 ```bash
 UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_model_evolution_workbench --database agentic_migration_local --load-data-500k --capture-state
-UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt parse --project-dir dbt --profiles-dir dbt
-UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt compile --project-dir dbt --profiles-dir dbt
-UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt run --project-dir dbt --profiles-dir dbt --select path:models/derived
-UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt test --project-dir dbt --profiles-dir dbt --select path:models/derived
-UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt docs generate --project-dir dbt --profiles-dir dbt
-UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_model_evolution_workbench --database agentic_migration_local --capture-dbt-artifacts --validate-sql-answers
 ```
 
-dbt reads adapter-loaded records from `landing.*`. The model tree under `dbt/models/derived/**` materializes into the PostgreSQL `staging` schema by default.
-
-These commands produce local SQL-answer evidence only. They do not create production Gold models, Databricks serving tables, Terraform resources, bundles, Docker services, or Databricks parity claims.
+Modeling and transformation work now lives in the separate dbt repository. This
+repository stops at the landing-load boundary.

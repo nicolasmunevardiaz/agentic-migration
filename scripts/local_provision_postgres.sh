@@ -39,4 +39,4 @@ uv run --no-sync python -m src.handlers.local_model_evolution_workbench \
   --capture-state
 
 echo "Provision complete. Landing tables are loaded in ${DATABASE_NAME}."
-echo "Next step: run dbt with dbt run --project-dir dbt --profiles-dir dbt"
+echo "Next step for model work: switch to the dbt-only repository."

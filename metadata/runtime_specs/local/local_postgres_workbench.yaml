@@ -1,8 +1,8 @@
 spec_version: "0.1"
 artifact: "local_postgres_workbench"
-plan_id: "05_dbt_model_layering_and_normal_form_evolution_plan"
+plan_id: "04_local_runtime_and_contract_certification_plan"
 status: "draft_ready_for_local_deploy"
-purpose: "Create an idempotent local PostgreSQL landing schema for adapter-loaded canonical provider data before dbt transformations."
+purpose: "Create an idempotent local PostgreSQL landing schema for adapter-loaded canonical provider data."
 database:
   engine: "postgresql"
   default_database: "agentic_migration_local"
@@ -16,7 +16,7 @@ database:
     - "docker_desktop"
 schemas:
   - name: "landing"
-    purpose: "Adapter-loaded canonical landing tables for all approved providers before dbt transformations."
+    purpose: "Adapter-loaded canonical landing tables for all approved providers."
 landing_tables:
   enabled: true
   schema: "landing"
@@ -51,7 +51,7 @@ deploy:
     - "CREATE INDEX IF NOT EXISTS"
 guardrails:
   - "No DROP, TRUNCATE, DELETE, or destructive DDL in deploy."
-  - "No operational, evidence, review, scratch, data_quality, or modeled schemas in pre-dbt provision."
+  - "No operational, evidence, review, scratch, or modeled schemas in provision."
   - "No production data."
   - "No cloud credentials."
   - "No Databricks, Terraform, bundle, Docker Desktop, or Snowflake execution."

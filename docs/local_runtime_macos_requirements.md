@@ -40,7 +40,7 @@ Required before optional Spark, Delta Lake OSS, OpenLineage, or Marquez validati
 - Java for Spark and Delta Lake OSS local execution.
 - Docker CLI configured against Colima, not Docker Desktop.
 - Git configured with the user's name and email for reviewed commits.
-- A local data workbench choice for Plan 04.5 drift review: PostgreSQL + DBeaver, DuckDB + dbt Core, or Snowflake after separate approval.
+- A local data workbench choice for drift review: PostgreSQL + DBeaver, DuckDB, or Snowflake after separate approval.
 
 If `uv` is not installed, install it after HITL approval with:
 
@@ -68,7 +68,7 @@ Plan 04 certified local Raw/Bronze to Silver contracts. Plan 04.5 must not jump 
 Recommended order:
 
 1. Use PostgreSQL + DBeaver when humans need a familiar read/write database UI for drift review and decision entry.
-2. Use DuckDB + dbt Core when the team needs fast local SQL tests, reproducible transformations, and file-backed evidence without running a database service.
+2. Use DuckDB when the team needs fast local SQL tests and file-backed evidence without running a database service.
 3. Use Spark, Delta Lake OSS, and Spark Declarative Pipelines only after HITL approves local pipeline execution; start with dry-runs and small fixtures before any table writes.
 4. Use Marquez/OpenLineage only after HITL approves Colima service start and lineage event emission.
 5. Defer Snowflake until the team intentionally moves beyond local-only drift review and records cloud governance approval.
@@ -111,7 +111,7 @@ Optional smoke test after HITL approval:
 docker run --rm hello-world
 ```
 
-Colima is needed only for local container services such as PostgreSQL or Marquez. It is not required for DuckDB, dbt Core, `uv`, or metadata/spec tests.
+Colima is needed only for local container services such as PostgreSQL or Marquez. It is not required for DuckDB, `uv`, or metadata/spec tests.
 
 ## PostgreSQL And DBeaver For HITL Drift Review
 
@@ -190,44 +190,18 @@ UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local
 
 The deploy is idempotent and uses `CREATE SCHEMA IF NOT EXISTS`, `CREATE TABLE IF NOT EXISTS`, `ALTER TABLE ADD COLUMN IF NOT EXISTS`, and `CREATE INDEX IF NOT EXISTS`. It must not emit `DROP`, `TRUNCATE`, `DELETE`, destructive DDL, or non-landing schemas.
 
-## DuckDB And dbt Core For Reproducible Local Tests
+## DuckDB For Reproducible Local SQL Checks
 
-Use DuckDB + dbt Core when the goal is a fast, local, file-backed SQL harness rather than a human-edited database service. DuckDB can run embedded analytical SQL locally, and the Python client can be installed as a normal Python package. dbt Core can then express reproducible SQL transformations and tests.
+Use DuckDB when the goal is a fast, local, file-backed SQL harness rather than a
+human-edited database service. DuckDB can run embedded analytical SQL locally,
+and the Python client can be installed as a normal Python package.
 
-Use DuckDB + dbt for:
+Use DuckDB for local drift profiling, CI-friendly SQL checks over generated
+CSV/Parquet/JSON evidence, and comparing source-scoped values without changing
+canonical specs.
 
-- Local drift profiling over generated CSV/Parquet/JSON evidence.
-- SQL tests that can run in CI without a database service.
-- Repeatable transformations from local Silver artifacts into drift-review tables.
-- Comparing normalized vs source-scoped values without changing canonical specs.
-
-Do not use DuckDB + dbt for:
-
-- HITL row editing as the primary interface.
-- Production datasets.
-- Gold mart approval before drift decisions are complete.
-
-After HITL approval, install CLI tooling:
-
-```bash
-brew install duckdb
-duckdb --version
-```
-
-After HITL approval for Python/dbt dependencies, run from the repository root:
-
-```bash
-cd /path/to/agentic-migration
-test -f pyproject.toml
-uv add duckdb dbt-core dbt-duckdb
-UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt --version
-```
-
-Suggested local file path:
-
-```text
-artifacts/local_workbench/agentic_migration.duckdb
-```
+Do not use DuckDB for HITL row editing as the primary interface or production
+datasets.
 
 Keep DuckDB database files under `artifacts/` so they stay out of Git.
 
@@ -271,7 +245,7 @@ Do not run more `uv add` commands unless a new HITL dependency approval exists. 
 
 Use Spark + Delta only when:
 
-- The team needs to validate local execution behavior that DuckDB/dbt cannot represent.
+- The team needs to validate local execution behavior that DuckDB cannot represent.
 - Java is configured and plain `java -version` works in the active shell.
 - HITL has approved Spark execution and Delta local writes.
 - Inputs are deterministic fixtures or approved local samples.

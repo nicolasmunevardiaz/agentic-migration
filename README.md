@@ -1,33 +1,37 @@
-# Agentic Migration Local Workbench
+# Agentic Migration Local Loader
 
-This repository supports a local PostgreSQL + dbt workflow for loading `data_500k` through approved adapters, writing canonical landing tables, and building layered dbt models on top of those tables.
+This repository owns local data profiling, provider adapters, and PostgreSQL landing-load
+operations for `data_500k`.
 
-The clean local state is an absent project database. The reset script drops the whole local project database; the provision script creates it again, deploys only the `landing` schema, and loads all adapter output into `landing.*`. dbt is run after provision.
+The dbt project has moved to:
+
+```text
+/Users/nicolas.munevardiaz/Library/CloudStorage/OneDrive-Slalom/slalom/slalom
+```
+
+Use this repository when you need to reset PostgreSQL, provision the local database, or reload
+provider data into the landing schema. Use the dbt repository when you need model layering,
+normalization, tests, docs, or dbt artifacts.
 
 ## Prerequisites
 
-Run commands from the repository root:
+Run commands from this repository root:
 
 ```bash
 test -f pyproject.toml
 ```
 
-PostgreSQL must be reachable locally. The default connection uses:
+PostgreSQL must be reachable locally. The default local connection is:
 
 ```bash
 PGHOST=/tmp
 DATABASE_NAME=agentic_migration_local
 ```
 
-You can override either variable when needed:
-
-```bash
-PGHOST=/tmp DATABASE_NAME=agentic_migration_local ./scripts/local_provision_postgres.sh
-```
-
 ## Reset / Rollback
 
-Use reset when you want to discard all local project database state. This intentionally drops the entire `agentic_migration_local` database so the next deploy starts from nothing.
+Reset intentionally drops the whole local project database. This is the clean rollback path before
+re-provisioning from source files and adapter contracts.
 
 ```bash
 PGHOST=/tmp DATABASE_NAME=agentic_migration_local ./scripts/local_reset_postgres.sh
@@ -41,9 +45,10 @@ PGHOST=/tmp psql -d postgres -At -c "select 1 from pg_database where datname = '
 
 The command should return no rows.
 
-## Provision Before dbt
+## Provision
 
-Provision creates the database, creates only the `landing` schema, creates all landing tables, then loads all local `data_500k` files through the approved adapter handlers.
+Provision creates the database, deploys only the `landing` schema, creates landing tables, and
+loads all local `data_500k` files through approved adapter handlers.
 
 ```bash
 PGHOST=/tmp DATABASE_NAME=agentic_migration_local ./scripts/local_provision_postgres.sh
@@ -57,7 +62,13 @@ uv run --no-sync python -m src.handlers.local_postgres_workbench_deploy --apply 
 uv run --no-sync python -m src.handlers.local_model_evolution_workbench --load-data-500k --capture-state
 ```
 
-After provision, PostgreSQL contains loaded landing tables such as:
+After provision, the only project schema created by this repository should be:
+
+```text
+landing
+```
+
+The loaded landing tables are:
 
 ```text
 landing.members
@@ -69,9 +80,9 @@ landing.coverage_periods
 landing.cost_records
 ```
 
-After provision, the only project schema in PostgreSQL should be `landing`. `data_quality`, `review`, `scratch`, `ops`, and `evidence` are not created by the default local provision path.
+## Inspect
 
-Optional inspection queries:
+List landing tables:
 
 ```bash
 PGHOST=/tmp PGDATABASE=agentic_migration_local psql -c "
@@ -81,6 +92,8 @@ where table_schema = 'landing'
 order by table_schema, table_name;
 "
 ```
+
+Check row counts:
 
 ```bash
 PGHOST=/tmp PGDATABASE=agentic_migration_local psql -c "
@@ -100,6 +113,8 @@ select 'landing.cost_records', count(*) from landing.cost_records;
 "
 ```
 
+Check provider coverage:
+
 ```bash
 PGHOST=/tmp PGDATABASE=agentic_migration_local psql -c "
 select provider_slug, count(*) as member_rows
@@ -109,85 +124,27 @@ order by provider_slug;
 "
 ```
 
-## Build dbt Models
-
-Build the derived dbt model layer after provision:
-
-```bash
-PGHOST=/tmp PGDATABASE=agentic_migration_local \
-UV_CACHE_DIR=/private/tmp/uv-cache \
-uv run --no-sync dbt run --project-dir dbt --profiles-dir dbt --select path:models/derived
-```
-
-The `dbt/models/data_quality/` folder remains in the repository for contract-driven audits, but it is not part of the default local provision/build path and should not be materialized into PostgreSQL unless a data quality audit run is explicitly requested.
-
-To parse the full dbt project without creating database objects:
-
-```bash
-PGHOST=/tmp PGDATABASE=agentic_migration_local \
-UV_CACHE_DIR=/private/tmp/uv-cache \
-uv run --no-sync dbt parse --project-dir dbt --profiles-dir dbt
-```
-
-dbt reads `landing.*` through `source()` and creates configured relations in the PostgreSQL `staging` schema.
-
 ## Validate
 
-Run dbt tests for the derived layer:
+Run loader/spec validation:
 
 ```bash
-PGHOST=/tmp PGDATABASE=agentic_migration_local \
-UV_CACHE_DIR=/private/tmp/uv-cache \
-uv run --no-sync dbt test --project-dir dbt --profiles-dir dbt --select path:models/derived
-```
-
-For faster feedback, use the named selectors in `dbt/selectors.yml`:
-
-```bash
-# Lightweight smoke, currently 58 tests:
-# custom SQL assertions plus accepted-values/domain checks.
-PGHOST=/tmp PGDATABASE=agentic_migration_local DBT_THREADS=10 \
-UV_CACHE_DIR=/private/tmp/uv-cache \
-uv run --no-sync dbt test --project-dir dbt --profiles-dir dbt --selector staging_smoke
-
-# Critical regression, currently 110 tests:
-# smoke plus uniqueness checks, excluding broad not-null scans.
-PGHOST=/tmp PGDATABASE=agentic_migration_local DBT_THREADS=10 \
-UV_CACHE_DIR=/private/tmp/uv-cache \
-uv run --no-sync dbt test --project-dir dbt --profiles-dir dbt --selector staging_critical
-
-# Full certification, currently 267 tests:
-# all derived model tests.
-PGHOST=/tmp PGDATABASE=agentic_migration_local DBT_THREADS=10 \
-UV_CACHE_DIR=/private/tmp/uv-cache \
-uv run --no-sync dbt test --project-dir dbt --profiles-dir dbt --selector staging_full
-```
-
-`DBT_THREADS` controls dbt concurrency. The local profile defaults to `10`, which is appropriate for a Mac M4 with 48 GB RAM. dbt parallelizes independent DAG nodes/tests whose dependencies are ready; one large SQL test still runs as one PostgreSQL query.
-
-Run Python/spec validation:
-
-```bash
-UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync pytest tests/specs tests/sql
-UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync ruff check tests/specs tests/sql
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync pytest tests/specs
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync ruff check src tests
 ```
 
 ## Fast Operator Sequence
 
-For a full clean rebuild:
+For a full clean reload:
 
 ```bash
 PGHOST=/tmp DATABASE_NAME=agentic_migration_local ./scripts/local_reset_postgres.sh
 
 PGHOST=/tmp DATABASE_NAME=agentic_migration_local ./scripts/local_provision_postgres.sh
-
-PGHOST=/tmp PGDATABASE=agentic_migration_local \
-UV_CACHE_DIR=/private/tmp/uv-cache \
-uv run --no-sync dbt run --project-dir dbt --profiles-dir dbt --select path:models/derived
-
-PGHOST=/tmp PGDATABASE=agentic_migration_local \
-UV_CACHE_DIR=/private/tmp/uv-cache \
-uv run --no-sync dbt test --project-dir dbt --profiles-dir dbt --select path:models/derived
 ```
 
-Use reset as the rollback path whenever local state needs to be discarded and rebuilt from contracts, adapters, and dbt models.
+Then switch to the dbt repository for model work:
+
+```bash
+cd /Users/nicolas.munevardiaz/Library/CloudStorage/OneDrive-Slalom/slalom/slalom
+```
