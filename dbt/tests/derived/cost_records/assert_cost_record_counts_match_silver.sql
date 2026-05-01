@@ -1,6 +1,6 @@
 with silver_counts as (
     select count(*) as row_count
-    from {{ source('review', 'silver_cost_records') }}
+    from {{ source('landing', 'cost_records') }}
     where {{ active_batch_filter() }}
 ),
 

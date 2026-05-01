@@ -16,7 +16,7 @@ with source_medications as (
         record_status,
         review_batch_id,
         loaded_at
-    from {{ source('review', 'silver_medications') }}
+    from {{ source('landing', 'medications') }}
     where {{ active_batch_filter() }}
 ),
 

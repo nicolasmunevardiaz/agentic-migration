@@ -32,7 +32,7 @@ def test_cost_record_derived_sql_preserves_source_amounts_without_interpretation
         for path in sorted((DBT_ROOT / "models/derived/cost_records").rglob("*.sql"))
     )
 
-    assert "{{ source('review', 'silver_cost_records') }}" in sql_text
+    assert "{{ source('landing', 'cost_records') }}" in sql_text
     assert "source_cost_amount" in sql_text
     assert "source_cost_amount_field_name" in sql_text
     assert "has_missing_cost_amount" in sql_text
@@ -47,9 +47,10 @@ def test_cost_record_v0_5_records_cost_evidence() -> None:
     db_state = load_yaml(EVOLUTION_ROOT / "db_state_snapshot.yaml")
     probe = load_yaml(EVOLUTION_ROOT / "normalization_probe_cost_records.yaml")
 
-    assert db_state["cost_record_quality_summary"]["source_relation"] == (
-        "review.silver_cost_records"
-    )
+    assert db_state["cost_record_quality_summary"]["source_relation"] in {
+        "review.silver_cost_records",
+        "landing.cost_records",
+    }
     assert db_state["derived_outputs"]["derived.cost_record_fact"]["row_count"] == 1606374
     assert (
         db_state["derived_outputs"]["derived.cost_record_member_summary"]["row_count"]

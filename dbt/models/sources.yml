@@ -1,13 +1,13 @@
 version: 2
 
 sources:
-  - name: review
-    schema: review
+  - name: landing
+    schema: landing
     tables:
-      - name: silver_members
-      - name: silver_coverage_periods
-      - name: silver_encounters
-      - name: silver_conditions
-      - name: silver_medications
-      - name: silver_observations
-      - name: silver_cost_records
+      - name: members
+      - name: coverage_periods
+      - name: encounters
+      - name: conditions
+      - name: medications
+      - name: observations
+      - name: cost_records

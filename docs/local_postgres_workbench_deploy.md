@@ -1,6 +1,6 @@
 # Local PostgreSQL Workbench Deploy
 
-Use this flow to deploy the local review workbench into an existing PostgreSQL database such as `agentic_migration_local`. Run every command from the repository root:
+Use this flow to deploy the local landing workbench into an existing PostgreSQL database such as `agentic_migration_local`. Run every command from the repository root:
 
 ```bash
 cd /path/to/agentic-migration
@@ -13,7 +13,7 @@ The declarative source of truth is:
 metadata/runtime_specs/local/local_postgres_workbench.yaml
 ```
 
-Edit that YAML when schemas, tables, drift review fields, HITL decision fields, or evidence tables need to change. Do not hand-edit PostgreSQL objects as the durable contract.
+Edit that YAML when landing schemas or tables need to change. Do not hand-edit PostgreSQL objects as the durable contract.
 
 ## Dry Run
 
@@ -37,12 +37,12 @@ After HITL approval, apply the idempotent schema and verify all expected tables:
 UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_postgres_workbench_deploy --database agentic_migration_local --apply --verify
 ```
 
-The deploy creates `staging`, `review`, and `evidence` schemas. It uses `CREATE ... IF NOT EXISTS`, `ALTER TABLE ADD COLUMN IF NOT EXISTS`, guarded constraints, and `CREATE INDEX IF NOT EXISTS`. The deploy must not emit `DROP`, `TRUNCATE`, `DELETE`, production data access, Databricks jobs, Terraform, bundles, or Docker Desktop operations.
+The deploy creates only the `landing` schema. `landing.*` is where adapter-loaded provider data lands before dbt. Operational manifests, evidence tables, review tables, scratch tables, and data quality tables are intentionally not created in PostgreSQL by the default provision path. The deploy uses `CREATE ... IF NOT EXISTS`, `ALTER TABLE ADD COLUMN IF NOT EXISTS`, and `CREATE INDEX IF NOT EXISTS`. The deploy must not emit `DROP`, `TRUNCATE`, `DELETE`, production data access, Databricks jobs, Terraform, bundles, or Docker Desktop operations.
 
 For manual verification:
 
 ```bash
-psql -d agentic_migration_local -c "select table_schema, table_name from information_schema.tables where table_schema in ('staging','review','evidence') order by table_schema, table_name;"
+psql -d agentic_migration_local -c "select table_schema, table_name from information_schema.tables where table_schema = 'landing' order by table_schema, table_name;"
 ```
 
 ## Plan 04.5 Model Evolution
@@ -55,8 +55,8 @@ Approved local data_500k load and dbt validation commands:
 UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_model_evolution_workbench --database agentic_migration_local --load-data-500k --capture-state
 UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt parse --project-dir dbt --profiles-dir dbt
 UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt compile --project-dir dbt --profiles-dir dbt
-UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt run --project-dir dbt --profiles-dir dbt
-UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt test --project-dir dbt --profiles-dir dbt
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt run --project-dir dbt --profiles-dir dbt --select path:models/derived
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt test --project-dir dbt --profiles-dir dbt --select path:models/derived
 UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt docs generate --project-dir dbt --profiles-dir dbt
 UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_model_evolution_workbench --database agentic_migration_local --capture-dbt-artifacts --validate-sql-answers
 ```

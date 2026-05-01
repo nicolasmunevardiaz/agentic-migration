@@ -30,7 +30,7 @@ def test_observation_derived_sql_extracts_nested_payload_without_raw_examples() 
         for path in sorted((DBT_ROOT / "models/derived/observations").rglob("*.sql"))
     )
 
-    assert "{{ source('review', 'silver_observations') }}" in sql_text
+    assert "{{ source('landing', 'observations') }}" in sql_text
     assert "observation_payload_raw #>> '{height,value}'" in sql_text
     assert "observation_payload_raw #>> '{blood_pressure,systolic}'" in sql_text
     assert "payload_value_path" in sql_text

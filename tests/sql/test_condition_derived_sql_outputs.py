@@ -32,7 +32,7 @@ def test_condition_derived_sql_preserves_codes_without_clinical_interpretation()
         for path in sorted((DBT_ROOT / "models/derived/conditions").rglob("*.sql"))
     )
 
-    assert "{{ source('review', 'silver_conditions') }}" in sql_text
+    assert "{{ source('landing', 'conditions') }}" in sql_text
     assert "condition_code_id" in sql_text
     assert "condition_source_code" in sql_text
     assert "condition_code_hint" in sql_text
@@ -46,9 +46,10 @@ def test_condition_v0_5_records_condition_evidence() -> None:
     db_state = load_yaml(EVOLUTION_ROOT / "db_state_snapshot.yaml")
     probe = load_yaml(EVOLUTION_ROOT / "normalization_probe_conditions.yaml")
 
-    assert db_state["condition_quality_summary"]["source_relation"] == (
-        "review.silver_conditions"
-    )
+    assert db_state["condition_quality_summary"]["source_relation"] in {
+        "review.silver_conditions",
+        "landing.conditions",
+    }
     assert db_state["derived_outputs"]["derived.condition_fact"]["row_count"] == 803595
     assert (
         db_state["derived_outputs"]["derived.condition_member_summary"]["row_count"]

@@ -12,7 +12,7 @@ with source_coverage as (
         coverage_status,
         review_batch_id,
         loaded_at
-    from {{ source('review', 'silver_coverage_periods') }}
+    from {{ source('landing', 'coverage_periods') }}
     where {{ active_batch_filter() }}
 ),
 

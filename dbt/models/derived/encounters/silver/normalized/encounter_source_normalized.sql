@@ -13,7 +13,7 @@ with source_encounters as (
         record_status,
         review_batch_id,
         loaded_at
-    from {{ source('review', 'silver_encounters') }}
+    from {{ source('landing', 'encounters') }}
     where {{ active_batch_filter() }}
 ),
 

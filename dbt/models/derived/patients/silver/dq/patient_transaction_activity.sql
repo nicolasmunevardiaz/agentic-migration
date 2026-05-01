@@ -11,7 +11,7 @@ with patients as (
 
 coverage as (
     select provider_slug, member_reference, count(*) as coverage_rows
-    from {{ source('review', 'silver_coverage_periods') }}
+    from {{ source('landing', 'coverage_periods') }}
     where {{ active_batch_filter() }}
       and member_reference is not null
     group by provider_slug, member_reference
@@ -24,7 +24,7 @@ encounters as (
         count(*) as encounter_rows,
         min(encounter_datetime) as first_encounter_datetime,
         max(encounter_datetime) as last_encounter_datetime
-    from {{ source('review', 'silver_encounters') }}
+    from {{ source('landing', 'encounters') }}
     where {{ active_batch_filter() }}
       and member_reference is not null
     group by provider_slug, member_reference
@@ -32,7 +32,7 @@ encounters as (
 
 conditions as (
     select provider_slug, member_reference, count(*) as condition_rows
-    from {{ source('review', 'silver_conditions') }}
+    from {{ source('landing', 'conditions') }}
     where {{ active_batch_filter() }}
       and member_reference is not null
     group by provider_slug, member_reference
@@ -45,7 +45,7 @@ medications as (
         count(*) as medication_rows,
         min(medication_datetime) as first_medication_datetime,
         max(medication_datetime) as last_medication_datetime
-    from {{ source('review', 'silver_medications') }}
+    from {{ source('landing', 'medications') }}
     where {{ active_batch_filter() }}
       and member_reference is not null
     group by provider_slug, member_reference
@@ -59,7 +59,7 @@ observations as (
         count(*) filter (where observation_payload_raw is not null) as observation_payload_rows,
         min(observation_datetime) as first_observation_datetime,
         max(observation_datetime) as last_observation_datetime
-    from {{ source('review', 'silver_observations') }}
+    from {{ source('landing', 'observations') }}
     where {{ active_batch_filter() }}
       and member_reference is not null
     group by provider_slug, member_reference
@@ -72,7 +72,7 @@ costs as (
         count(*) as cost_rows,
         min(cost_date) as first_cost_date,
         max(cost_date) as last_cost_date
-    from {{ source('review', 'silver_cost_records') }}
+    from {{ source('landing', 'cost_records') }}
     where {{ active_batch_filter() }}
       and member_reference is not null
     group by provider_slug, member_reference

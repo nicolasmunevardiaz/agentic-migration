@@ -150,38 +150,18 @@ def test_local_postgres_workbench_spec_declares_expected_schemas_and_tables() ->
     assert spec["artifact"] == "local_postgres_workbench"
     assert spec["database"]["engine"] == "postgresql"
     assert spec["database"]["default_database"] == "agentic_migration_local"
-    assert {schema["name"] for schema in spec["schemas"]} == {
-        "staging",
-        "scratch",
-        "review",
-        "evidence",
+    assert {schema["name"] for schema in spec["schemas"]} == {"landing"}
+    assert spec["landing_tables"]["enabled"] is True
+    assert set(spec["landing_tables"]["generated_table_names"]) == {
+        "landing.conditions",
+        "landing.cost_records",
+        "landing.coverage_periods",
+        "landing.encounters",
+        "landing.medications",
+        "landing.members",
+        "landing.observations",
     }
-    assert spec["silver_review_tables"]["enabled"] is True
-    assert set(spec["silver_review_tables"]["generated_table_names"]) == {
-        "review.silver_conditions",
-        "review.silver_cost_records",
-        "review.silver_coverage_periods",
-        "review.silver_encounters",
-        "review.silver_medications",
-        "review.silver_members",
-        "review.silver_observations",
-    }
-    manual_tables = {
-        f"{table['schema']}.{table['name']}"
-        for table in spec["manual_tables"]
-    }
-    assert manual_tables >= {
-        "staging.load_manifest",
-        "scratch.normalization_probe_runs",
-        "evidence.local_deploy_runs",
-        "evidence.qa_artifact_refs",
-        "review.hitl_decisions",
-        "review.drift_status_values",
-        "review.drift_gender_values",
-        "review.drift_coverage_values",
-        "review.drift_nullability",
-        "review.drift_unmapped_or_sparse_fields",
-    }
+    assert spec["manual_tables"] == []
 
 
 def test_local_postgres_workbench_rendered_sql_is_idempotent_and_safe() -> None:
@@ -195,11 +175,12 @@ def test_local_postgres_workbench_rendered_sql_is_idempotent_and_safe() -> None:
     assert "CREATE TABLE IF NOT EXISTS" in sql
     assert "ADD COLUMN IF NOT EXISTS" in sql
     assert "CREATE INDEX IF NOT EXISTS" in sql
-    assert "review" in sql
-    assert "scratch" in sql
-    assert "normalization_probe_runs" in sql
-    assert "silver_members" in sql
-    assert "hitl_decisions" in sql
+    assert '"landing"."members"' in sql
+    assert '"review"' not in sql
+    assert '"scratch"' not in sql
+    assert '"evidence"' not in sql
+    assert '"ops"' not in sql
+    assert '"data_quality"' not in sql
     assert "DROP " not in upper_sql
     assert "TRUNCATE " not in upper_sql
     assert "DELETE " not in upper_sql

@@ -1,6 +1,6 @@
 with silver_counts as (
     select provider_slug, count(*) as silver_rows
-    from {{ source('review', 'silver_medications') }}
+    from {{ source('landing', 'medications') }}
     where {{ active_batch_filter() }}
     group by provider_slug
 ),

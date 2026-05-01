@@ -14,7 +14,7 @@ with source_cost_records as (
         record_status,
         review_batch_id,
         loaded_at
-    from {{ source('review', 'silver_cost_records') }}
+    from {{ source('landing', 'cost_records') }}
     where {{ active_batch_filter() }}
 ),
 

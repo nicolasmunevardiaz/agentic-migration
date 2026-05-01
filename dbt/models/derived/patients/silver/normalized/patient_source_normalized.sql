@@ -12,7 +12,7 @@ with source_members as (
         record_status,
         review_batch_id,
         loaded_at
-    from {{ source('review', 'silver_members') }}
+    from {{ source('landing', 'members') }}
     where {{ active_batch_filter() }}
 ),
 

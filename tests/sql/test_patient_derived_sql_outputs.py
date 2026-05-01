@@ -30,7 +30,7 @@ def test_patient_derived_sql_preserves_provider_scoped_lineage() -> None:
         for path in sorted((DBT_ROOT / "models/derived/patients").rglob("*.sql"))
     )
 
-    assert "{{ source('review', 'silver_members') }}" in sql_text
+    assert "{{ source('landing', 'members') }}" in sql_text
     assert "patient_provider_member_id" in sql_text
     assert "provider_slug" in sql_text
     assert "member_reference" in sql_text

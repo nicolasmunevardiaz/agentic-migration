@@ -34,7 +34,7 @@ def test_medication_derived_sql_preserves_codes_without_interpretation() -> None
         for path in sorted((DBT_ROOT / "models/derived/medications").rglob("*.sql"))
     )
 
-    assert "{{ source('review', 'silver_medications') }}" in sql_text
+    assert "{{ source('landing', 'medications') }}" in sql_text
     assert "medication_code_id" in sql_text
     assert "medication_source_code" in sql_text
     assert "medication_source_code_raw" in sql_text
@@ -50,9 +50,10 @@ def test_medication_v0_5_records_medication_evidence() -> None:
     db_state = load_yaml(EVOLUTION_ROOT / "db_state_snapshot.yaml")
     probe = load_yaml(EVOLUTION_ROOT / "normalization_probe_medications.yaml")
 
-    assert db_state["medication_quality_summary"]["source_relation"] == (
-        "review.silver_medications"
-    )
+    assert db_state["medication_quality_summary"]["source_relation"] in {
+        "review.silver_medications",
+        "landing.medications",
+    }
     assert db_state["derived_outputs"]["derived.medication_fact"]["row_count"] == 1606374
     assert (
         db_state["derived_outputs"]["derived.medication_member_summary"]["row_count"]
