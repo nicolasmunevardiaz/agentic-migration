@@ -45,7 +45,7 @@ def test_dbt_sql_outputs_stay_local_and_do_not_create_production_gold() -> None:
 
     forbidden = ["databricks", "unity catalog", "terraform", "production", "gold."]
     assert not any(token in sql_text.lower() for token in forbidden)
-    assert "{{ source('review'" in sql_text
+    assert "{{ source('landing'" in sql_text
 
 
 def test_bq_016_records_reference_alignment_probe() -> None:

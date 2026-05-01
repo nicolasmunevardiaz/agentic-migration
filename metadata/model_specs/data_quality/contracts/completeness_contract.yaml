@@ -1,0 +1,84 @@
+contract_id: DQ_CONTRACT_COMPLETENESS_V0_5
+model_snapshot: V0_5
+status: approved
+purpose: >
+  Separate requiredness from data availability so insurance-only providers,
+  optional clinical components, and missing-but-unapproved inferred fields are
+  handled consistently.
+provider_entity_availability:
+  default:
+    required_entities:
+      - patients
+      - coverage_periods
+      - encounters
+      - conditions
+      - observations
+      - medications
+      - cost_records
+    treatment: required_unless_provider_override
+  data_provider_5_pacific_shield_insurance:
+    required_entities: [patients, coverage_periods]
+    unavailable_entities:
+      - encounters
+      - conditions
+      - observations
+      - medications
+      - cost_records
+    treatment: not_a_defect_until_provider_contract_changes
+requiredness_rules:
+  timestamps:
+    status: approved_null_semantics
+    rule: preserve_null_and_emit_temporal_unusable_flag_without_inference
+    managed_statuses:
+      cost_date: managed_date_not_provided
+      encounter_datetime: managed_event_datetime_not_provided
+      medication_datetime: managed_event_datetime_not_provided
+      coverage_start_date: managed_coverage_boundary_not_provided
+      coverage_end_date: managed_coverage_boundary_not_provided
+  observation_components:
+    required_components: []
+    optional_components:
+      - height_cm
+      - weight_kg
+      - blood_pressure_pair
+      - pulse_lpm
+      - temperature_c
+      - bmi_payload
+    treatment: emit_completeness_flags_only
+  cost_amount:
+    status: approved_null_semantics
+    treatment: preserve_null_and_amount_source
+    managed_status: managed_amount_not_provided
+    usable_for_sum: false
+  downstream_null_policy:
+    source_value_mutation: forbidden
+    inference_from_related_entities: forbidden
+    safe_columns:
+      - completeness_field_status
+      - null_semantics_status
+      - usable_for_sum
+      - usable_for_temporal_analysis
+      - usable_for_duration
+      - safe_downstream_value_policy
+contract_status_values:
+  - complete
+  - managed_optional_sparse
+  - managed_provider_not_applicable
+  - managed_amount_not_provided
+  - managed_date_not_provided
+  - managed_event_datetime_not_provided
+  - managed_coverage_boundary_not_provided
+  - open_pending_source_validation
+  - open_pending_financial_contract
+  - open_required_entity_missing
+  - contract_violation
+acceptance:
+  remediation_requires: approved_requiredness_rule_by_provider_entity_field
+  audit_grain: provider_entity_field
+  current_iteration_acceptance:
+    - provider_entity_availability_is_classified_by_contract
+    - pacific_shield_clinical_and_cost_absence_is_managed_not_applicable
+    - optional_observation_component_sparsity_is_managed_not_failed
+    - missing_timestamp_fields_preserve_null_and_emit_managed_unusable_flags
+    - missing_cost_amount_preserves_null_and_emits_managed_sum_unusable_flag
+    - no_contract_violation_rows_are_emitted

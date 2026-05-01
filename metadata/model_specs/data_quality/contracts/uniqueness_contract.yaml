@@ -1,0 +1,60 @@
+contract_id: DQ_CONTRACT_UNIQUENESS_V0_5
+model_snapshot: V0_5
+status: draft
+purpose: >
+  Define duplicate handling without silently dropping source rows.
+rule_scope:
+  audit_grain: provider_entity_field
+  source_data_mutation: forbidden
+  dbt_allowed_actions:
+    - emit_deterministic_business_key
+    - profile_duplicate_groups
+    - preserve_duplicate_rows
+    - preserve_lineage_columns
+    - classify_duplicate_status
+    - emit_survivor_rank
+    - expose_survivor_view
+  dbt_forbidden_actions:
+    - drop_duplicate_rows_without_survivor_rule
+    - merge_duplicate_rows_without_lineage_preservation
+    - alter_source_row_identity
+coverage_period_keys:
+  key_components:
+    - provider_slug
+    - patient_provider_member_id
+    - coverage_start_date
+    - coverage_end_date
+    - coverage_status
+  duplicate_treatment:
+    exact_duplicates: merge_only_after_lineage_preserved
+    non_exact_duplicates: preserve_and_flag
+  required_lineage:
+    - source_row_id
+    - source_lineage_ref
+    - coverage_source_row_id
+status_contract:
+  complete: no duplicate business key detected
+  managed_duplicate_key_survivor_applied: duplicate business key exists, lineage is preserved, and survivor view is unique
+  open_duplicate_key_pending_survivor_rule: duplicate business key exists and lineage is preserved
+  contract_violation: duplicate key or identity issue lacks required lineage
+survivor_rules:
+  coverage_periods:
+    rule_id: latest_loaded_record_per_provider_member_period_status
+    grain:
+      - provider_slug
+      - patient_provider_member_id
+      - coverage_start_date
+      - coverage_end_date
+      - coverage_status
+    order_by:
+      - loaded_at desc nulls last
+      - review_batch_id desc nulls last
+      - source_row_id desc nulls last
+      - coverage_source_row_id desc
+    output_models:
+      candidate: derived.coverage_period_survivor_candidate
+      survivor: derived.coverage_period_survivor_fact
+    lineage_preservation: all duplicate rows remain in derived.coverage_period_fact and candidate view
+acceptance:
+  remediation_requires: approved_survivor_rule
+  audit_grain: provider_entity_field

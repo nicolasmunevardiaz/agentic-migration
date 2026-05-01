@@ -1,0 +1,115 @@
+version: 2
+
+models:
+  - name: dq_accuracy_clinical_semantic_metrics
+    description: Clinical semantic accuracy metrics that preserve evidence and require HITL before remediation.
+    columns:
+      - name: accuracy_clinical_metric_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: accuracy_clinical_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - complete
+                  - managed_valid_code_with_domain_hint_mismatch
+                  - managed_canonical_medication_code_with_variants
+                  - managed_description_match_code_conflict_preserved
+                  - hitl_required_clinical_semantic_review
+
+  - name: dq_accuracy_medication_canonical_dimension
+    description: Medication canonical code dimension preserving raw and description variants.
+    columns:
+      - name: canonical_medication_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: canonical_medication_code
+        tests:
+          - not_null
+      - name: medication_canonical_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - complete
+                  - managed_canonical_medication_code_with_variants
+                  - managed_description_match_code_conflict_preserved
+
+  - name: dq_accuracy_financial_metrics
+    description: Financial amount/date accuracy metrics that preserve source amount evidence.
+    columns:
+      - name: accuracy_financial_metric_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: accuracy_financial_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - complete
+                  - managed_financial_semantics_preserved
+                  - hitl_required_financial_semantic_review
+
+  - name: dq_accuracy_observation_reconciliation_metrics
+    description: Deterministic observation payload-vs-derived reconciliation metrics.
+    columns:
+      - name: accuracy_observation_metric_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: accuracy_observation_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - complete
+                  - open_observation_computational_review
+
+  - name: dq_accuracy_contract_violations
+    description: Accuracy contract violations. This table must stay empty because dbt may profile only.
+    columns:
+      - name: violation_id
+        tests:
+          - not_null
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: affected_rows
+        tests:
+          - not_null
+
+  - name: dq_accuracy_findings
+    description: HITL-required and open accuracy findings by provider/entity/field.
+    columns:
+      - name: finding_id
+        tests:
+          - not_null
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: severity
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["critical", "high", "medium", "low", "hitl"]

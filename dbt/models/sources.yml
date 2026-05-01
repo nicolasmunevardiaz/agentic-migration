@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: landing
+    schema: landing
+    tables:
+      - name: members
+      - name: coverage_periods
+      - name: encounters
+      - name: conditions
+      - name: medications
+      - name: observations
+      - name: cost_records

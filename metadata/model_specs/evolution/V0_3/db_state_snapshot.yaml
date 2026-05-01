@@ -6,18 +6,15 @@ database: agentic_migration_local
 review_batch_id: plan-04-5-v0-3-data-500k
 privacy_rule: No raw PHI or PII values are stored in this snapshot.
 schemas:
-- staging
-- scratch
-- review
-- evidence
+- landing
 row_counts:
-  review.silver_conditions: 803595
-  review.silver_cost_records: 1606374
-  review.silver_coverage_periods: 875760
-  review.silver_encounters: 535326
-  review.silver_medications: 1606374
-  review.silver_members: 875760
-  review.silver_observations: 535326
+  landing.conditions: 803595
+  landing.cost_records: 1606374
+  landing.coverage_periods: 875760
+  landing.encounters: 535326
+  landing.medications: 1606374
+  landing.members: 875760
+  landing.observations: 535326
 null_rate_checks:
   conditions:
     provider_slug:

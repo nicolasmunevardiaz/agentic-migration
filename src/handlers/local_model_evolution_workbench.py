@@ -167,20 +167,15 @@ def load_data_500k_rows(database: str, batch_id: str) -> dict[str, Any]:
     with connect(database) as connection, connection.cursor() as cursor:
         for entity in sorted(columns_by_entity):
             cursor.execute(
-                f'DELETE FROM review."silver_{entity}" WHERE review_batch_id = %s',
+                f'DELETE FROM landing."{entity}" WHERE review_batch_id = %s',
                 (batch_id,),
             )
-        cursor.execute("DELETE FROM staging.load_manifest WHERE load_id = %s", (batch_id,))
-        cursor.execute(
-            "DELETE FROM evidence.qa_artifact_refs WHERE artifact_id = %s",
-            (batch_id,),
-        )
         for entity, rows in sorted(rows_by_entity.items()):
             insert_columns = columns_by_entity[entity] + ["review_batch_id"]
             placeholders = ", ".join(["%s"] * len(insert_columns))
             quoted_columns = ", ".join(f'"{column}"' for column in insert_columns)
             sql = (
-                f'INSERT INTO review."silver_{entity}" '
+                f'INSERT INTO landing."{entity}" '
                 f"({quoted_columns}) VALUES ({placeholders})"
             )
             execute_batch(
@@ -189,45 +184,14 @@ def load_data_500k_rows(database: str, batch_id: str) -> dict[str, Any]:
                 [tuple(sql_value(row.get(column)) for column in insert_columns) for row in rows],
                 page_size=1000,
             )
-        cursor.execute(
-            """
-            INSERT INTO staging.load_manifest
-            (load_id, plan_id, provider_slug, source_entity, source_path,
-             source_checksum, row_count, load_status, evidence_path)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """,
-            (
-                batch_id,
-                PLAN_ID,
-                "all",
-                "all",
-                "data_500k",
-                checksum_data_500k_contract(),
-                sum(source_counts.values()),
-                "loaded",
-                DEFAULT_EVIDENCE_PATH,
-            ),
-        )
-        cursor.execute(
-            """
-            INSERT INTO evidence.qa_artifact_refs
-            (artifact_id, plan_id, artifact_path, artifact_kind,
-             artifact_checksum, record_count)
-            VALUES (%s, %s, %s, %s, %s, %s)
-            """,
-            (
-                batch_id,
-                PLAN_ID,
-                DEFAULT_EVIDENCE_PATH,
-                "local_data_500k_silver_load",
-                checksum_data_500k_contract(),
-                sum(len(rows) for rows in rows_by_entity.values()),
-            ),
-        )
     return {
         "batch_id": batch_id,
         "source_record_count": sum(source_counts.values()),
-        "silver_row_counts": {entity: len(rows) for entity, rows in sorted(rows_by_entity.items())},
+        "source_checksum": checksum_data_500k_contract(),
+        "evidence_path": DEFAULT_EVIDENCE_PATH,
+        "landing_row_counts": {
+            entity: len(rows) for entity, rows in sorted(rows_by_entity.items())
+        },
         "source_counts": source_counts,
     }
 
@@ -260,7 +224,7 @@ def capture_state(database: str, batch_id: str, output_path: Path) -> dict[str, 
         "database": database,
         "review_batch_id": batch_id,
         "privacy_rule": "No raw PHI or PII values are stored in this snapshot.",
-        "schemas": ["staging", "scratch", "review", "evidence"],
+        "schemas": ["landing"],
         "row_counts": {},
         "null_rate_checks": {},
         "duplicate_key_checks": {},
@@ -271,12 +235,12 @@ def capture_state(database: str, batch_id: str, output_path: Path) -> dict[str, 
     }
     with connect(database) as connection, connection.cursor() as cursor:
         for entity, columns in sorted(columns_by_entity.items()):
-            table = f'review."silver_{entity}"'
+            table = f'landing."{entity}"'
             cursor.execute(
                 f"SELECT count(*) FROM {table} WHERE review_batch_id = %s",
                 (batch_id,),
             )
-            state["row_counts"][f"review.silver_{entity}"] = int(cursor.fetchone()[0])
+            state["row_counts"][f"landing.{entity}"] = int(cursor.fetchone()[0])
             state["null_rate_checks"][entity] = {}
             for column in columns:
                 cursor.execute(
@@ -330,8 +294,8 @@ def orphan_count(cursor, entity: str, column: str, batch_id: str) -> int:
     cursor.execute(
         f"""
         SELECT count(*)
-        FROM review."silver_{entity}" child
-        LEFT JOIN review.silver_members members
+        FROM landing."{entity}" child
+        LEFT JOIN landing.members members
           ON child.provider_slug = members.provider_slug
          AND child."{column}" = members.member_reference
          AND members.review_batch_id = %s
@@ -431,7 +395,7 @@ def main() -> int:
     args = parse_args()
     if args.load_data_500k or args.load_fixtures:
         result = load_data_500k_rows(database=args.database, batch_id=args.batch_id)
-        print(f"loaded_batch={result['batch_id']} silver_rows={result['silver_row_counts']}")
+        print(f"loaded_batch={result['batch_id']} landing_rows={result['landing_row_counts']}")
     if args.capture_state:
         state = capture_state(
             database=args.database,

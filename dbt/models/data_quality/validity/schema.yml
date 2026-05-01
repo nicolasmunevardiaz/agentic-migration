@@ -1,0 +1,147 @@
+version: 2
+
+models:
+  - name: dq_validity_date_metrics
+    description: Provider/entity/field date-bound and inverted-range validity metrics.
+    columns:
+      - name: validity_date_metric_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: validity_date_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["complete", "managed_implausible_date_quarantined"]
+
+  - name: dq_validity_code_metrics
+    description: Provider/entity/field code token and code-domain validity metrics.
+    columns:
+      - name: validity_code_metric_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: validity_code_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - complete
+                  - managed_split_provider_and_clinical_codes
+                  - open_unresolved_clinical_code_pattern
+                  - open_missing_code
+                  - contract_violation
+
+  - name: dq_validity_amount_metrics
+    description: Provider/entity/field numeric amount validity metrics.
+    columns:
+      - name: validity_amount_metric_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: validity_amount_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["complete", "open_nonpositive_amount", "contract_violation"]
+
+  - name: dq_validity_domain_metrics
+    description: Provider/entity/field domain validity metrics for demographics and observation units.
+    columns:
+      - name: validity_domain_metric_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: validity_domain_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - complete
+                  - open_domain_value_failure
+                  - open_unit_domain_failure
+
+  - name: dq_validity_contract_violations
+    description: Validity contract violations. This table must stay empty.
+    columns:
+      - name: violation_id
+        tests:
+          - not_null
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: affected_rows
+        tests:
+          - not_null
+
+  - name: dq_validity_findings
+    description: Open validity findings by provider/entity/field.
+    columns:
+      - name: finding_id
+        tests:
+          - not_null
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: severity
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["critical", "high", "medium", "low"]
+
+  - name: dq_validity_condition_code_domain_bridge
+    description: Managed split between provider condition codes and clinical code hints.
+    columns:
+      - name: condition_code_domain_bridge_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: condition_code_domain_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - complete
+                  - managed_split_provider_and_clinical_codes
+                  - open_unresolved_clinical_code_pattern
+
+  - name: dq_validity_date_quarantine
+    description: Validated date values and quarantine flags for implausible date-bound failures.
+    columns:
+      - name: date_quarantine_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: date_validity_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - complete
+                  - managed_implausible_birth_date_quarantined
+                  - managed_implausible_coverage_date_quarantined

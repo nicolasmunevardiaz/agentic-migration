@@ -1,0 +1,70 @@
+contract_id: DQ_CONTRACT_CONSISTENCY_V0_5
+model_snapshot: V0_5
+status: approved
+purpose: >
+  Define neutral reference and semantic variant handling before deduplication or
+  dimensional survivor rules are applied.
+reference_standard:
+  raw_reference_column: required_when_source_has_reference
+  final_segment_column: required
+  provider_scoped_reference_key: required_when_raw_reference_is_present
+  resolution_status_values:
+    - missing_reference
+    - unknown_reference
+    - resolved
+    - unresolved_reference
+  management_status_values:
+    - complete
+    - managed_missing_reference_preserved
+    - managed_unknown_reference_preserved
+    - managed_unresolved_reference_preserved
+    - contract_violation
+  boolean_flags:
+    - is_missing_reference
+    - is_unknown_reference
+    - is_unresolved_reference
+    - is_resolved_reference
+  unresolved_treatment: preserve_raw_reference_and_emit_boolean_flags
+  neutral_key_rule: do_not_create_provider_scoped_key_when_raw_reference_is_missing_or_unknown
+legacy_reference_standard:
+  resolution_status_values:
+    - missing_reference
+    - reference_present
+    - reference_resolved
+    - reference_unresolved
+semantic_variants:
+  code_tokens:
+    raw_column: required
+    normalized_token_column: required
+    normalization_status_values: [missing, normalized]
+  descriptions:
+    treatment: preserve_variant_dimension_and_emit_managed_status
+demographics:
+  survivor_rules:
+    grain: provider_slug_plus_patient_provider_member_id
+    cross_provider_identity_merge: forbidden
+    gender: provider_scoped_frequency_latest_loaded_tiebreaker
+    birth_date: provider_scoped_frequency_latest_loaded_tiebreaker
+    raw_variant_preservation: required
+    status_values:
+      - complete
+      - managed_demographic_survivor_selected
+code_domain_mapping:
+  condition_source_code:
+    source_code_role: primary_source_code
+    condition_code_hint_role: metadata_hint
+    mismatch_status: managed_source_code_hint_domain_mismatch
+medication_code_variants:
+  same_normalized_code_status: managed_canonical_medication_code_with_variants
+  same_description_different_code_status: managed_description_match_code_conflict_preserved
+acceptance:
+  remediation_requires: approved_survivor_or_reference_resolution_rule
+  audit_grain: provider_entity_field
+  current_iteration_acceptance:
+    - reference_metrics_cover_all_standardized_reference_rows
+    - code_metrics_cover_all_standardized_code_rows
+    - no_provider_scoped_reference_key_exists_without_raw_reference
+    - unresolved_references_remain_visible_as_managed_findings_with_boolean_flags
+    - demographic_conflicts_use_provider_scoped_survivor_without_cross_provider_merge
+    - code_domain_mismatches_are_managed_without_replacing_source_codes
+    - medication_code_variants_are_managed_without_dropping_variants

@@ -11,8 +11,8 @@ clean-targets: ["target", "dbt_packages"]
 
 models:
   agentic_migration_local:
-    business_questions:
-      +schema: evidence
+    data_quality:
+      +schema: data_quality
       +materialized: view
     derived:
       +schema: derived

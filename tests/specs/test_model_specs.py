@@ -277,12 +277,12 @@ def test_model_evolution_snapshots_are_complete_and_local_only() -> None:
             assert (REPO_ROOT / declared_path).exists(), declared_path
 
         assert "CREATE SCHEMA IF NOT EXISTS" in ddl
-        assert '"staging"' in ddl
+        assert ('"staging"' in ddl) or ('"ops"' in ddl and '"landing"' in ddl)
         assert '"scratch"' in ddl
         assert '"review"' in ddl
         assert '"evidence"' in ddl
         assert '"scratch"."normalization_probe_runs"' in ddl
-        assert '"review"."silver_members"' in ddl
+        assert ('"review"."silver_members"' in ddl) or ('"landing"."members"' in ddl)
         assert '"review"."hitl_decisions"' in ddl
         assert "DROP " not in ddl_upper
         assert "TRUNCATE " not in ddl_upper

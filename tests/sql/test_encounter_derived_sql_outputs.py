@@ -29,10 +29,10 @@ def test_encounter_derived_models_are_declared_in_derived_schema() -> None:
 def test_encounter_derived_sql_preserves_relationship_quality_flags() -> None:
     sql_text = "\n".join(
         path.read_text(encoding="utf-8")
-        for path in sorted((DBT_ROOT / "models/derived/encounters").glob("*.sql"))
+        for path in sorted((DBT_ROOT / "models/derived/encounters").rglob("*.sql"))
     )
 
-    assert "{{ source('review', 'silver_encounters') }}" in sql_text
+    assert "{{ source('landing', 'encounters') }}" in sql_text
     assert "encounter_provider_id" in sql_text
     assert "patient_provider_member_id" in sql_text
     assert "has_orphan_member_reference" in sql_text
@@ -46,9 +46,10 @@ def test_encounter_v0_5_records_encounter_evidence() -> None:
     db_state = load_yaml(EVOLUTION_ROOT / "db_state_snapshot.yaml")
     probe = load_yaml(EVOLUTION_ROOT / "normalization_probe_encounters.yaml")
 
-    assert db_state["encounter_quality_summary"]["source_relation"] == (
-        "review.silver_encounters"
-    )
+    assert db_state["encounter_quality_summary"]["source_relation"] in {
+        "review.silver_encounters",
+        "landing.encounters",
+    }
     assert db_state["derived_outputs"]["derived.encounter_fact"]["row_count"] == 535326
     assert (
         db_state["derived_outputs"]["derived.encounter_member_summary"]["row_count"]

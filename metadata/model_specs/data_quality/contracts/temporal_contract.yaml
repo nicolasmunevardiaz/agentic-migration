@@ -1,0 +1,85 @@
+contract_id: DQ_CONTRACT_TEMPORAL_V0_5
+model_snapshot: V0_5
+status: approved
+purpose: >
+  Establish a neutral timestamp/date standard so later remediation can move
+  from provider-local values to UTC without relying on PostgreSQL session
+  timezone rendering.
+standard_columns:
+  raw_value: "*_raw"
+  local_ntz: "*_local_ntz"
+  provider_timezone: provider_timezone
+  utc_value: "*_utc"
+  parse_status: "*_parse_status"
+  timezone_status: "*_timezone_status"
+timezone_policy:
+  timezone_format: IANA
+  utc_derivation_requires_explicit_temporal_authority: true
+  utc_derivation_precedence:
+    - source_row_explicit_offset
+    - approved_provider_iana_timezone
+  unresolved_timezone_status: timezone_pending
+  default_timezone: null
+  source_row_explicit_offset_policy:
+    status: approved
+    rule: >
+      If a row-level temporal value contains an explicit UTC offset or Z suffix,
+      derive UTC from that source-row offset without requiring provider-level
+      IANA timezone approval.
+    examples:
+      - raw_value: "2025-12-27 00:00:00-05"
+        utc_value: "2025-12-27 05:00:00+00"
+      - raw_value: "2025-07-10 14:30:00Z"
+        utc_value: "2025-07-10 14:30:00+00"
+  provider_timezone_fallback_policy:
+    status: approved
+    rule: >
+      If a row-level temporal value does not contain an explicit offset, derive
+      UTC only when the provider has an approved IANA timezone in the provider
+      timezone registry.
+  majority_inference_policy:
+    status: prohibited
+    rule: >
+      Do not assign provider timezone or row UTC values by majority offset,
+      provider name, or surrounding records. Majority patterns may be reported
+      as evidence for HITL, but not used as durable temporal normalization.
+provider_timezone_registry:
+  data_provider_1_aegis_care_network:
+    provider_timezone: null
+    status: timezone_pending
+  data_provider_2_bluestone_health:
+    provider_timezone: null
+    status: timezone_pending
+  data_provider_3_northcare_clinics:
+    provider_timezone: null
+    status: timezone_pending
+  data_provider_4_valleybridge_medical:
+    provider_timezone: null
+    status: timezone_pending
+  data_provider_5_pacific_shield_insurance:
+    provider_timezone: null
+    status: timezone_pending
+neutral_standardization:
+  implemented_models:
+    - data_quality.dq_provider_timezone_contract
+    - data_quality.dq_standardized_temporal_fields
+    - data_quality.dq_timeliness_provider_field_metrics
+    - data_quality.dq_timeliness_contract_violations
+    - data_quality.dq_timeliness_findings
+  utc_derivation_status: enabled_for_source_row_explicit_offset_only
+  contract_violation_rule: >
+    utc_value_must_be_null_unless_timezone_status_is_offset_derived_or_timezone_approved
+postgres_semantics:
+  local_ntz_type: timestamp without time zone
+  utc_type: timestamp with time zone
+  warning: do_not_depend_on_session_timezone_for_lineage
+acceptance:
+  remediation_requires: explicit_row_offset_or_approved_provider_timezone_mapping
+  audit_grain: provider_entity_field
+  current_iteration_acceptance:
+    - all_provider_timezones_are_explicitly_pending
+    - utc_values_are_derived_from_explicit_row_offsets_when_available
+    - utc_values_are_not_derived_from_offsetless_values_without_provider_timezone_approval
+    - provider_timezone_is_not_inferred_by_majority_or_provider_name
+    - provider_entity_field_timeliness_metrics_cover_all_standardized_temporal_rows
+    - open_missing_chronology_and_remaining_timezone_pending_findings_remain_visible
