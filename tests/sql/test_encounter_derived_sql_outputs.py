@@ -29,7 +29,7 @@ def test_encounter_derived_models_are_declared_in_derived_schema() -> None:
 def test_encounter_derived_sql_preserves_relationship_quality_flags() -> None:
     sql_text = "\n".join(
         path.read_text(encoding="utf-8")
-        for path in sorted((DBT_ROOT / "models/derived/encounters").glob("*.sql"))
+        for path in sorted((DBT_ROOT / "models/derived/encounters").rglob("*.sql"))
     )
 
     assert "{{ source('review', 'silver_encounters') }}" in sql_text

@@ -31,7 +31,7 @@ def test_medication_derived_models_are_declared_in_derived_schema() -> None:
 def test_medication_derived_sql_preserves_codes_without_interpretation() -> None:
     sql_text = "\n".join(
         path.read_text(encoding="utf-8")
-        for path in sorted((DBT_ROOT / "models/derived/medications").glob("*.sql"))
+        for path in sorted((DBT_ROOT / "models/derived/medications").rglob("*.sql"))
     )
 
     assert "{{ source('review', 'silver_medications') }}" in sql_text

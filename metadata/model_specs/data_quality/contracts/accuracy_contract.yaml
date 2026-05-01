@@ -1,0 +1,135 @@
+contract_id: DQ_CONTRACT_ACCURACY_V0_5
+model_snapshot: V0_5
+status: approved
+purpose: >
+  Define which accuracy issues require HITL or authoritative business rules
+  before dbt remediation can change clinical, financial, or demographic meaning.
+rule_scope:
+  audit_grain: provider_entity_field
+  source_data_mutation: forbidden
+  dbt_allowed_actions:
+    - profile_frequency
+    - profile_distribution
+    - preserve_raw_value
+    - preserve_normalized_token
+    - emit_review_flags
+    - emit_computational_reconciliation_flags
+    - emit_approved_canonical_columns
+    - emit_approved_preservation_status
+  dbt_forbidden_actions:
+    - recode_clinical_meaning
+    - collapse_distinct_codes
+    - infer_medication_class
+    - infer_condition_group
+    - impute_cost_amount
+    - infer_cost_date
+    - assign_payment_conclusion
+rules:
+  approved_accuracy_rules:
+    condition_source_code_precedence:
+      rule_id: condition_source_code_is_primary_domain_hint_is_metadata
+      decision: >
+        Preserve condition_source_code as the primary code. Treat
+        condition_code_hint mismatches as managed domain metadata mismatch.
+      output_status: managed_valid_code_with_domain_hint_mismatch
+      forbidden_action: replace_source_code_with_hint
+      approved_by_user_on: "2026-04-30"
+    medication_canonicalization:
+      same_normalized_code_rule:
+        rule_id: medication_same_normalized_code_canonicalizes_with_variants
+        decision: >
+          Collapse raw code variants only to canonical_medication_code when the
+          normalized medication_source_code is identical. Preserve raw variants
+          and descriptions.
+        output_status: managed_canonical_medication_code_with_variants
+      same_description_different_code_rule:
+        rule_id: medication_same_description_different_code_preserve_conflict
+        decision: >
+          Do not collapse different medication codes even when normalized
+          descriptions match. Preserve distinct codes and emit conflict status.
+        output_status: managed_description_match_code_conflict_preserved
+      canonical_columns:
+        - canonical_medication_id
+        - canonical_medication_code
+        - canonical_medication_description
+        - raw_code_variant_count
+        - description_variant_count
+        - canonical_rule_id
+      approved_by_user_on: "2026-04-30"
+    financial_preservation:
+      rule_id: financial_amount_date_preserve_nulls_and_provider_semantics
+      decision: >
+        Do not impute missing cost_amount or cost_date. Do not treat UNIT_COST,
+        RX_UNIT_AMT, MED_PRICE, LINE_PRICE, and PAID_AMT as globally equivalent.
+        Preserve provider/source-field semantics and profile distributions only.
+      output_status: managed_financial_semantics_preserved
+      approved_by_user_on: "2026-04-30"
+    observation_bmi_reconciliation:
+      rule_id: observation_bmi_delta_threshold_preserve_both
+      threshold:
+        bmi_payload_recomputed_abs_delta_max: 0.1
+      decision: >
+        Accept BMI payload/recomputed delta <= 0.1. If a future row exceeds the
+        threshold, preserve payload and recomputed values and emit review status.
+      output_status: complete_or_open_observation_computational_review
+      approved_by_user_on: "2026-04-30"
+  clinical_semantic_review:
+    applies_to:
+      - entity: conditions
+        fields: [condition_source_code, condition_description]
+      - entity: medications
+        fields: [medication_source_code, medication_description]
+      - entity: observations
+        fields: [vital_components]
+    dbt_allowed_actions:
+      - profile_frequency
+      - preserve_raw_and_normalized_tokens
+      - emit_review_flags
+    dbt_forbidden_without_hitl:
+      - recode_clinical_meaning
+      - collapse_distinct_codes
+      - infer_medication_class
+      - infer_condition_group
+  financial_semantic_review:
+    applies_to:
+      - entity: cost_records
+        fields: [source_cost_amount, cost_date, source_cost_amount_field_name]
+    dbt_allowed_actions:
+      - profile_amount_distribution
+      - preserve_source_amount_field
+      - emit_missing_or_outlier_flags
+    dbt_forbidden_without_hitl:
+      - impute_cost_amount
+      - infer_cost_date
+      - assign_payment_conclusion
+  observation_computational_reconciliation:
+    applies_to:
+      - entity: observations
+        fields:
+          - height_cm
+          - weight_kg
+          - systolic_bp
+          - bmi_payload
+    dbt_allowed_actions:
+      - compare_payload_to_silver
+      - recompute_bmi_for_reconciliation
+      - emit_review_flags
+    dbt_forbidden_without_hitl:
+      - replace_observed_vital
+      - reinterpret_unit
+      - infer_clinical_state
+    thresholds:
+      bmi_payload_recomputed_abs_delta_max: 0.1
+status_contract:
+  complete: no accuracy review flag detected
+  managed_valid_code_with_domain_hint_mismatch: condition code is primary and code hint is metadata mismatch
+  managed_canonical_medication_code_with_variants: medication normalized code canonicalization is applied while preserving variants
+  managed_description_match_code_conflict_preserved: medication description matches across distinct codes and codes remain separate
+  managed_financial_semantics_preserved: financial amount/date/source semantics are preserved without imputation or cross-provider equivalence
+  hitl_required_clinical_semantic_review: clinical semantic meaning cannot be remediated by dbt alone
+  hitl_required_financial_semantic_review: financial amount/date meaning cannot be remediated by dbt alone
+  open_observation_computational_review: deterministic payload reconciliation found a mismatch
+  contract_violation: dbt attempted forbidden semantic remediation or failed to preserve required evidence
+acceptance:
+  remediation_requires: approved_contract_rule_or_HITL_approved_semantic_rule
+  audit_grain: provider_entity_field

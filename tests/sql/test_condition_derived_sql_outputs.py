@@ -29,7 +29,7 @@ def test_condition_derived_models_are_declared_in_derived_schema() -> None:
 def test_condition_derived_sql_preserves_codes_without_clinical_interpretation() -> None:
     sql_text = "\n".join(
         path.read_text(encoding="utf-8")
-        for path in sorted((DBT_ROOT / "models/derived/conditions").glob("*.sql"))
+        for path in sorted((DBT_ROOT / "models/derived/conditions").rglob("*.sql"))
     )
 
     assert "{{ source('review', 'silver_conditions') }}" in sql_text

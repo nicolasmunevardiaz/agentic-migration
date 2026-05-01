@@ -1,0 +1,104 @@
+version: 2
+
+models:
+  - name: dq_provider_timezone_contract
+    description: Provider-level timezone contract placeholder. Timezones remain pending until approved.
+    columns:
+      - name: provider_slug
+        tests:
+          - not_null
+          - unique
+      - name: timezone_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["timezone_pending", "timezone_approved"]
+
+  - name: dq_standardized_temporal_fields
+    description: Neutral temporal standardization surface for business dates/timestamps.
+    columns:
+      - name: temporal_standardization_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: temporal_standardization_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - missing_source_temporal_value
+                  - timezone_pending
+                  - standardized_from_source_offset
+                  - standardized
+
+  - name: dq_standardized_reference_fields
+    description: Neutral reference standardization surface for provider-scoped relationship keys.
+    columns:
+      - name: reference_standardization_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: reference_standardization_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["missing_reference", "reference_unresolved", "reference_resolved"]
+
+  - name: dq_standardized_code_fields
+    description: Neutral code-token standardization surface for clinical codes.
+    columns:
+      - name: code_standardization_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: code_standardization_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["missing_code", "review_code_domain", "normalized"]
+
+  - name: dq_standardized_amount_fields
+    description: Neutral amount standardization surface for cost records.
+    columns:
+      - name: amount_standardization_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: amount_standardization_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["missing_amount", "nonpositive_amount", "parsed_numeric_amount"]
+
+  - name: dq_standardization_issue_register
+    description: Unified open issue register produced from neutral standardization surfaces.
+    columns:
+      - name: issue_id
+        tests:
+          - not_null
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: category
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["accuracy", "consistency", "timeliness", "validity"]

@@ -1,0 +1,76 @@
+version: 2
+
+models:
+  - name: dq_uniqueness_coverage_period_key_groups
+    description: Coverage-period business-key groups preserving all source lineage.
+    columns:
+      - name: uniqueness_key_group_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: provider_member_plan_period_key
+        tests:
+          - not_null
+      - name: uniqueness_key_group_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - complete
+                  - managed_duplicate_key_survivor_applied
+                  - open_duplicate_key_pending_survivor_rule
+                  - contract_violation
+
+  - name: dq_uniqueness_coverage_period_metrics
+    description: Provider-level duplicate coverage-period business-key metrics.
+    columns:
+      - name: uniqueness_metric_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: uniqueness_metric_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - complete
+                  - managed_duplicate_key_survivor_applied
+                  - open_duplicate_key_pending_survivor_rule
+                  - contract_violation
+
+  - name: dq_uniqueness_contract_violations
+    description: Uniqueness contract violations. This table must stay empty.
+    columns:
+      - name: violation_id
+        tests:
+          - not_null
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: affected_rows
+        tests:
+          - not_null
+
+  - name: dq_uniqueness_findings
+    description: Open uniqueness findings by provider/entity/field.
+    columns:
+      - name: finding_id
+        tests:
+          - not_null
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: severity
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["critical", "high", "medium", "low"]

@@ -1,0 +1,78 @@
+contract_id: DQ_CONTRACT_VALIDITY_V0_5
+model_snapshot: V0_5
+status: approved
+purpose: >
+  Define neutral format/domain validation before data values are corrected or
+  quarantined.
+rule_scope:
+  audit_grain: provider_entity_field
+  source_data_mutation: forbidden
+  dbt_allowed_actions:
+    - preserve_raw_value
+    - emit_standard_token
+    - strip_wrapping_quotes_and_outer_whitespace
+    - split_provider_code_from_clinical_hint
+    - classify_domain_status
+    - classify_bounds_status
+    - quarantine_invalid_date_to_validated_null
+    - classify_unit_status
+    - classify_amount_status
+  dbt_forbidden_actions:
+    - hand_patch_source_value
+    - infer_semantic_code_system_without_contract
+    - impute_invalid_date
+    - replace_nonpositive_amount
+date_bounds:
+  birth_date:
+    min: "1900-01-01"
+    max_rule: not_after_current_date
+  clinical_or_financial_dates:
+    min: "1900-01-01"
+    max_rule: not_after_current_date_plus_one_year
+code_format:
+  normalized_token_rule: uppercase_alphanumeric_joined_by_underscore
+  preserve_raw_code: true
+  provider_code_cleanup:
+    trim_outer_whitespace: true
+    strip_wrapping_quotes: true
+  condition_code_domain_split:
+    status: approved
+    provider_code_field: provider_condition_code_normalized
+    clinical_hint_field: clinical_code_normalized
+    clinical_system_patterns:
+      snomed_ct: "^[0-9]{6,}$"
+      icd_10_cm: "^[A-TV-Z][0-9][A-Z0-9](\\.[A-Z0-9]+)?$"
+      icd_9_cm: "^[0-9]{3}(\\.[0-9]+)?$"
+    semantic_rule: >
+      Provider CND-* codes and clinical code hints are separate domains. Preserve
+      both values and expose a managed split instead of replacing one with the
+      other or treating the hint as the provider code.
+amount_format:
+  numeric_amount_required_for_populated_source: true
+  nonpositive_amount_treatment: validity_failure
+domain_rules:
+  gender:
+    accepted_normalized_values: ["F", "M"]
+    missing_treatment: completeness_not_validity
+  observation_units:
+    height_cm: ["cm"]
+    weight_kg: ["kg"]
+    systolic_bp: ["mmHg"]
+    diastolic_bp: ["mmHg"]
+    pulse_lpm: ["lpm"]
+    temperature_c: ["C"]
+    bmi: ["kg/m2"]
+status_contract:
+  complete: no validity issue detected
+  managed_implausible_date_quarantined: date value is outside approved neutral bounds or has inverted range and validated value is null
+  open_code_domain_drift: code token is normalized but source-code/system hint contract does not match
+  managed_split_provider_and_clinical_codes: provider code and clinical hint are preserved in separate contracted fields
+  open_unresolved_clinical_code_pattern: clinical code hint is populated but does not match an approved system pattern
+  open_missing_code: source code is absent and must remain visible without semantic substitution
+  open_nonpositive_amount: populated amount is numeric but violates positive amount guardrail
+  open_domain_value_failure: normalized domain value is outside accepted contract values
+  open_unit_domain_failure: unit value is outside accepted component-unit contract values
+  contract_violation: dbt standardization failed to preserve or tokenize a populated source value
+acceptance:
+  remediation_requires: approved_format_rule_or_quarantine_rule
+  audit_grain: provider_entity_field

@@ -1,0 +1,96 @@
+version: 2
+
+models:
+  - name: dq_completeness_provider_entity_availability
+    description: Provider/entity availability classified by the completeness contract.
+    columns:
+      - name: completeness_entity_availability_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: entity
+        tests:
+          - not_null
+      - name: completeness_entity_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - complete
+                  - managed_provider_not_applicable
+                  - open_required_entity_missing
+
+  - name: dq_completeness_field_metrics
+    description: Provider/entity/field completeness metrics classified by requiredness contract.
+    columns:
+      - name: completeness_field_metric_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: completeness_field_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - complete
+                  - managed_optional_sparse
+                  - managed_amount_not_provided
+                  - managed_date_not_provided
+                  - managed_event_datetime_not_provided
+                  - managed_coverage_boundary_not_provided
+                  - open_pending_source_validation
+                  - open_pending_financial_contract
+                  - contract_violation
+      - name: null_semantics_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - not_applicable_populated
+                  - optional_component_not_provided
+                  - null_preserved_amount_not_provided
+                  - null_preserved_date_not_provided
+                  - null_preserved_event_datetime_not_provided
+                  - null_preserved_coverage_boundary_not_provided
+                  - unknown_requiredness_status
+      - name: safe_downstream_value_policy
+        tests:
+          - not_null
+
+  - name: dq_completeness_contract_violations
+    description: Completeness contract violations. This table must stay empty.
+    columns:
+      - name: violation_id
+        tests:
+          - not_null
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: affected_rows
+        tests:
+          - not_null
+
+  - name: dq_completeness_findings
+    description: Managed and open completeness findings by provider/entity/field.
+    columns:
+      - name: finding_id
+        tests:
+          - not_null
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: severity
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["critical", "high", "medium", "low"]

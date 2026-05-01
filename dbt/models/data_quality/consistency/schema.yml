@@ -1,0 +1,190 @@
+version: 2
+
+models:
+  - name: dq_consistency_reference_metrics
+    description: Provider/entity/field reference consistency metrics over standardized references.
+    columns:
+      - name: consistency_reference_metric_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: entity
+        tests:
+          - not_null
+      - name: field_column
+        tests:
+          - not_null
+      - name: consistency_reference_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - contract_violation
+                  - managed_missing_reference_preserved
+                  - managed_unknown_reference_preserved
+                  - managed_unresolved_reference_preserved
+                  - complete
+
+  - name: dq_consistency_reference_bridge
+    description: Provider-scoped reference resolution bridge preserving raw references with boolean resolution flags.
+    columns:
+      - name: consistency_reference_bridge_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: reference_resolution_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - missing_reference
+                  - unknown_reference
+                  - resolved
+                  - unresolved_reference
+      - name: consistency_reference_management_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - complete
+                  - managed_missing_reference_preserved
+                  - managed_unknown_reference_preserved
+                  - managed_unresolved_reference_preserved
+
+  - name: dq_consistency_code_metrics
+    description: Provider/entity/field code consistency and semantic variant metrics.
+    columns:
+      - name: consistency_code_metric_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: consistency_code_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - contract_violation
+                  - managed_source_code_hint_domain_mismatch
+                  - managed_canonical_medication_code_with_variants
+                  - managed_description_match_code_conflict_preserved
+                  - managed_missing_code_preserved
+                  - complete
+
+  - name: dq_condition_code_domain_mapping
+    description: Condition source-code and code-hint domain mapping without replacing source clinical codes.
+    columns:
+      - name: condition_code_domain_mapping_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: condition_code_consistency_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - complete
+                  - managed_source_code_hint_domain_mismatch
+                  - missing_source_code
+                  - missing_code_hint
+
+  - name: dq_medication_code_consistency_bridge
+    description: Medication code consistency bridge aligned with canonical medication rules while preserving variants.
+    columns:
+      - name: medication_code_consistency_bridge_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: medication_code_consistency_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - complete
+                  - managed_canonical_medication_code_with_variants
+                  - managed_description_match_code_conflict_preserved
+
+  - name: dq_consistency_demographic_metrics
+    description: Provider-level demographic conflict metrics for patient dimensions.
+    columns:
+      - name: consistency_demographic_metric_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: consistency_demographic_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["managed_demographic_survivor_selected", "complete"]
+
+  - name: dq_patient_demographic_survivor
+    description: Provider-scoped patient demographic survivor surface preserving conflict flags and avoiding cross-provider merges.
+    columns:
+      - name: patient_demographic_survivor_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: demographic_survivor_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - complete
+                  - managed_demographic_survivor_selected
+
+  - name: dq_consistency_contract_violations
+    description: Consistency contract violations. This view must stay empty.
+    columns:
+      - name: violation_id
+        tests:
+          - not_null
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: affected_rows
+        tests:
+          - not_null
+
+  - name: dq_consistency_findings
+    description: Open consistency findings by provider/entity/field.
+    columns:
+      - name: finding_id
+        tests:
+          - not_null
+      - name: provider_slug
+        tests:
+          - not_null
+      - name: severity
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["critical", "high", "medium", "low"]

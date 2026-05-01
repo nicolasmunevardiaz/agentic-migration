@@ -53,6 +53,66 @@ models:
                   - open_ended
                   - bounded
 
+  - name: coverage_period_survivor_candidate
+    description: >
+      Coverage-period survivor candidate view. Preserves all source rows while
+      ranking duplicate provider/member/date/status business keys.
+    columns:
+      - name: coverage_period_id
+        tests:
+          - not_null
+          - unique
+      - name: coverage_source_row_id
+        tests:
+          - not_null
+          - unique
+      - name: provider_member_plan_period_key
+        tests: [not_null]
+      - name: survivor_rank
+        tests: [not_null]
+      - name: survivor_rule_id
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['latest_loaded_record_per_provider_member_period_status']
+      - name: survivor_selection_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - survivor_selected
+                  - duplicate_retained_for_lineage
+                  - not_duplicate
+
+  - name: coverage_period_survivor_fact
+    description: >
+      One-row-per-provider/member/date/status coverage survivor view for
+      downstream use after duplicate business-key ranking.
+    columns:
+      - name: provider_member_plan_period_key
+        tests:
+          - not_null
+          - unique
+      - name: coverage_period_id
+        tests:
+          - not_null
+          - unique
+      - name: coverage_source_row_id
+        tests:
+          - not_null
+          - unique
+      - name: is_survivor
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true]
+      - name: survivor_rule_id
+        tests:
+          - not_null
+
   - name: coverage_status_dimension
     description: Canonical coverage status dimension observed in the active local batch.
     columns:

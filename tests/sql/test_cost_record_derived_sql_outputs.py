@@ -29,7 +29,7 @@ def test_cost_record_derived_models_are_declared_in_derived_schema() -> None:
 def test_cost_record_derived_sql_preserves_source_amounts_without_interpretation() -> None:
     sql_text = "\n".join(
         path.read_text(encoding="utf-8")
-        for path in sorted((DBT_ROOT / "models/derived/cost_records").glob("*.sql"))
+        for path in sorted((DBT_ROOT / "models/derived/cost_records").rglob("*.sql"))
     )
 
     assert "{{ source('review', 'silver_cost_records') }}" in sql_text

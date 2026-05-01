@@ -1,0 +1,124 @@
+contract_id: DBT_MODEL_LAYERING_CONTRACT_V0_5
+model_snapshot: V0_5
+status: approved
+purpose: >
+  Define a sustainable dbt filesystem and materialization contract so model
+  evolution can move from source-shaped normalization toward production-grade
+  gold models without creating an unbounded table-on-table lineage.
+scope:
+  applies_to:
+    - dbt/models/derived
+    - future dbt domain folders
+  active_schema: derived
+  active_domains:
+    - patients
+    - observations
+    - encounters
+    - coverage
+    - conditions
+    - cost_records
+    - medications
+layer_contract:
+  silver:
+    purpose: source-shaped preparation and auditable normalization
+    allowed_subfolders:
+      - landing
+      - staging
+      - standardized
+      - normalized
+      - conformed
+      - dq
+    materialization_policy:
+      default: view
+      allowed:
+        - ephemeral
+        - view
+        - table
+      table_requires: high-cost reuse or HITL/audit evidence
+    production_consumption: false
+  gold:
+    purpose: final domain facts, dimensions, and marts
+    allowed_subfolders:
+      - facts
+      - dimensions
+      - marts
+      - exchange
+      - exports
+    materialization_policy:
+      default: table_for_production
+      local_v0_5_default: view
+      allowed:
+        - view
+        - table
+        - incremental
+      table_requires: production consumption or repeated expensive scans
+    production_consumption: true
+model_role_rules:
+  source_normalized:
+    folder: silver/normalized
+    production_consumption: false
+    description: source row normalization with lineage, parsing, and provider-scoped ids
+  source_standardized:
+    folder: silver/standardized
+    production_consumption: false
+    description: deterministic format cleanup such as trimming, quote handling, token normalization, and parser output
+  conformed_entity_or_lookup:
+    folder: silver/conformed
+    production_consumption: false
+    description: reusable conformed ids, lookup dimensions, bridge candidates, and entity splits that are not yet gold products
+  dq_profile_or_candidate:
+    folder: silver/dq
+    production_consumption: false
+    description: QA/profiling/survivor-candidate models that explain a decision
+  fact:
+    folder: gold/facts
+    production_consumption: true
+    description: entity-grain final/candidate facts
+  dimension:
+    folder: gold/dimensions
+    production_consumption: true
+    description: stable lookup/dimension outputs
+  mart_or_summary:
+    folder: gold/marts
+    production_consumption: true
+    description: summary/profile outputs that are intentional final products
+materialization_decision_tree:
+  ephemeral:
+    use_when:
+      - single-parent helper logic
+      - small CTE-style transformations
+      - no direct audit/debug requirement
+  view:
+    use_when:
+      - local V0_5 development output
+      - lightweight auditable model
+      - model is reused but not expensive enough to persist
+  table:
+    use_when:
+      - high-cost data-quality scan over full data_500k
+      - HITL evidence artifact
+      - final gold table expected to be queried repeatedly
+  incremental:
+    use_when:
+      - production load has stable batch/time partition
+      - merge key and rollback strategy are documented
+provider_dimension_rule:
+  required_future_model: dim_provider
+  rationale: >
+    Provider metadata such as display name, source family, timezone IANA,
+    approval status, and active flag should be centralized instead of relying
+    only on repeated provider_slug text columns.
+  current_v0_5_policy: provider_slug remains as lineage key until dim_provider is introduced
+hitl_governance:
+  rule: >
+    HITL decisions must update the relevant contract before changing gold
+    semantics. Silver normalized models may expose evidence, but production
+    behavior belongs in gold facts/dimensions/marts after contract approval.
+acceptance:
+  audit_grain: model_path
+  required:
+    - every derived SQL model lives under an approved layer subfolder
+    - source-normalized models are not placed under gold
+    - survivor-candidate and QA profile models are not placed under gold unless promoted
+    - gold models do not read raw review sources directly unless explicitly documented
+    - model names remain stable during path-only refactors
