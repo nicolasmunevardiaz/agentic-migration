@@ -9149,9 +9149,659 @@ mappings:
   quarantine_rule: warn and preserve raw lineage when optional value is invalid
   plan_02_allowance: allowed
   approval_status: applied
+- provider_slug: data_provider_1_aegis_care_network
+  provider_name: Aegis Care Network
+  source_entity: patients
+  source_header: FIRST_NAME
+  source_index: null
+  source_field_key: FIRST_NAME
+  source_field_path: name[0].given[0]
+  provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/patients.yaml
+  field_decision_id: BQFD-1-patients-first_name-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  canonical_concept: member_direct_identifier
+  source_canonical_hint: PT_FIRST_NM
+  silver_entity: members
+  silver_column: pt_first_nm
+  target_type: string
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: direct_identifier_name
+  mapping_confidence: approved
+  transform_rule: copy direct identifier with provider lineage; no enterprise identity resolution inferred
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_2_bluestone_health
+  provider_name: BlueStone Health
+  source_entity: patients
+  source_header: MBR_FIRST_NM
+  source_index: null
+  source_field_key: MBR_FIRST_NM
+  source_field_path: PID.5.2
+  provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/patients.yaml
+  field_decision_id: BQFD-2-patients-mbr_first_nm-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  - DRIFT-006
+  canonical_concept: member_direct_identifier
+  source_canonical_hint: PT_FIRST_NM
+  silver_entity: members
+  silver_column: pt_first_nm
+  target_type: string
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: direct_identifier_name
+  mapping_confidence: approved
+  transform_rule: copy direct identifier with provider lineage; no enterprise identity resolution inferred
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_3_northcare_clinics
+  provider_name: NorthCare Clinics
+  source_entity: patients
+  source_header: PT_GIVEN_NAME
+  source_index: null
+  source_field_key: PT_GIVEN_NAME
+  source_field_path: segment[3]
+  provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/patients.yaml
+  field_decision_id: BQFD-3-patients-pt_given_name-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  - DRIFT-007
+  canonical_concept: member_direct_identifier
+  source_canonical_hint: PT_FIRST_NM
+  silver_entity: members
+  silver_column: pt_first_nm
+  target_type: string
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: direct_identifier_name
+  mapping_confidence: approved
+  transform_rule: copy direct identifier with provider lineage; no enterprise identity resolution inferred
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_4_valleybridge_medical
+  provider_name: ValleyBridge Medical
+  source_entity: patients
+  source_header: NAME_FIRST
+  source_index: null
+  source_field_key: NAME_FIRST
+  source_field_path: name[0].given[0]
+  provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/patients.yaml
+  field_decision_id: BQFD-4-patients-name_first-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  - DRIFT-008
+  canonical_concept: member_direct_identifier
+  source_canonical_hint: PT_FIRST_NM
+  silver_entity: members
+  silver_column: pt_first_nm
+  target_type: string
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: direct_identifier_name
+  mapping_confidence: approved
+  transform_rule: copy direct identifier with provider lineage; no enterprise identity resolution inferred
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_5_pacific_shield_insurance
+  provider_name: Pacific Shield Insurance
+  source_entity: patients
+  source_header: MBR_FIRST_NAME
+  source_index: 2
+  source_field_key: MBR_FIRST_NAME[2]
+  source_field_path: source_index[2]
+  provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/patients.yaml
+  field_decision_id: BQFD-5-patients-mbr_first_name_2-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  - DRIFT-009
+  - DRIFT-011
+  canonical_concept: member_direct_identifier
+  source_canonical_hint: PT_FIRST_NM
+  silver_entity: members
+  silver_column: pt_first_nm
+  target_type: string
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: direct_identifier_name
+  mapping_confidence: approved
+  transform_rule: copy direct identifier with provider lineage; no enterprise identity resolution inferred
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_1_aegis_care_network
+  provider_name: Aegis Care Network
+  source_entity: patients
+  source_header: LAST_NAME
+  source_index: null
+  source_field_key: LAST_NAME
+  source_field_path: name[0].family
+  provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/patients.yaml
+  field_decision_id: BQFD-1-patients-last_name-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  canonical_concept: member_direct_identifier
+  source_canonical_hint: PT_LAST_NM
+  silver_entity: members
+  silver_column: pt_last_nm
+  target_type: string
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: direct_identifier_name
+  mapping_confidence: approved
+  transform_rule: copy direct identifier with provider lineage; no enterprise identity resolution inferred
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_2_bluestone_health
+  provider_name: BlueStone Health
+  source_entity: patients
+  source_header: MBR_LAST_NM
+  source_index: null
+  source_field_key: MBR_LAST_NM
+  source_field_path: PID.5.1
+  provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/patients.yaml
+  field_decision_id: BQFD-2-patients-mbr_last_nm-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  - DRIFT-006
+  canonical_concept: member_direct_identifier
+  source_canonical_hint: PT_LAST_NM
+  silver_entity: members
+  silver_column: pt_last_nm
+  target_type: string
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: direct_identifier_name
+  mapping_confidence: approved
+  transform_rule: copy direct identifier with provider lineage; no enterprise identity resolution inferred
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_3_northcare_clinics
+  provider_name: NorthCare Clinics
+  source_entity: patients
+  source_header: PT_FAMILY_NAME
+  source_index: null
+  source_field_key: PT_FAMILY_NAME
+  source_field_path: segment[4]
+  provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/patients.yaml
+  field_decision_id: BQFD-3-patients-pt_family_name-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  - DRIFT-007
+  canonical_concept: member_direct_identifier
+  source_canonical_hint: PT_LAST_NM
+  silver_entity: members
+  silver_column: pt_last_nm
+  target_type: string
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: direct_identifier_name
+  mapping_confidence: approved
+  transform_rule: copy direct identifier with provider lineage; no enterprise identity resolution inferred
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_4_valleybridge_medical
+  provider_name: ValleyBridge Medical
+  source_entity: patients
+  source_header: NAME_LAST
+  source_index: null
+  source_field_key: NAME_LAST
+  source_field_path: name[0].family
+  provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/patients.yaml
+  field_decision_id: BQFD-4-patients-name_last-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  - DRIFT-008
+  canonical_concept: member_direct_identifier
+  source_canonical_hint: PT_LAST_NM
+  silver_entity: members
+  silver_column: pt_last_nm
+  target_type: string
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: direct_identifier_name
+  mapping_confidence: approved
+  transform_rule: copy direct identifier with provider lineage; no enterprise identity resolution inferred
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_5_pacific_shield_insurance
+  provider_name: Pacific Shield Insurance
+  source_entity: patients
+  source_header: MBR_LAST_NAME
+  source_index: 3
+  source_field_key: MBR_LAST_NAME[3]
+  source_field_path: source_index[3]
+  provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/patients.yaml
+  field_decision_id: BQFD-5-patients-mbr_last_name_3-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  - DRIFT-009
+  - DRIFT-011
+  canonical_concept: member_direct_identifier
+  source_canonical_hint: PT_LAST_NM
+  silver_entity: members
+  silver_column: pt_last_nm
+  target_type: string
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: direct_identifier_name
+  mapping_confidence: approved
+  transform_rule: copy direct identifier with provider lineage; no enterprise identity resolution inferred
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_1_aegis_care_network
+  provider_name: Aegis Care Network
+  source_entity: patients
+  source_header: SSN
+  source_index: null
+  source_field_key: SSN
+  source_field_path: identifier[1].value
+  provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/patients.yaml
+  field_decision_id: BQFD-1-patients-ssn-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  canonical_concept: member_direct_identifier
+  source_canonical_hint: SSN_VAL
+  silver_entity: members
+  silver_column: ssn_val
+  target_type: string
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: direct_identifier_government_id
+  mapping_confidence: approved
+  transform_rule: copy direct government identifier with provider lineage; no masking applied in governed local landing
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_2_bluestone_health
+  provider_name: BlueStone Health
+  source_entity: patients
+  source_header: TAX_ID
+  source_index: null
+  source_field_key: TAX_ID
+  source_field_path: PID.19
+  provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/patients.yaml
+  field_decision_id: BQFD-2-patients-tax_id-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  - DRIFT-006
+  canonical_concept: member_direct_identifier
+  source_canonical_hint: SSN_VAL
+  silver_entity: members
+  silver_column: ssn_val
+  target_type: string
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: direct_identifier_government_id
+  mapping_confidence: approved
+  transform_rule: copy direct government identifier with provider lineage; no masking applied in governed local landing
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_3_northcare_clinics
+  provider_name: NorthCare Clinics
+  source_entity: patients
+  source_header: SSN_NUM
+  source_index: null
+  source_field_key: SSN_NUM
+  source_field_path: segment[5]
+  provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/patients.yaml
+  field_decision_id: BQFD-3-patients-ssn_num-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  - DRIFT-007
+  canonical_concept: member_direct_identifier
+  source_canonical_hint: SSN_VAL
+  silver_entity: members
+  silver_column: ssn_val
+  target_type: string
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: direct_identifier_government_id
+  mapping_confidence: approved
+  transform_rule: copy direct government identifier with provider lineage; no masking applied in governed local landing
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_4_valleybridge_medical
+  provider_name: ValleyBridge Medical
+  source_entity: patients
+  source_header: PATIENT_SSN
+  source_index: null
+  source_field_key: PATIENT_SSN
+  source_field_path: identifier[1].value
+  provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/patients.yaml
+  field_decision_id: BQFD-4-patients-patient_ssn-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  - DRIFT-008
+  canonical_concept: member_direct_identifier
+  source_canonical_hint: SSN_VAL
+  silver_entity: members
+  silver_column: ssn_val
+  target_type: string
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: direct_identifier_government_id
+  mapping_confidence: approved
+  transform_rule: copy direct government identifier with provider lineage; no masking applied in governed local landing
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_5_pacific_shield_insurance
+  provider_name: Pacific Shield Insurance
+  source_entity: patients
+  source_header: MBR_SSN
+  source_index: 4
+  source_field_key: MBR_SSN[4]
+  source_field_path: source_index[4]
+  provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/patients.yaml
+  field_decision_id: BQFD-5-patients-mbr_ssn_4-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  - DRIFT-009
+  - DRIFT-011
+  canonical_concept: member_direct_identifier
+  source_canonical_hint: SSN_VAL
+  silver_entity: members
+  silver_column: ssn_val
+  target_type: string
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: direct_identifier_government_id
+  mapping_confidence: approved
+  transform_rule: copy direct government identifier with provider lineage; no masking applied in governed local landing
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_1_aegis_care_network
+  provider_name: Aegis Care Network
+  source_entity: patients
+  source_header: GDR_CD
+  source_index: null
+  source_field_key: GDR_CD
+  source_field_path: gender
+  provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/patients.yaml
+  field_decision_id: BQFD-1-patients-gdr_cd-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  canonical_concept: member_demographic
+  source_canonical_hint: GDR_CD
+  silver_entity: members
+  silver_column: gdr_cd
+  target_type: string
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: phi_demographic
+  mapping_confidence: approved
+  transform_rule: copy source-scoped gender value with provider lineage
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_2_bluestone_health
+  provider_name: BlueStone Health
+  source_entity: patients
+  source_header: SEX_CD
+  source_index: null
+  source_field_key: SEX_CD
+  source_field_path: PID.8
+  provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/patients.yaml
+  field_decision_id: BQFD-2-patients-sex_cd-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  - DRIFT-006
+  canonical_concept: member_demographic
+  source_canonical_hint: GDR_CD
+  silver_entity: members
+  silver_column: gdr_cd
+  target_type: string
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: phi_demographic
+  mapping_confidence: approved
+  transform_rule: copy source-scoped gender value with provider lineage
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_3_northcare_clinics
+  provider_name: NorthCare Clinics
+  source_entity: patients
+  source_header: GDR_CD
+  source_index: null
+  source_field_key: GDR_CD
+  source_field_path: segment[6]
+  provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/patients.yaml
+  field_decision_id: BQFD-3-patients-gdr_cd-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  - DRIFT-007
+  canonical_concept: member_demographic
+  source_canonical_hint: GDR_CD
+  silver_entity: members
+  silver_column: gdr_cd
+  target_type: string
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: phi_demographic
+  mapping_confidence: approved
+  transform_rule: copy source-scoped gender value with provider lineage
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_4_valleybridge_medical
+  provider_name: ValleyBridge Medical
+  source_entity: patients
+  source_header: SX_FLAG
+  source_index: null
+  source_field_key: SX_FLAG
+  source_field_path: gender
+  provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/patients.yaml
+  field_decision_id: BQFD-4-patients-sx_flag-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  - DRIFT-008
+  canonical_concept: member_demographic
+  source_canonical_hint: GDR_CD
+  silver_entity: members
+  silver_column: gdr_cd
+  target_type: string
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: phi_demographic
+  mapping_confidence: approved
+  transform_rule: copy source-scoped gender value with provider lineage
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_5_pacific_shield_insurance
+  provider_name: Pacific Shield Insurance
+  source_entity: patients
+  source_header: MBR_SEX
+  source_index: 5
+  source_field_key: MBR_SEX[5]
+  source_field_path: source_index[5]
+  provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/patients.yaml
+  field_decision_id: BQFD-5-patients-mbr_sex_5-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  - DRIFT-009
+  - DRIFT-011
+  canonical_concept: member_demographic
+  source_canonical_hint: GDR_CD
+  silver_entity: members
+  silver_column: gdr_cd
+  target_type: string
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: phi_demographic
+  mapping_confidence: approved
+  transform_rule: copy source-scoped gender value with provider lineage
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_1_aegis_care_network
+  provider_name: Aegis Care Network
+  source_entity: patients
+  source_header: BDT_VAL
+  source_index: null
+  source_field_key: BDT_VAL
+  source_field_path: birthDate
+  provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/patients.yaml
+  field_decision_id: BQFD-1-patients-bdt_val-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  canonical_concept: member_demographic
+  source_canonical_hint: BDT_VAL
+  silver_entity: members
+  silver_column: bdt_val
+  target_type: date
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: phi_demographic_identifier
+  mapping_confidence: approved
+  transform_rule: safe-cast source birth date to ISO date while preserving provider lineage
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_2_bluestone_health
+  provider_name: BlueStone Health
+  source_entity: patients
+  source_header: DOB_TXT
+  source_index: null
+  source_field_key: DOB_TXT
+  source_field_path: PID.7
+  provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/patients.yaml
+  field_decision_id: BQFD-2-patients-dob_txt-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  - DRIFT-006
+  canonical_concept: member_demographic
+  source_canonical_hint: BDT_VAL
+  silver_entity: members
+  silver_column: bdt_val
+  target_type: date
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: phi_demographic_identifier
+  mapping_confidence: approved
+  transform_rule: safe-cast source birth date to ISO date while preserving provider lineage
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_3_northcare_clinics
+  provider_name: NorthCare Clinics
+  source_entity: patients
+  source_header: BDT_VAL
+  source_index: null
+  source_field_key: BDT_VAL
+  source_field_path: segment[7]
+  provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/patients.yaml
+  field_decision_id: BQFD-3-patients-bdt_val-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  - DRIFT-007
+  canonical_concept: member_demographic
+  source_canonical_hint: BDT_VAL
+  silver_entity: members
+  silver_column: bdt_val
+  target_type: date
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: phi_demographic_identifier
+  mapping_confidence: approved
+  transform_rule: safe-cast source birth date to ISO date while preserving provider lineage
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_4_valleybridge_medical
+  provider_name: ValleyBridge Medical
+  source_entity: patients
+  source_header: DT_BORN
+  source_index: null
+  source_field_key: DT_BORN
+  source_field_path: birthDate
+  provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/patients.yaml
+  field_decision_id: BQFD-4-patients-dt_born-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  - DRIFT-008
+  canonical_concept: member_demographic
+  source_canonical_hint: BDT_VAL
+  silver_entity: members
+  silver_column: bdt_val
+  target_type: date
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: phi_demographic_identifier
+  mapping_confidence: approved
+  transform_rule: safe-cast source birth date to ISO date while preserving provider lineage
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
+- provider_slug: data_provider_5_pacific_shield_insurance
+  provider_name: Pacific Shield Insurance
+  source_entity: patients
+  source_header: MBR_DOB
+  source_index: 6
+  source_field_key: MBR_DOB[6]
+  source_field_path: source_index[6]
+  provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/patients.yaml
+  field_decision_id: BQFD-5-patients-mbr_dob_6-01
+  linked_runbook_decision_ids:
+  - DRIFT-003
+  - DRIFT-009
+  - DRIFT-011
+  canonical_concept: member_demographic
+  source_canonical_hint: BDT_VAL
+  silver_entity: members
+  silver_column: bdt_val
+  target_type: date
+  nullable: true
+  required: false
+  pii_signal: true
+  pii_class: phi_demographic_identifier
+  mapping_confidence: approved
+  transform_rule: safe-cast source birth date to ISO date while preserving provider lineage
+  quarantine_rule: warn and preserve raw lineage when optional value is invalid
+  plan_02_allowance: allowed
+  approval_status: applied
 coverage_summary:
   provider_count: 5
   provider_spec_count: 25
   silver_entity_count: 7
-  mapping_count: 355
+  mapping_count: 380
   field_decision_count: 205

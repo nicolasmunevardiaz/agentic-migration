@@ -101,6 +101,34 @@ def sql_value(value: Any) -> Any:
     return value
 
 
+def insert_landing_rows(
+    cursor,
+    entity: str,
+    rows: list[dict[str, Any]],
+    columns_by_entity: dict[str, list[str]],
+    batch_id: str,
+) -> int:
+    if not rows:
+        return 0
+
+    insert_columns = columns_by_entity[entity] + ["review_batch_id"]
+    placeholders = ", ".join(["%s"] * len(insert_columns))
+    quoted_columns = ", ".join(f'"{column}"' for column in insert_columns)
+    sql = (
+        f'INSERT INTO landing."{entity}" '
+        f"({quoted_columns}) VALUES ({placeholders})"
+    )
+    loaded_rows = []
+    for row in rows:
+        loaded_row = dict(row)
+        loaded_row["review_batch_id"] = batch_id
+        loaded_rows.append(
+            tuple(sql_value(loaded_row.get(column)) for column in insert_columns)
+        )
+    execute_batch(cursor, sql, loaded_rows, page_size=1000)
+    return len(loaded_rows)
+
+
 def source_files_for_entity(provider: ProviderDataSet, entity: str) -> list[Path]:
     provider_spec = load_yaml(provider.provider_spec_root / f"{entity}.yaml")
     files: list[Path] = []
@@ -140,6 +168,68 @@ def collect_data_500k_rows(batch_id: str) -> tuple[dict[str, list[dict[str, Any]
 
 
 def load_data_500k_rows(database: str, batch_id: str) -> dict[str, Any]:
+    columns_by_entity = silver_columns()
+    source_counts: dict[str, int] = {}
+    landing_row_counts: dict[str, int] = {entity: 0 for entity in columns_by_entity}
+    with connect(database) as connection:
+        with connection.cursor() as cursor:
+            for entity in sorted(columns_by_entity):
+                cursor.execute(
+                    f'DELETE FROM landing."{entity}" WHERE review_batch_id = %s',
+                    (batch_id,),
+                )
+        connection.commit()
+
+        for provider in PROVIDER_DATASETS:
+            for source_entity in provider.entities:
+                source_count_key = f"{provider.provider_slug}.{source_entity}"
+                source_counts[source_count_key] = 0
+                for source_file in source_files_for_entity(provider, source_entity):
+                    result = provider.runner(
+                        entity=source_entity,
+                        source_file=source_file,
+                        ingestion_run_id=batch_id,
+                        provider_spec_root=provider.provider_spec_root,
+                        model_root=MODEL_ROOT,
+                        evidence_path=DEFAULT_EVIDENCE_PATH,
+                    )
+                    source_counts[source_count_key] += len(result.bronze_records)
+                    file_landing_counts: dict[str, int] = {}
+                    with connection.cursor() as cursor:
+                        for silver_entity, rows in sorted(result.silver_rows.items()):
+                            inserted = insert_landing_rows(
+                                cursor=cursor,
+                                entity=silver_entity,
+                                rows=rows,
+                                columns_by_entity=columns_by_entity,
+                                batch_id=batch_id,
+                            )
+                            landing_row_counts[silver_entity] += inserted
+                            file_landing_counts[silver_entity] = inserted
+                    connection.commit()
+                    print(
+                        "loaded_file="
+                        f"{source_file.relative_to(REPO_ROOT).as_posix()} "
+                        f"bronze_rows={len(result.bronze_records)} "
+                        f"landing_rows={file_landing_counts}",
+                        flush=True,
+                    )
+
+    return {
+        "batch_id": batch_id,
+        "source_record_count": sum(source_counts.values()),
+        "source_checksum": checksum_data_500k_contract(),
+        "evidence_path": DEFAULT_EVIDENCE_PATH,
+        "landing_row_counts": {
+            entity: count
+            for entity, count in sorted(landing_row_counts.items())
+            if count
+        },
+        "source_counts": source_counts,
+    }
+
+
+def load_data_500k_rows_in_memory(database: str, batch_id: str) -> dict[str, Any]:
     columns_by_entity = silver_columns()
     rows_by_entity, source_counts = collect_data_500k_rows(batch_id=batch_id)
     with connect(database) as connection, connection.cursor() as cursor:
