@@ -2998,7 +2998,6 @@ runbook_decisions_applied:
 - DRIFT-014
 evidence_paths:
 - metadata/provider_specs
-- metadata/model_specs/impact/business_question_profiles.yaml
 - reports/hitl/canonical_drift_decision_runbook.md
 - reports/drift
 - reports/privacy
