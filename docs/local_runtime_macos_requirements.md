@@ -40,7 +40,7 @@ Required before optional Spark, Delta Lake OSS, OpenLineage, or Marquez validati
 - Java for Spark and Delta Lake OSS local execution.
 - Docker CLI configured against Colima, not Docker Desktop.
 - Git configured with the user's name and email for reviewed commits.
-- A local data workbench choice for Plan 04.5 drift review: PostgreSQL + DBeaver, DuckDB + dbt Core, or Snowflake after separate approval.
+- A local data workbench choice for drift review: PostgreSQL + DBeaver, DuckDB, or Snowflake after separate approval.
 
 If `uv` is not installed, install it after HITL approval with:
 
@@ -68,7 +68,7 @@ Plan 04 certified local Raw/Bronze to Silver contracts. Plan 04.5 must not jump 
 Recommended order:
 
 1. Use PostgreSQL + DBeaver when humans need a familiar read/write database UI for drift review and decision entry.
-2. Use DuckDB + dbt Core when the team needs fast local SQL tests, reproducible transformations, and file-backed evidence without running a database service.
+2. Use DuckDB when the team needs fast local SQL tests and file-backed evidence without running a database service.
 3. Use Spark, Delta Lake OSS, and Spark Declarative Pipelines only after HITL approves local pipeline execution; start with dry-runs and small fixtures before any table writes.
 4. Use Marquez/OpenLineage only after HITL approves Colima service start and lineage event emission.
 5. Defer Snowflake until the team intentionally moves beyond local-only drift review and records cloud governance approval.
@@ -111,18 +111,17 @@ Optional smoke test after HITL approval:
 docker run --rm hello-world
 ```
 
-Colima is needed only for local container services such as PostgreSQL or Marquez. It is not required for DuckDB, dbt Core, `uv`, or metadata/spec tests.
+Colima is needed only for local container services such as PostgreSQL or Marquez. It is not required for DuckDB, `uv`, or metadata/spec tests.
 
 ## PostgreSQL And DBeaver For HITL Drift Review
 
-Use PostgreSQL + DBeaver when HITL needs a persistent local database with read/write decision tables. This is the preferred interface for resolving drift because reviewers can filter source values, inspect Silver mappings, and write decisions into controlled tables such as `review.hitl_decisions`.
+Use PostgreSQL + DBeaver when reviewers need to inspect the local adapter-loaded landing tables. The default local provision path creates only `landing`; read/write HITL decision tables are not part of the default PostgreSQL deploy.
 
 Use PostgreSQL for:
 
-- Human-readable review schemas such as `review.silver_members`, `review.drift_gender_values`, `review.drift_coverage_values`, and `review.hitl_decisions`.
-- Read/write edits by approved reviewers.
-- SQL joins across Silver outputs, provider lineage, QA evidence, and drift candidates.
-- Exporting approved decisions back to YAML and Markdown evidence.
+- Human-readable landing tables such as `landing.members`, `landing.encounters`, and `landing.cost_records`.
+- SQL inspection across provider lineage and adapter-loaded canonical rows.
+- Exporting investigation notes back to YAML and Markdown evidence outside PostgreSQL.
 
 Do not use PostgreSQL for:
 
@@ -148,12 +147,10 @@ DBeaver is the approved GUI option for PostgreSQL review because it lets HITL us
 brew install --cask dbeaver-community
 ```
 
-Suggested local schemas:
+Default local schema:
 
 ```sql
-CREATE SCHEMA IF NOT EXISTS review;
-CREATE SCHEMA IF NOT EXISTS staging;
-CREATE SCHEMA IF NOT EXISTS evidence;
+CREATE SCHEMA IF NOT EXISTS landing;
 ```
 
 The repository owns the declarative workbench contract at:
@@ -168,7 +165,7 @@ The short deploy runbook lives at:
 docs/local_postgres_workbench_deploy.md
 ```
 
-That YAML is the source of truth for local PostgreSQL schemas, review tables, drift tables, evidence tables, idempotency rules, and blocked operations. Do not hand-edit database objects as the durable contract; edit the YAML, review it, then rerun the deploy.
+That YAML is the source of truth for local PostgreSQL landing tables, idempotency rules, and blocked operations. Do not hand-edit database objects as the durable contract; edit the YAML, review it, then rerun the deploy.
 
 Dry-run the deploy from the repository root:
 
@@ -191,68 +188,20 @@ cd /path/to/agentic-migration
 UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_postgres_workbench_deploy --database agentic_migration_local --apply --verify
 ```
 
-The deploy is idempotent and uses `CREATE SCHEMA IF NOT EXISTS`, `CREATE TABLE IF NOT EXISTS`, `ALTER TABLE ADD COLUMN IF NOT EXISTS`, `CREATE INDEX IF NOT EXISTS`, and guarded constraint creation. It must not emit `DROP`, `TRUNCATE`, `DELETE`, or destructive DDL.
+The deploy is idempotent and uses `CREATE SCHEMA IF NOT EXISTS`, `CREATE TABLE IF NOT EXISTS`, `ALTER TABLE ADD COLUMN IF NOT EXISTS`, and `CREATE INDEX IF NOT EXISTS`. It must not emit `DROP`, `TRUNCATE`, `DELETE`, destructive DDL, or non-landing schemas.
 
-The HITL decision table shape is:
+## DuckDB For Reproducible Local SQL Checks
 
-```sql
-CREATE TABLE IF NOT EXISTS review.hitl_decisions (
-  decision_id text PRIMARY KEY,
-  plan_id text NOT NULL,
-  business_question_id text,
-  drift_domain text NOT NULL,
-  source_entity text,
-  source_field text,
-  observed_value text,
-  recommended_option text,
-  selected_option text,
-  decision_status text NOT NULL,
-  reviewer_notes text,
-  evidence_path text NOT NULL,
-  updated_at timestamptz DEFAULT now()
-);
-```
+Use DuckDB when the goal is a fast, local, file-backed SQL harness rather than a
+human-edited database service. DuckDB can run embedded analytical SQL locally,
+and the Python client can be installed as a normal Python package.
 
-Allowed `decision_status` values should be `approved`, `rejected`, `deferred_with_human_approval`, or `needs_more_evidence`. If a decision is `needs_more_evidence`, downstream semantic modeling remains blocked for that drift domain.
+Use DuckDB for local drift profiling, CI-friendly SQL checks over generated
+CSV/Parquet/JSON evidence, and comparing source-scoped values without changing
+canonical specs.
 
-## DuckDB And dbt Core For Reproducible Local Tests
-
-Use DuckDB + dbt Core when the goal is a fast, local, file-backed SQL harness rather than a human-edited database service. DuckDB can run embedded analytical SQL locally, and the Python client can be installed as a normal Python package. dbt Core can then express reproducible SQL transformations and tests.
-
-Use DuckDB + dbt for:
-
-- Local drift profiling over generated CSV/Parquet/JSON evidence.
-- SQL tests that can run in CI without a database service.
-- Repeatable transformations from local Silver artifacts into drift-review tables.
-- Comparing normalized vs source-scoped values without changing canonical specs.
-
-Do not use DuckDB + dbt for:
-
-- HITL row editing as the primary interface.
-- Production datasets.
-- Gold mart approval before drift decisions are complete.
-
-After HITL approval, install CLI tooling:
-
-```bash
-brew install duckdb
-duckdb --version
-```
-
-After HITL approval for Python/dbt dependencies, run from the repository root:
-
-```bash
-cd /path/to/agentic-migration
-test -f pyproject.toml
-uv add duckdb dbt-core dbt-duckdb
-UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync dbt --version
-```
-
-Suggested local file path:
-
-```text
-artifacts/local_workbench/agentic_migration.duckdb
-```
+Do not use DuckDB for HITL row editing as the primary interface or production
+datasets.
 
 Keep DuckDB database files under `artifacts/` so they stay out of Git.
 
@@ -296,7 +245,7 @@ Do not run more `uv add` commands unless a new HITL dependency approval exists. 
 
 Use Spark + Delta only when:
 
-- The team needs to validate local execution behavior that DuckDB/dbt cannot represent.
+- The team needs to validate local execution behavior that DuckDB cannot represent.
 - Java is configured and plain `java -version` works in the active shell.
 - HITL has approved Spark execution and Delta local writes.
 - Inputs are deterministic fixtures or approved local samples.

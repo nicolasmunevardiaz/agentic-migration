@@ -9,7 +9,7 @@
 - `model_specs/silver/`: executable canonical Silver contracts. `src/common/adapter_runtime.py` reads these YAMLs to decide Silver entities, columns, source mappings, types, and nullability.
 - `model_specs/mappings/`: cross-provider reconciliation matrix. It is the audit table that proves provider fields and Silver columns agree; tests keep it aligned with `silver/*.yaml`.
 - `model_specs/impact/`: modeling risks and business-question decision evidence.
-- `model_specs/evolution/`: complete versioned model snapshots for Plan 04.5 local PostgreSQL/dbt iterations. Each `V0_N/` folder records the snapshot header, business-question registry version, full PostgreSQL DDL image, rollback target, quality gates, and blocked downstream scope.
+- `model_specs/evolution/`: historical local PostgreSQL model snapshots retained for audit context.
 - `runtime_specs/` and `deployment_specs/`: planned runtime/deployment contracts for local certification and Databricks rollout.
 
 ## Mini Example

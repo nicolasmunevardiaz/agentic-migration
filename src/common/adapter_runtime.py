@@ -4,7 +4,7 @@ import hashlib
 import json
 import re
 from dataclasses import dataclass, field
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any
@@ -447,7 +447,20 @@ def normalize_coverage_status(raw_value: Any) -> str:
 def parse_date(raw_value: Any) -> str:
     if isinstance(raw_value, date) and not isinstance(raw_value, datetime):
         return raw_value.isoformat()
-    text = str(raw_value).strip()
+    text = str(raw_value).strip().strip('"').strip()
+    try:
+        epoch_seconds = int(text)
+    except ValueError:
+        epoch_seconds = None
+    if epoch_seconds is not None:
+        epoch_date = datetime.fromtimestamp(epoch_seconds, tz=UTC).date()
+        if date(1900, 1, 1) <= epoch_date <= date(2026, 12, 31):
+            return epoch_date.isoformat()
+    for date_format in ("%Y-%m-%d", "%d/%m/%Y", "%m/%d/%Y", "%Y%m%d"):
+        try:
+            return datetime.strptime(text[:10], date_format).date().isoformat()
+        except ValueError:
+            continue
     return date.fromisoformat(text[:10]).isoformat()
 
 
