@@ -222,6 +222,211 @@ columns:
   quarantine_if_invalid: false
   needs_human_review: false
   review_reason: Approved for Plan 02 canonical normalization by linked field decisions and drift runbook.
+- name: pt_first_nm
+  type: string
+  nullable: true
+  required: false
+  pii_class: direct_identifier_name
+  lineage_required: false
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: patients
+    source_header: FIRST_NAME
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/patients.yaml
+    field_decision_id: BQFD-1-patients-first_name-01
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: patients
+    source_header: MBR_FIRST_NM
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/patients.yaml
+    field_decision_id: BQFD-2-patients-mbr_first_nm-01
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: patients
+    source_header: PT_GIVEN_NAME
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/patients.yaml
+    field_decision_id: BQFD-3-patients-pt_given_name-01
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: patients
+    source_header: NAME_FIRST
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/patients.yaml
+    field_decision_id: BQFD-4-patients-name_first-01
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: patients
+    source_header: MBR_FIRST_NAME
+    source_index: 2
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/patients.yaml
+    field_decision_id: BQFD-5-patients-mbr_first_name_2-01
+  transform_rule: copy direct identifier with provider lineage; no enterprise identity resolution inferred
+  quarantine_if_invalid: false
+  needs_human_review: false
+  review_reason: Approved source-scoped preservation of direct identifier fields for governed local landing.
+- name: pt_last_nm
+  type: string
+  nullable: true
+  required: false
+  pii_class: direct_identifier_name
+  lineage_required: false
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: patients
+    source_header: LAST_NAME
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/patients.yaml
+    field_decision_id: BQFD-1-patients-last_name-01
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: patients
+    source_header: MBR_LAST_NM
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/patients.yaml
+    field_decision_id: BQFD-2-patients-mbr_last_nm-01
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: patients
+    source_header: PT_FAMILY_NAME
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/patients.yaml
+    field_decision_id: BQFD-3-patients-pt_family_name-01
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: patients
+    source_header: NAME_LAST
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/patients.yaml
+    field_decision_id: BQFD-4-patients-name_last-01
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: patients
+    source_header: MBR_LAST_NAME
+    source_index: 3
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/patients.yaml
+    field_decision_id: BQFD-5-patients-mbr_last_name_3-01
+  transform_rule: copy direct identifier with provider lineage; no enterprise identity resolution inferred
+  quarantine_if_invalid: false
+  needs_human_review: false
+  review_reason: Approved source-scoped preservation of direct identifier fields for governed local landing.
+- name: ssn_val
+  type: string
+  nullable: true
+  required: false
+  pii_class: direct_identifier_government_id
+  lineage_required: false
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: patients
+    source_header: SSN
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/patients.yaml
+    field_decision_id: BQFD-1-patients-ssn-01
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: patients
+    source_header: TAX_ID
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/patients.yaml
+    field_decision_id: BQFD-2-patients-tax_id-01
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: patients
+    source_header: SSN_NUM
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/patients.yaml
+    field_decision_id: BQFD-3-patients-ssn_num-01
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: patients
+    source_header: PATIENT_SSN
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/patients.yaml
+    field_decision_id: BQFD-4-patients-patient_ssn-01
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: patients
+    source_header: MBR_SSN
+    source_index: 4
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/patients.yaml
+    field_decision_id: BQFD-5-patients-mbr_ssn_4-01
+  transform_rule: copy direct government identifier with provider lineage; no masking applied in governed local landing
+  quarantine_if_invalid: false
+  needs_human_review: false
+  review_reason: Approved source-scoped preservation of direct identifier fields for governed local landing.
+- name: gdr_cd
+  type: string
+  nullable: true
+  required: false
+  pii_class: phi_demographic
+  lineage_required: false
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: patients
+    source_header: GDR_CD
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/patients.yaml
+    field_decision_id: BQFD-1-patients-gdr_cd-01
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: patients
+    source_header: SEX_CD
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/patients.yaml
+    field_decision_id: BQFD-2-patients-sex_cd-01
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: patients
+    source_header: GDR_CD
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/patients.yaml
+    field_decision_id: BQFD-3-patients-gdr_cd-01
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: patients
+    source_header: SX_FLAG
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/patients.yaml
+    field_decision_id: BQFD-4-patients-sx_flag-01
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: patients
+    source_header: MBR_SEX
+    source_index: 5
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/patients.yaml
+    field_decision_id: BQFD-5-patients-mbr_sex_5-01
+  transform_rule: copy source-scoped gender value with provider lineage
+  quarantine_if_invalid: false
+  needs_human_review: false
+  review_reason: Approved source-scoped preservation of demographic code fields for governed local landing.
+- name: bdt_val
+  type: date
+  nullable: true
+  required: false
+  pii_class: phi_demographic_identifier
+  lineage_required: false
+  source_mappings:
+  - provider_slug: data_provider_1_aegis_care_network
+    source_entity: patients
+    source_header: BDT_VAL
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_1_aegis_care_network/patients.yaml
+    field_decision_id: BQFD-1-patients-bdt_val-01
+  - provider_slug: data_provider_2_bluestone_health
+    source_entity: patients
+    source_header: DOB_TXT
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_2_bluestone_health/patients.yaml
+    field_decision_id: BQFD-2-patients-dob_txt-01
+  - provider_slug: data_provider_3_northcare_clinics
+    source_entity: patients
+    source_header: BDT_VAL
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_3_northcare_clinics/patients.yaml
+    field_decision_id: BQFD-3-patients-bdt_val-01
+  - provider_slug: data_provider_4_valleybridge_medical
+    source_entity: patients
+    source_header: DT_BORN
+    source_index: null
+    provider_spec_path: metadata/provider_specs/data_provider_4_valleybridge_medical/patients.yaml
+    field_decision_id: BQFD-4-patients-dt_born-01
+  - provider_slug: data_provider_5_pacific_shield_insurance
+    source_entity: patients
+    source_header: MBR_DOB
+    source_index: 6
+    provider_spec_path: metadata/provider_specs/data_provider_5_pacific_shield_insurance/patients.yaml
+    field_decision_id: BQFD-5-patients-mbr_dob_6-01
+  transform_rule: safe-cast source birth date to ISO date while preserving provider lineage
+  quarantine_if_invalid: false
+  needs_human_review: false
+  review_reason: Approved source-scoped preservation of demographic date fields for governed local landing.
 - name: gender_code
   type: string
   nullable: true
