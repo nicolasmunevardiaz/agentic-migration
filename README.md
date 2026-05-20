@@ -1,65 +1,231 @@
 # Agentic Migration
 
-This repo owns the local flow that moves raw `data_500k` files into PostgreSQL through provider contracts, canonical modeling metadata, and provider adapters. Its responsibility ends at the `landing` layer: it provisions the local database, creates landing tables, interprets each provider file, and loads normalized rows according to metadata. Analytical modeling/dbt lives in the separate `../slalom` repo.
+This repo owns the local flow that moves raw `data_500k` files into PostgreSQL through provider contracts, canonical modeling metadata, and provider adapters. Its responsibility ends at the `landing` layer: it provisions the local database, creates landing tables, interprets each provider file, and loads normalized rows according to metadata. Analytical modeling and dbt work live in the separate `../slalom` repo.
 
-## Repo Logic
+## System Boundary
 
-- `metadata/`: domain contracts and canonical model specs. It defines which columns exist, their canonical/silver names, and how each provider maps into them. Example: `FIRST_NAME`, `MBR_FIRST_NM`, `PT_GIVEN_NAME`, `NAME_FIRST`, and `MBR_FIRST_NAME` land as `pt_first_nm`.
-- `src/adapters/`: provider adapters. Each adapter knows its source headers, file shapes, and conversion rules, but should not invent data or drop contracted fields.
-- `src/common/adapter_runtime.py`: shared adapter runtime for parsing and conversion. Cross-provider rules live here, including ISO dates, `DD/MM/YYYY`, `YYYYMMDD`, and epoch seconds.
-- `src/handlers/`: orchestration for deploy, reset, incremental `data_500k` loading, and state snapshots.
-- `tests/`: coverage for contracts, mappings, adapters, and local runtime behavior.
+This repository must stop at PostgreSQL `landing.*`.
 
-## Minimum Runtime
+```text
+CURRENT / APPROVED FLOW
 
-Install only the packages needed for this local loader:
+data_500k files
+    ->
+provider_specs + silver contracts
+    ->
+src/adapters/* + src/common/adapter_runtime.py
+    ->
+src/handlers/local_postgres_workbench_deploy.py
+    ->
+PostgreSQL schema: landing
+    ->
+landing.members
+landing.encounters
+landing.conditions
+landing.medications
+landing.observations
+landing.coverage_periods
+landing.cost_records
+    ->
+STOP in this repo
+    ->
+../slalom/dbt reads source('landing', ...)
+    ->
+standardized / derived / dwh
+```
+
+```text
+OLD / DO NOT USE AS THE SOURCE-OF-TRUTH FOR DBT
+
+data_500k
+    ->
+review.silver_*
+
+That historical review-layer pattern is not the active contract for this repo.
+The active contract is landing.* and dbt consumes landing.* directly.
+```
+
+If you see `staging`, `standardized`, `derived`, or `dwh` objects in the same PostgreSQL database, those come from the dbt repository after `landing`, not from this repository's provision/load path.
+
+## What This Repo Owns
+
+- `metadata/`: provider contracts, runtime specs, and canonical model specs.
+- `src/adapters/`: provider-specific parsers for the raw file formats.
+- `src/common/adapter_runtime.py`: shared casting, mapping, and normalization logic.
+- `src/handlers/`: local deploy and `data_500k` load entrypoints.
+- `tests/`: contract, mapping, adapter, and local runtime coverage.
+
+Helpful follow-up docs:
+
+- [docs/local_postgres_workbench_deploy.md](docs/local_postgres_workbench_deploy.md)
+- [src/README.md](src/README.md)
+- [docs/local_runtime_macos_requirements.md](docs/local_runtime_macos_requirements.md)
+
+## Prerequisites
+
+Run everything from the repository root.
+
+### 1. Install local tools
 
 ```bash
 brew install uv postgresql@17
-brew services start postgresql@17
 uv --version
 psql --version
 ```
 
-Run commands from the repo root and do not run `uv init` here; this repo already owns `pyproject.toml`.
-
-## Local Load
-
-Local PostgreSQL usually uses:
+### 2. Start PostgreSQL
 
 ```bash
-PGHOST=/tmp
-DATABASE_NAME=agentic_migration_local
+brew services start postgresql@17
+PGHOST=/tmp psql -d postgres -At -c "select version();"
 ```
 
-Full reset:
+If the `psql` check fails with a socket error, PostgreSQL is not ready yet or is listening somewhere other than `/tmp`.
+
+### 3. Sync the project environment
+
+This repo already owns `pyproject.toml` and `uv.lock`, so do not run `uv init`.
 
 ```bash
-PGHOST=/tmp DATABASE_NAME=agentic_migration_local ./scripts/local_reset_postgres.sh
+uv sync --dev
 ```
 
-Provision and load from `data_500k`:
+After that, the repo-standard commands use `uv run --no-sync`.
+
+### 4. Confirm local source data exists
+
+The load flow expects a local `data_500k/` directory in the repo root. That dataset is intentionally not tracked by git.
 
 ```bash
-PGHOST=/tmp DATABASE_NAME=agentic_migration_local ./scripts/local_provision_postgres.sh
+test -d data_500k && echo "data_500k present" || echo "data_500k missing"
 ```
 
-The flow creates `landing.members`, `landing.encounters`, `landing.conditions`, `landing.medications`, `landing.observations`, `landing.coverage_periods`, and `landing.cost_records`.
+The provider specs look for paths like:
 
-## Quick Validation
+```text
+data_500k/data_provider_<n>_<provider_slug>/year=2025/<entity>/*
+```
+
+## Quick Start
+
+Use these defaults unless you intentionally need another local database:
+
+```bash
+export PGHOST=/tmp
+export DATABASE_NAME=agentic_migration_local
+export PGDATABASE=agentic_migration_local
+export UV_CACHE_DIR=/private/tmp/uv-cache
+```
+
+Reset the local database:
+
+```bash
+./scripts/local_reset_postgres.sh
+```
+
+Provision the schema and load all registered `data_500k` provider files:
+
+```bash
+./scripts/local_provision_postgres.sh
+```
+
+What that script does:
+
+1. Creates `agentic_migration_local`.
+2. Applies the local PostgreSQL landing schema.
+3. Loads adapter output into `landing.members`, `landing.encounters`, `landing.conditions`, `landing.medications`, `landing.observations`, `landing.coverage_periods`, and `landing.cost_records`.
+4. Captures a local state snapshot under `artifacts/`.
+
+## Manual Flow
+
+If you want to inspect each step instead of using the wrapper script:
+
+Dry-run the generated schema SQL:
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_postgres_workbench_deploy \
+  --database agentic_migration_local \
+  --dry-run
+```
+
+Apply and verify the landing schema:
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_postgres_workbench_deploy \
+  --database agentic_migration_local \
+  --apply \
+  --verify
+```
+
+Load all `data_500k` files and capture state:
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync python -m src.handlers.local_model_evolution_workbench \
+  --database agentic_migration_local \
+  --load-data-500k \
+  --capture-state
+```
+
+## Validation
+
+Smoke-test the runtime contract:
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync pytest tests/specs/test_local_runtime_specs.py -q
+```
+
+Run the main local validation suite:
+
+```bash
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync pytest tests/specs tests/adapters tests/test_repository_governance.py
+UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync ruff check src tests
+```
+
+Check loaded row counts in PostgreSQL:
 
 ```bash
 PGHOST=/tmp PGDATABASE=agentic_migration_local psql -c "
-select provider_slug, count(*) from landing.members group by provider_slug order by 1;"
+select 'members' as entity, count(*) from landing.members
+union all
+select 'encounters', count(*) from landing.encounters
+union all
+select 'conditions', count(*) from landing.conditions
+union all
+select 'medications', count(*) from landing.medications
+union all
+select 'observations', count(*) from landing.observations
+union all
+select 'coverage_periods', count(*) from landing.coverage_periods
+union all
+select 'cost_records', count(*) from landing.cost_records
+order by 1;"
+```
 
-UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync pytest tests/specs tests/adapters
-UV_CACHE_DIR=/private/tmp/uv-cache uv run --no-sync ruff check src tests
+Check provider distribution:
+
+```bash
+PGHOST=/tmp PGDATABASE=agentic_migration_local psql -c "
+select provider_slug, count(*)
+from landing.members
+group by provider_slug
+order by provider_slug;"
 ```
 
 ## Troubleshooting
 
-- If PostgreSQL is missing columns, check `metadata/model_specs/silver/*.yaml` and `metadata/model_specs/mappings/provider_to_silver_matrix.yaml` first; then redeploy with `local_postgres_workbench_deploy --apply --verify`.
-- If a CSV loads zero rows, confirm the matching adapter in `src/adapters/` recognizes the file entity and real headers.
-- If a date lands empty, inspect the source format and extend `parse_date` in `src/common/adapter_runtime.py`. NorthCare DOB arrives as epoch seconds and is already supported.
-- If loading looks stuck, watch for `loaded_file=...` output; the loader commits incrementally per file to avoid holding all of `data_500k` in memory.
-- If you need a clean local database, run reset + provision; avoid mixing old rows with newer contracts.
+- `uv run --no-sync ...` fails because dependencies are missing:
+  run `uv sync --dev` first.
+- `psql: connection to server on socket \"/tmp/.s.PGSQL.5432\" failed`:
+  start PostgreSQL with `brew services start postgresql@17` and retry the `psql` health check.
+- `Database already exists` during provision:
+  run `./scripts/local_reset_postgres.sh` before `./scripts/local_provision_postgres.sh`.
+- A provider/entity loads zero rows:
+  inspect the matching `metadata/provider_specs/<provider>/<entity>.yaml` file and confirm the expected file patterns match the real files in `data_500k/`.
+- A date field lands empty:
+  inspect the source format and extend `parse_date` in `src/common/adapter_runtime.py`.
+- Loading appears slow:
+  watch for `loaded_file=...` log lines; the loader commits file by file instead of keeping the entire dataset in memory.
+
+## Boundary
+
+This repository stops at the PostgreSQL `landing` load. It should not create durable post-landing modeling layers such as `standardized`, `derived`, or `dwh`. Once the local load is complete, move to the separate dbt repository for modeled transformations and downstream analytics.
